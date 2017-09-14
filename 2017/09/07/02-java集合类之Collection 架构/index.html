@@ -98,17 +98,17 @@
 <meta name="description" content="概要首先看一下 Collection 的类图结构如下：  Collection 是一个接口，它主要有两个分支 List 和 Set。 List 和 Set 是两个接口，他们继承自 Collection ，List 是有序的队列，元素可以重复， Set 是不重复的的集合。 为了减少重复代码，jdk 抽象出了一个 AbstractCollection 抽象类，这个类实现了 Collection 中绝大">
 <meta name="keywords" content="java">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Collection 架构">
+<meta property="og:title" content="Java Collection 架构">
 <meta property="og:url" content="http://yoursite.com/2017/09/07/02-java集合类之Collection 架构/index.html">
-<meta property="og:site_name" content="XiXi&#39;s Blog">
+<meta property="og:site_name" content="XiYang&#39;s Blog">
 <meta property="og:description" content="概要首先看一下 Collection 的类图结构如下：  Collection 是一个接口，它主要有两个分支 List 和 Set。 List 和 Set 是两个接口，他们继承自 Collection ，List 是有序的队列，元素可以重复， Set 是不重复的的集合。 为了减少重复代码，jdk 抽象出了一个 AbstractCollection 抽象类，这个类实现了 Collection 中绝大">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505116825766.png?imageMogr2/thumbnail/!70p/quality/100!">
 <meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505117974012.png?imageMogr2/thumbnail/!70p/quality/100!">
 <meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505119617661.png?imageMogr2/thumbnail/!100p/quality/100!">
-<meta property="og:updated_time" content="2017-09-12T10:26:39.000Z">
+<meta property="og:updated_time" content="2017-09-14T08:57:04.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Collection 架构">
+<meta name="twitter:title" content="Java Collection 架构">
 <meta name="twitter:description" content="概要首先看一下 Collection 的类图结构如下：  Collection 是一个接口，它主要有两个分支 List 和 Set。 List 和 Set 是两个接口，他们继承自 Collection ，List 是有序的队列，元素可以重复， Set 是不重复的的集合。 为了减少重复代码，jdk 抽象出了一个 AbstractCollection 抽象类，这个类实现了 Collection 中绝大">
 <meta name="twitter:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505116825766.png?imageMogr2/thumbnail/!70p/quality/100!">
 
@@ -146,7 +146,7 @@
 
 
 
-  <title>Collection 架构 | XiXi's Blog</title>
+  <title>Java Collection 架构 | XiYang's Blog</title>
   
 
 
@@ -176,7 +176,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">XiXi's Blog</span>
+        <span class="site-title">XiYang's Blog</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -302,7 +302,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XiXi's Blog">
+      <meta itemprop="name" content="XiYang's Blog">
     </span>
 
     
@@ -310,7 +310,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Collection 架构</h1>
+          <h1 class="post-title" itemprop="name headline">Java Collection 架构</h1>
         
 
         <div class="post-meta">
@@ -332,6 +332,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java-集合/" itemprop="url" rel="index">
+                    <span itemprop="name">java 集合</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -419,8 +441,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/10/21/06-深入研究java基础---HashMap/" rel="next" title="HashMap">
-                <i class="fa fa-chevron-left"></i> HashMap
+              <a href="/2017/07/13/一些好玩的前端项目/" rel="next" title="一些好玩的前端项目">
+                <i class="fa fa-chevron-left"></i> 一些好玩的前端项目
               </a>
             
           </div>
@@ -429,8 +451,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/09/11/03-java集合类之ArrayList/" rel="prev" title="ArrayList">
-                ArrayList <i class="fa fa-chevron-right"></i>
+              <a href="/2017/09/11/03-java集合类之ArrayList/" rel="prev" title="ArrayList 详解和源码解析">
+                ArrayList 详解和源码解析 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -514,12 +536,21 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
           
 
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
           
 
           
@@ -527,7 +558,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -721,7 +752,7 @@
         var disqus_config = function () {
           this.page.url = 'http://yoursite.com/2017/09/07/02-java集合类之Collection 架构/';
           this.page.identifier = '2017/09/07/02-java集合类之Collection 架构/';
-          this.page.title = 'Collection 架构';
+          this.page.title = 'Java Collection 架构';
         };
         var d = document, s = d.createElement('script');
         s.src = 'https://.disqus.com/embed.js';

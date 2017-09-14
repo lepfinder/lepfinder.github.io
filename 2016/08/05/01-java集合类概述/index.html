@@ -79,7 +79,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="java," />
 
 
 
@@ -96,18 +96,19 @@
 
 
 <meta name="description" content="在java中一切皆是对象，集合就是盛放对象的容器，根据不同的数据结构（集合、链表、队列、栈、数组、映射等）对应不同的集合类。java的集合类都在java.util包下。为了处理多线程环境下的并发安全问题，java5还在java.util.concurrent包下提供了一些多线程支持的集合类。本文暂不包含并发集合包。 java 集合主要可以分为如下4个部分：List列表、Set集合、Map映射和工具">
+<meta name="keywords" content="java">
 <meta property="og:type" content="article">
-<meta property="og:title" content="java集合类概述">
+<meta property="og:title" content="java 集合类概述">
 <meta property="og:url" content="http://yoursite.com/2016/08/05/01-java集合类概述/index.html">
-<meta property="og:site_name" content="XiXi&#39;s Blog">
+<meta property="og:site_name" content="XiYang&#39;s Blog">
 <meta property="og:description" content="在java中一切皆是对象，集合就是盛放对象的容器，根据不同的数据结构（集合、链表、队列、栈、数组、映射等）对应不同的集合类。java的集合类都在java.util包下。为了处理多线程环境下的并发安全问题，java5还在java.util.concurrent包下提供了一些多线程支持的集合类。本文暂不包含并发集合包。 java 集合主要可以分为如下4个部分：List列表、Set集合、Map映射和工具">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505102536216.png?imageMogr2/thumbnail/!50p/quality/100!">
 <meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1470370421012.png?imageMogr2/thumbnail/!100p/quality/100!">
 <meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505102962855.png?imageMogr2/thumbnail/!100p/quality/100!">
-<meta property="og:updated_time" content="2017-09-12T09:42:51.000Z">
+<meta property="og:updated_time" content="2017-09-14T08:32:09.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="java集合类概述">
+<meta name="twitter:title" content="java 集合类概述">
 <meta name="twitter:description" content="在java中一切皆是对象，集合就是盛放对象的容器，根据不同的数据结构（集合、链表、队列、栈、数组、映射等）对应不同的集合类。java的集合类都在java.util包下。为了处理多线程环境下的并发安全问题，java5还在java.util.concurrent包下提供了一些多线程支持的集合类。本文暂不包含并发集合包。 java 集合主要可以分为如下4个部分：List列表、Set集合、Map映射和工具">
 <meta name="twitter:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505102536216.png?imageMogr2/thumbnail/!50p/quality/100!">
 
@@ -145,7 +146,7 @@
 
 
 
-  <title>java集合类概述 | XiXi's Blog</title>
+  <title>java 集合类概述 | XiYang's Blog</title>
   
 
 
@@ -175,7 +176,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">XiXi's Blog</span>
+        <span class="site-title">XiYang's Blog</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -301,7 +302,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XiXi's Blog">
+      <meta itemprop="name" content="XiYang's Blog">
     </span>
 
     
@@ -309,7 +310,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">java集合类概述</h1>
+          <h1 class="post-title" itemprop="name headline">java 集合类概述</h1>
         
 
         <div class="post-meta">
@@ -331,6 +332,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java-集合/" itemprop="url" rel="index">
+                    <span itemprop="name">java 集合</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -401,6 +424,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
 
       
       
@@ -410,14 +439,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2016/03/14/我的读书史/" rel="next" title="我的读书史">
+                <i class="fa fa-chevron-left"></i> 我的读书史
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/10/21/06-深入研究java基础---HashMap/" rel="prev" title="HashMap">
-                HashMap <i class="fa fa-chevron-right"></i>
+              <a href="/2016/10/21/06-深入研究java基础---HashMap/" rel="prev" title="HashMap 详解和源码解析">
+                HashMap 详解和源码解析 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -492,12 +525,21 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
           
 
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
           
 
           
@@ -505,7 +547,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -683,7 +725,7 @@
         var disqus_config = function () {
           this.page.url = 'http://yoursite.com/2016/08/05/01-java集合类概述/';
           this.page.identifier = '2016/08/05/01-java集合类概述/';
-          this.page.title = 'java集合类概述';
+          this.page.title = 'java 集合类概述';
         };
         var d = document, s = d.createElement('script');
         s.src = 'https://.disqus.com/embed.js';

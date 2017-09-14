@@ -79,7 +79,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="java," />
+  <meta name="keywords" content="大雪," />
 
 
 
@@ -95,20 +95,25 @@
 
 
 
-<meta name="description" content="概述123public class HashMap&amp;lt;K,V&amp;gt;    extends AbstractMap&amp;lt;K,V&amp;gt;    implements Map&amp;lt;K,V&amp;gt;, Cloneable, Serializable 类图结构 http://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E">
-<meta name="keywords" content="java">
+<meta name="description" content="进入三月，北京的天气本来已经开始转暖，屋里的冷气也在这几天停止了供暖，有几天气温已经接近二十度，没想到从昨天中午开始，天却起了大雪，说是鹅毛大雪倒也不为过，下午下班的时候还在下雨加雪，我因为没有带伞，所以想等着小一点再走，一直到晚上8点反而越下越大。找了把同事的旧伞，凑合还可以用，就出门准备回去了，路上行人仍然不少，都是行色匆匆，估计都是下班往家里赶的人。我平时都是走路回家，大约30多分钟，今天由">
+<meta name="keywords" content="大雪">
 <meta property="og:type" content="article">
-<meta property="og:title" content="HashMap 详解和源码解析">
-<meta property="og:url" content="http://yoursite.com/2016/10/21/06-深入研究java基础---HashMap/index.html">
+<meta property="og:title" content="意料之外的大雪">
+<meta property="og:url" content="http://yoursite.com/2013/03/20/snow/index.html">
 <meta property="og:site_name" content="XiYang&#39;s Blog">
-<meta property="og:description" content="概述123public class HashMap&amp;lt;K,V&amp;gt;    extends AbstractMap&amp;lt;K,V&amp;gt;    implements Map&amp;lt;K,V&amp;gt;, Cloneable, Serializable 类图结构 http://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E">
+<meta property="og:description" content="进入三月，北京的天气本来已经开始转暖，屋里的冷气也在这几天停止了供暖，有几天气温已经接近二十度，没想到从昨天中午开始，天却起了大雪，说是鹅毛大雪倒也不为过，下午下班的时候还在下雨加雪，我因为没有带伞，所以想等着小一点再走，一直到晚上8点反而越下越大。找了把同事的旧伞，凑合还可以用，就出门准备回去了，路上行人仍然不少，都是行色匆匆，估计都是下班往家里赶的人。我平时都是走路回家，大约30多分钟，今天由">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505200086056.png?imageMogr2/thumbnail/!60p/quality/100!">
-<meta property="og:updated_time" content="2017-09-14T08:31:51.000Z">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385318781.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385415133.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385448829.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385474936.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385492871.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385506795.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:updated_time" content="2017-09-14T10:43:48.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="HashMap 详解和源码解析">
-<meta name="twitter:description" content="概述123public class HashMap&amp;lt;K,V&amp;gt;    extends AbstractMap&amp;lt;K,V&amp;gt;    implements Map&amp;lt;K,V&amp;gt;, Cloneable, Serializable 类图结构 http://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E">
-<meta name="twitter:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505200086056.png?imageMogr2/thumbnail/!60p/quality/100!">
+<meta name="twitter:title" content="意料之外的大雪">
+<meta name="twitter:description" content="进入三月，北京的天气本来已经开始转暖，屋里的冷气也在这几天停止了供暖，有几天气温已经接近二十度，没想到从昨天中午开始，天却起了大雪，说是鹅毛大雪倒也不为过，下午下班的时候还在下雨加雪，我因为没有带伞，所以想等着小一点再走，一直到晚上8点反而越下越大。找了把同事的旧伞，凑合还可以用，就出门准备回去了，路上行人仍然不少，都是行色匆匆，估计都是下班往家里赶的人。我平时都是走路回家，大约30多分钟，今天由">
+<meta name="twitter:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385318781.png?imageMogr2/thumbnail/!100p/quality/100!">
 
 
 
@@ -138,13 +143,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/10/21/06-深入研究java基础---HashMap/"/>
+  <link rel="canonical" href="http://yoursite.com/2013/03/20/snow/"/>
 
 
 
 
 
-  <title>HashMap 详解和源码解析 | XiYang's Blog</title>
+  <title>意料之外的大雪 | XiYang's Blog</title>
   
 
 
@@ -291,7 +296,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/10/21/06-深入研究java基础---HashMap/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2013/03/20/snow/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="XiYang">
@@ -308,7 +313,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">HashMap 详解和源码解析</h1>
+          <h1 class="post-title" itemprop="name headline">意料之外的大雪</h1>
         
 
         <div class="post-meta">
@@ -320,8 +325,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-10-21T18:12:53+08:00">
-                2016-10-21
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2013-03-20T00:00:00+08:00">
+                2013-03-20
               </time>
             
 
@@ -343,8 +348,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java-集合/" itemprop="url" rel="index">
-                    <span itemprop="name">java 集合</span>
+                  <a href="/categories/随笔/" itemprop="url" rel="index">
+                    <span itemprop="name">随笔</span>
                   </a>
                 </span>
 
@@ -361,9 +366,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2016/10/21/06-深入研究java基础---HashMap/#comments" itemprop="discussionUrl">
+                <a href="/2013/03/20/snow/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2016/10/21/06-深入研究java基础---HashMap/" itemprop="commentCount"></span>
+                        data-disqus-identifier="2013/03/20/snow/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -391,10 +396,19 @@
       
 
       
-        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public class HashMap&lt;K,V&gt;</div><div class="line">    extends AbstractMap&lt;K,V&gt;</div><div class="line">    implements Map&lt;K,V&gt;, Cloneable, Serializable</div></pre></td></tr></table></figure>
-<p>类图结构<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505200086056.png?imageMogr2/thumbnail/!60p/quality/100!" alt=""></p>
-<p><a href="http://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/" target="_blank" rel="external">http://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/</a></p>
-<p><a href="http://www.cnblogs.com/skywang12345/p/3323085.html" target="_blank" rel="external">http://www.cnblogs.com/skywang12345/p/3323085.html</a></p>
+        <p>进入三月，北京的天气本来已经开始转暖，屋里的冷气也在这几天停止了供暖，有几天气温已经接近二十度，没想到从昨天中午开始，天却起了大雪，说是鹅毛大雪倒也不为过，下午下班的时候还在下雨加雪，我因为没有带伞，所以想等着小一点再走，一直到晚上8点反而越下越大。找了把同事的旧伞，凑合还可以用，就出门准备回去了，路上行人仍然不少，都是行色匆匆，估计都是下班往家里赶的人。我平时都是走路回家，大约30多分钟，今天由于天气不怎么好所以就坐公交回去，等车的时候一个女孩也没有带伞，一直在打电话。</p>
+<p>今天早上起来推开门，才发现路上竟然积起了20厘米左右的雪，雪很白很软，树上挂满了晶光闪闪的雪花，一片银装素裹的世界。很多人在路边拍照，倒有了一种寒冬初雪的气氛。</p>
+<p>已经有好多年不曾看到很厚又很白的雪，特别是最近很多年在外求学，大都是在城市里面，下雪的时候要么雪量很少，要么下了也就化掉了，要么就是根本没有时间和心情去外面赏雪玩雪。</p>
+<p>上大一的时候，南方来的同学大都很期待冬天快点到来，因为可以看到雪，有些人可能从小到大都没有见过雪的世界是什么样子。不过那一年虽然雪也下了，但是赶上了多年不遇的大雪灾，南方受灾更为严重，过年回家家里下的雪一点也不比北边要少。记得我坐长途客车回去路上遇上好几个事故。</p>
+<p>走在去公司的路上，还不是上班高峰，洁白的雪，踩上去沙沙作响，突然间就希望把自己想象成10几年前小学的时候下雪天去学校的场景，那时候天一下雪学校就会广播，让离家近的同学回家拿扫雪的工具，整个学校也开始集体大扫除，本是少年爱玩的年纪，扫雪的时候大家便免不了打打闹闹，然后校园里就会多上几个大雪堆和奇形怪状的雪人。记忆中那个时候天总是很蓝，雪也是洁白洁白。</p>
+<p>不像城市，农村里面大片的农田，冬天下雪后很难化掉，一般会保留很长一段时间，极目望去，远山和一望无际的原野，到处都是洁白的雪，置身与其中，别有一番意境。</p>
+<p>最近北京雾霾的天气越来越多，走在街上呼吸的空气都有一种沉重感，每次雨雪或大风过后空气会恢复过来一点，再隔一两日则又会变成昏昏暗暗的天气，真的希望有时候人可以慢一点下来，看看路边的风景，品味下静静的生活。</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385318781.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385415133.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385448829.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385474936.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385492871.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385506795.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
 
       
     </div>
@@ -412,7 +426,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/java/" rel="tag"># java</a>
+            <a href="/tags/大雪/" rel="tag"># 大雪</a>
           
         </div>
       
@@ -425,8 +439,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/08/05/01-java集合类概述/" rel="next" title="java 集合类概述">
-                <i class="fa fa-chevron-left"></i> java 集合类概述
+              <a href="/2013/03/12/childhood/" rel="next" title="追忆似水流年">
+                <i class="fa fa-chevron-left"></i> 追忆似水流年
               </a>
             
           </div>
@@ -435,8 +449,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/07/13/一些好玩的前端项目/" rel="prev" title="一些好玩的前端项目">
-                一些好玩的前端项目 <i class="fa fa-chevron-right"></i>
+              <a href="/2016/03/14/我的读书史/" rel="prev" title="我的读书史">
+                我的读书史 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -496,17 +510,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview sidebar-panel">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           
             <p class="site-author-name" itemprop="name">XiYang</p>
@@ -567,22 +572,6 @@
 
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
@@ -734,9 +723,9 @@
     
       <script type="text/javascript">
         var disqus_config = function () {
-          this.page.url = 'http://yoursite.com/2016/10/21/06-深入研究java基础---HashMap/';
-          this.page.identifier = '2016/10/21/06-深入研究java基础---HashMap/';
-          this.page.title = 'HashMap 详解和源码解析';
+          this.page.url = 'http://yoursite.com/2013/03/20/snow/';
+          this.page.identifier = '2013/03/20/snow/';
+          this.page.title = '意料之外的大雪';
         };
         var d = document, s = d.createElement('script');
         s.src = 'https://.disqus.com/embed.js';

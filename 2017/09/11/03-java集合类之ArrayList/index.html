@@ -79,7 +79,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="java," />
 
 
 
@@ -96,16 +96,17 @@
 
 
 <meta name="description" content="概述ArrayList 是一个数组队列，相当于 动态数组。与Java中的数组相比，它的容量能动态增长。它继承于AbstractList，实现了List, RandomAccess, Cloneable, java.io.Serializable这些接口。 ArrayList 继承了AbstractList，实现了List。它是一个数组队列，提供了相关的添加、删除、修改、遍历等功能。ArrayLis">
+<meta name="keywords" content="java">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ArrayList">
+<meta property="og:title" content="ArrayList 详解和源码解析">
 <meta property="og:url" content="http://yoursite.com/2017/09/11/03-java集合类之ArrayList/index.html">
-<meta property="og:site_name" content="XiXi&#39;s Blog">
+<meta property="og:site_name" content="XiYang&#39;s Blog">
 <meta property="og:description" content="概述ArrayList 是一个数组队列，相当于 动态数组。与Java中的数组相比，它的容量能动态增长。它继承于AbstractList，实现了List, RandomAccess, Cloneable, java.io.Serializable这些接口。 ArrayList 继承了AbstractList，实现了List。它是一个数组队列，提供了相关的添加、删除、修改、遍历等功能。ArrayLis">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505122462998.png?imageMogr2/thumbnail/!80p/quality/100!">
-<meta property="og:updated_time" content="2017-09-14T01:51:12.000Z">
+<meta property="og:updated_time" content="2017-09-14T08:32:00.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ArrayList">
+<meta name="twitter:title" content="ArrayList 详解和源码解析">
 <meta name="twitter:description" content="概述ArrayList 是一个数组队列，相当于 动态数组。与Java中的数组相比，它的容量能动态增长。它继承于AbstractList，实现了List, RandomAccess, Cloneable, java.io.Serializable这些接口。 ArrayList 继承了AbstractList，实现了List。它是一个数组队列，提供了相关的添加、删除、修改、遍历等功能。ArrayLis">
 <meta name="twitter:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505122462998.png?imageMogr2/thumbnail/!80p/quality/100!">
 
@@ -143,7 +144,7 @@
 
 
 
-  <title>ArrayList | XiXi's Blog</title>
+  <title>ArrayList 详解和源码解析 | XiYang's Blog</title>
   
 
 
@@ -173,7 +174,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">XiXi's Blog</span>
+        <span class="site-title">XiYang's Blog</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -299,7 +300,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XiXi's Blog">
+      <meta itemprop="name" content="XiYang's Blog">
     </span>
 
     
@@ -307,7 +308,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">ArrayList</h1>
+          <h1 class="post-title" itemprop="name headline">ArrayList 详解和源码解析</h1>
         
 
         <div class="post-meta">
@@ -329,6 +330,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java-集合/" itemprop="url" rel="index">
+                    <span itemprop="name">java 集合</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -418,6 +441,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
 
       
       
@@ -427,8 +456,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/09/07/02-java集合类之Collection 架构/" rel="next" title="Collection 架构">
-                <i class="fa fa-chevron-left"></i> Collection 架构
+              <a href="/2017/09/07/02-java集合类之Collection 架构/" rel="next" title="Java Collection 架构">
+                <i class="fa fa-chevron-left"></i> Java Collection 架构
               </a>
             
           </div>
@@ -437,8 +466,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/09/12/03-java集合类之LinkedList/" rel="prev" title="LinkedList介绍">
-                LinkedList介绍 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/09/12/03-java集合类之LinkedList/" rel="prev" title="LinkedList 详解和源码解析">
+                LinkedList 详解和源码解析 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -522,12 +551,21 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
           
 
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
           
 
           
@@ -535,7 +573,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -729,7 +767,7 @@
         var disqus_config = function () {
           this.page.url = 'http://yoursite.com/2017/09/11/03-java集合类之ArrayList/';
           this.page.identifier = '2017/09/11/03-java集合类之ArrayList/';
-          this.page.title = 'ArrayList';
+          this.page.title = 'ArrayList 详解和源码解析';
         };
         var d = document, s = d.createElement('script');
         s.src = 'https://.disqus.com/embed.js';
