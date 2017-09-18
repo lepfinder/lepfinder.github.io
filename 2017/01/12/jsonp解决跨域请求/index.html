@@ -95,20 +95,20 @@
 
 
 
-<meta name="description" content="http://api.jquery.com/jQuery.ajax/ javascript1234567891011121314$.ajax(&amp;#123;     type: &amp;quot;get&amp;quot;,     async: false,     url: &amp;quot;http://wukong.iqdnet.cn/wukongbg/admin/monitorList/test&amp;quot;,">
+<meta name="description" content="什么是跨域请求浏览器的同源策略限制从一个源加载的文档或脚本与来自另一个源的资源进行交互。如果协议，端口和主机对于两个页面是相同的，则两个页面具有相同的源，否则就是不同源的。如果要在js里发起跨域请求，则要进行一些特殊处理了。 解决方案最简单的有两种解决方式：  可以把请求发到自己的服务端，再通过后台代码发起请求，再将数据返回前端。 使用jsonp  第一种需要在服务器端做额外开发，而且频繁修改也需">
 <meta name="keywords" content="jsonp 跨域">
 <meta property="og:type" content="article">
 <meta property="og:title" content="jsonp 解决跨域请求">
 <meta property="og:url" content="http://yoursite.com/2017/01/12/jsonp解决跨域请求/index.html">
 <meta property="og:site_name" content="XiYang&#39;s Blog">
-<meta property="og:description" content="http://api.jquery.com/jQuery.ajax/ javascript1234567891011121314$.ajax(&amp;#123;     type: &amp;quot;get&amp;quot;,     async: false,     url: &amp;quot;http://wukong.iqdnet.cn/wukongbg/admin/monitorList/test&amp;quot;,">
+<meta property="og:description" content="什么是跨域请求浏览器的同源策略限制从一个源加载的文档或脚本与来自另一个源的资源进行交互。如果协议，端口和主机对于两个页面是相同的，则两个页面具有相同的源，否则就是不同源的。如果要在js里发起跨域请求，则要进行一些特殊处理了。 解决方案最简单的有两种解决方式：  可以把请求发到自己的服务端，再通过后台代码发起请求，再将数据返回前端。 使用jsonp  第一种需要在服务器端做额外开发，而且频繁修改也需">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1484107901127.png?imageMogr2/thumbnail/!100p/quality/100!">
 <meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1484107880451.png?imageMogr2/thumbnail/!100p/quality/100!">
-<meta property="og:updated_time" content="2017-09-14T14:16:44.000Z">
+<meta property="og:updated_time" content="2017-09-15T03:19:12.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="jsonp 解决跨域请求">
-<meta name="twitter:description" content="http://api.jquery.com/jQuery.ajax/ javascript1234567891011121314$.ajax(&amp;#123;     type: &amp;quot;get&amp;quot;,     async: false,     url: &amp;quot;http://wukong.iqdnet.cn/wukongbg/admin/monitorList/test&amp;quot;,">
+<meta name="twitter:description" content="什么是跨域请求浏览器的同源策略限制从一个源加载的文档或脚本与来自另一个源的资源进行交互。如果协议，端口和主机对于两个页面是相同的，则两个页面具有相同的源，否则就是不同源的。如果要在js里发起跨域请求，则要进行一些特殊处理了。 解决方案最简单的有两种解决方式：  可以把请求发到自己的服务端，再通过后台代码发起请求，再将数据返回前端。 使用jsonp  第一种需要在服务器端做额外开发，而且频繁修改也需">
 <meta name="twitter:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1484107901127.png?imageMogr2/thumbnail/!100p/quality/100!">
 
 
@@ -392,15 +392,22 @@
       
 
       
-        <p><a href="http://api.jquery.com/jQuery.ajax/" target="_blank" rel="external">http://api.jquery.com/jQuery.ajax/</a></p>
-<h2 id="javascript"><a href="#javascript" class="headerlink" title="javascript"></a>javascript</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">$.ajax(&#123;</div><div class="line">     type: &quot;get&quot;,</div><div class="line">     async: false,</div><div class="line">     url: &quot;http://wukong.iqdnet.cn/wukongbg/admin/monitorList/test&quot;,</div><div class="line">     dataType: &quot;jsonp&quot;,</div><div class="line">     jsonp: &quot;callbackparam&quot;,//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)</div><div class="line">     success: function(json)&#123;</div><div class="line">      console.log(json);</div><div class="line">        alert(json);</div><div class="line">     &#125;,</div><div class="line">     error: function()&#123;</div><div class="line">        alert(&apos;fail&apos;);</div><div class="line">     &#125;</div><div class="line"> &#125;);</div></pre></td></tr></table></figure>
-<p>服务器端</p>
+        <h2 id="什么是跨域请求"><a href="#什么是跨域请求" class="headerlink" title="什么是跨域请求"></a>什么是跨域请求</h2><p>浏览器的同源策略限制从一个源加载的文档或脚本与来自另一个源的资源进行交互。<br>如果协议，端口和主机对于两个页面是相同的，则两个页面具有相同的源，否则就是不同源的。<br>如果要在js里发起跨域请求，则要进行一些特殊处理了。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>最简单的有两种解决方式：</p>
 <ol>
-<li>首先</li>
+<li>可以把请求发到自己的服务端，再通过后台代码发起请求，再将数据返回前端。</li>
+<li>使用jsonp</li>
 </ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * test</div><div class="line"> */</div><div class="line">@RequestMapping(value = &quot;test&quot;,method= RequestMethod.GET)</div><div class="line">@ResponseBody</div><div class="line">public Object test(String callbackparam,HttpServletRequest request,MonitorListParams monitorListParams) &#123;</div><div class="line">    logger.info(&quot;find monitorList list.&quot;);</div><div class="line"></div><div class="line">    System.out.println(System.getProperty(&quot;env&quot;));</div><div class="line"></div><div class="line">    ModelResult modelResult = new ModelResult(ModelResult.CODE_200);</div><div class="line">    ResultPage&lt;MonitorList&gt; resultPage = null;</div><div class="line">    resultPage = monitorListService.getResultPage(monitorListParams);</div><div class="line">    modelResult.setMessage(&quot;查询成功&quot;);</div><div class="line">    modelResult.setResultPage(resultPage);</div><div class="line"></div><div class="line">    String content = JSON.toJSONString(modelResult);</div><div class="line"></div><div class="line">    content = callbackparam +&quot;(&quot;+content+&quot;)&quot;;</div><div class="line">    return content;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1484107901127.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>第一种需要在服务器端做额外开发，而且频繁修改也需要频繁的改服务器端，一般不建议使用。下面看一下使用jsonp解决跨域问题的解决方案：</p>
+<h3 id="什么是jsonp"><a href="#什么是jsonp" class="headerlink" title="什么是jsonp"></a>什么是jsonp</h3><p>JSONP 和 JSON 看着很像，他们分别是什么呢？</p>
+<p>JSON(JavaScript Object Notation) 是一种轻量级的数据交换格式。对于JSON大家应该是很了解了吧，不是很清楚的朋友可以去json.org上了解下，简单易懂。</p>
+<p>JSONP是JSON with Padding的略称。它是一个非官方的协议，它允许在服务器端集成Script tags返回至客户端，通过javascript callback的形式实现跨域访问（这仅仅是JSONP简单的实现形式）。</p>
+<h2 id="实现演示"><a href="#实现演示" class="headerlink" title="实现演示"></a>实现演示</h2><h3 id="前端代码"><a href="#前端代码" class="headerlink" title="前端代码"></a>前端代码</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">$.ajax(&#123;</div><div class="line">     type: <span class="string">"get"</span>,</div><div class="line">     <span class="keyword">async</span>: <span class="literal">false</span>,</div><div class="line">     url: <span class="string">"http://wukong.iqdnet.cn/wukongbg/admin/monitorList/test"</span>,</div><div class="line">     dataType: <span class="string">"jsonp"</span>,</div><div class="line">     jsonp: <span class="string">"callbackparam"</span>,<span class="comment">//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)</span></div><div class="line">     success: <span class="function"><span class="keyword">function</span>(<span class="params">json</span>)</span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(json);</div><div class="line">        alert(json);</div><div class="line">     &#125;,</div><div class="line">     error: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">        alert(<span class="string">'fail'</span>);</div><div class="line">     &#125;</div><div class="line"> &#125;);</div></pre></td></tr></table></figure>
+<h3 id="服务器端"><a href="#服务器端" class="headerlink" title="服务器端"></a>服务器端</h3><p>在controller中定义一个方法 <code>test</code> 返回JSON的数据</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * test</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"test"</span>,method= RequestMethod.GET)</div><div class="line"><span class="meta">@ResponseBody</span></div><div class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">test</span><span class="params">(String callbackparam,HttpServletRequest request,MonitorListParams monitorListParams)</span> </span>&#123;</div><div class="line">    logger.info(<span class="string">"find monitorList list."</span>);</div><div class="line"></div><div class="line">    System.out.println(System.getProperty(<span class="string">"env"</span>));</div><div class="line"></div><div class="line">    ModelResult modelResult = <span class="keyword">new</span> ModelResult(ModelResult.CODE_200);</div><div class="line">    ResultPage&lt;MonitorList&gt; resultPage = <span class="keyword">null</span>;</div><div class="line">    resultPage = monitorListService.getResultPage(monitorListParams);</div><div class="line">    modelResult.setMessage(<span class="string">"查询成功"</span>);</div><div class="line">    modelResult.setResultPage(resultPage);</div><div class="line"></div><div class="line">    String content = JSON.toJSONString(modelResult);</div><div class="line"></div><div class="line">    content = callbackparam +<span class="string">"("</span>+content+<span class="string">")"</span>;</div><div class="line">    <span class="keyword">return</span> content;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1484107901127.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
 <p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1484107880451.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="http://api.jquery.com/jQuery.ajax/" target="_blank" rel="external">Jquery 文档</a></p>
 
       
     </div>
@@ -526,7 +533,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -537,7 +544,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -548,7 +555,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -583,7 +590,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#javascript"><span class="nav-number">1.</span> <span class="nav-text">javascript</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是跨域请求"><span class="nav-number">1.</span> <span class="nav-text">什么是跨域请求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案"><span class="nav-number">2.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是jsonp"><span class="nav-number">2.1.</span> <span class="nav-text">什么是jsonp</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现演示"><span class="nav-number">3.</span> <span class="nav-text">实现演示</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#前端代码"><span class="nav-number">3.1.</span> <span class="nav-text">前端代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务器端"><span class="nav-number">3.2.</span> <span class="nav-text">服务器端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#效果"><span class="nav-number">3.3.</span> <span class="nav-text">效果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
             
 
           </div>

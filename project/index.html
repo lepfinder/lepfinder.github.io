@@ -95,17 +95,21 @@
 
 
 
-<meta name="description" content="代码生成器DBMasterKnightWukong">
+<meta name="description" content="工作时间久了，对于重复性的工作越来越排斥，本页面记录了一些在工作中创造的一些轮子，等轮子多了，再开发就是一些积木的拼搭了。  代码生成器概述codeg是一个轻量级的代码生成器内核（代码仅300行左右），基于Python和jinja2开发，你可以定制自己的项目模板，快速生成可以直接运行的工程项目。项目主页： github  功能特点 根据数据库连接配置可以支持直接生成java工程 支持生成指定表的">
 <meta property="og:type" content="website">
 <meta property="og:title" content="个人项目">
 <meta property="og:url" content="http://yoursite.com/project/index.html">
 <meta property="og:site_name" content="XiYang&#39;s Blog">
-<meta property="og:description" content="代码生成器DBMasterKnightWukong">
+<meta property="og:description" content="工作时间久了，对于重复性的工作越来越排斥，本页面记录了一些在工作中创造的一些轮子，等轮子多了，再开发就是一些积木的拼搭了。  代码生成器概述codeg是一个轻量级的代码生成器内核（代码仅300行左右），基于Python和jinja2开发，你可以定制自己的项目模板，快速生成可以直接运行的工程项目。项目主页： github  功能特点 根据数据库连接配置可以支持直接生成java工程 支持生成指定表的">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-09-14T01:58:06.000Z">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505446743627.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505446793800.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505446067016.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:updated_time" content="2017-09-15T06:28:04.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="个人项目">
-<meta name="twitter:description" content="代码生成器DBMasterKnightWukong">
+<meta name="twitter:description" content="工作时间久了，对于重复性的工作越来越排斥，本页面记录了一些在工作中创造的一些轮子，等轮子多了，再开发就是一些积木的拼搭了。  代码生成器概述codeg是一个轻量级的代码生成器内核（代码仅300行左右），基于Python和jinja2开发，你可以定制自己的项目模板，快速生成可以直接运行的工程项目。项目主页： github  功能特点 根据数据库连接配置可以支持直接生成java工程 支持生成指定表的">
+<meta name="twitter:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505446743627.png?imageMogr2/thumbnail/!100p/quality/100!">
 
 
 
@@ -293,7 +297,64 @@
       <div class="post-body">
         
         
-          <h2 id="代码生成器"><a href="#代码生成器" class="headerlink" title="代码生成器"></a>代码生成器</h2><h2 id="DBMaster"><a href="#DBMaster" class="headerlink" title="DBMaster"></a>DBMaster</h2><h2 id="Knight"><a href="#Knight" class="headerlink" title="Knight"></a>Knight</h2><h2 id="Wukong"><a href="#Wukong" class="headerlink" title="Wukong"></a>Wukong</h2>
+          <blockquote>
+<p>工作时间久了，对于重复性的工作越来越排斥，本页面记录了一些在工作中创造的一些轮子，等轮子多了，再开发就是一些积木的拼搭了。</p>
+</blockquote>
+<h2 id="代码生成器"><a href="#代码生成器" class="headerlink" title="代码生成器"></a>代码生成器</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>codeg是一个轻量级的代码生成器内核（代码仅300行左右），基于Python和jinja2开发，你可以定制自己的项目模板，快速生成可以直接运行的工程项目。<br>项目主页： <a href="https://github.com/lepfinder/codeg" target="_blank" rel="external">github</a></p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505446743627.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h3 id="功能特点"><a href="#功能特点" class="headerlink" title="功能特点"></a>功能特点</h3><ul>
+<li>根据数据库连接配置可以支持直接生成java工程</li>
+<li>支持生成指定表的工程代码</li>
+<li>支持读取数据库表注释，自动完成java类注释</li>
+<li>微框架设计，方便自己修改模板完成自己的重复性代码工作</li>
+</ul>
+<h2 id="DBMaster"><a href="#DBMaster" class="headerlink" title="DBMaster"></a>DBMaster</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>dbmaster是一个python编写的在线数据库查询客户端，可以有效隔离线上数据库环境，提供了一系列便于开发者使用的特性。操作体验尽量兼容navcat。<br>项目主页：<a href="https://github.com/lepfinder/dbmaster" target="_blank" rel="external">github</a></p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505446793800.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h3 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h3><ul>
+<li>支持SQL语法高亮和自动提示</li>
+<li>支持SQL格式化</li>
+<li>支持执行选中的SQL片段</li>
+<li>支持数据库SCHEMA显示和表结构信息（双击表名显示表结构信息）</li>
+<li>支持快捷键执行，Cmd+R/Ctrl+R执行SQL</li>
+<li>支持查询执行记录</li>
+<li>支持多个语句同时执行，显示多个result结果集</li>
+</ul>
+<h2 id="Knight"><a href="#Knight" class="headerlink" title="Knight"></a>Knight</h2><h3 id="什么是-Knight"><a href="#什么是-Knight" class="headerlink" title="什么是 Knight"></a>什么是 Knight</h3><p>Knight 是一个 Java 开发的WEB后台开发微框架，基于成熟的 Spring 、 MyBatis 后端框架，集成AngularJS、echart等一些前端框架，可以极大的简化日常的后台开发。</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505446067016.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h3 id="特性-1"><a href="#特性-1" class="headerlink" title="特性"></a>特性</h3><ul>
+<li>提供文件导出服务，配置式开发</li>
+<li>提供简单的页面自动渲染能力，根据配置，自动生成搜索区域和table数据</li>
+<li>集成echart，提供报表工具，可以支持简易的报表渲染功能</li>
+<li>配置文件提供历史版本记录，可以在线查看diff</li>
+<li>提供易用的debug信息，可以支持查看导出的sql和页面渲染使用的sql</li>
+<li>支持动态多数据源，可以动态添加、删除和修改数据源配置</li>
+<li>数据源类型支持mysql、hive</li>
+<li>导出支持本地字典配置，可以省略大量的case when的写法</li>
+</ul>
+<h3 id="为什么要用-Knight"><a href="#为什么要用-Knight" class="headerlink" title="为什么要用 Knight"></a>为什么要用 Knight</h3><p>Knight的设计初衷是为了支持集中式的文件导出服务，用以解决后台文件导出的需求。经过一系列的迭代之后Knight的目标将会是简化前后端的开发。抽象出后台通用功能，封装前后端流程。提供配置式开发方式，提高开发效率，节省开发成本，规范前后端的写法。</p>
+<p>针对于导出需求，无需编写后端代码，只需在配置中心进行简单的配置后，在前端接入导出即可完成开发。导出的字段完全自定义，需求变更也无需上线即可完成修改。<br>针对于普通的页面需求，提供了前端指令可以动态生成搜索框和数据表格，无需编写后台代码，只需在配置中心进行配置即可。页面增减字段也无需上线，只需要修改配置即可。<br>针对于报表需求，集成了echart，后端配置后前端即可通过指令渲染。<br>提供易用的debug功能，可以在页面查看后台执行的sql及出错信息，无需频繁登录服务器查看日志。</p>
+<h2 id="Wukong"><a href="#Wukong" class="headerlink" title="Wukong"></a>Wukong</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>wukong是一个独立开发的业务监控系统，提供对线上业务进行监控和报警的能力，可以由各业务开发人员根据产品和业务需求制定规则，当系统出现异常数据时及时通知给相应的责任人。</p>
+<h3 id="设计目的"><a href="#设计目的" class="headerlink" title="设计目的"></a>设计目的</h3><ul>
+<li>线上业务异常反馈不及时，有些甚至几天后才会发现，导致修复特别困难。</li>
+<li>整合监控功能，提供业务代码中嵌入异常报警的功能，进一步提高系统稳定性。</li>
+<li>提供基础的报警组件，避免各系统重复开发，重复发明轮子。</li>
+</ul>
+<h3 id="具体适应的场景"><a href="#具体适应的场景" class="headerlink" title="具体适应的场景"></a>具体适应的场景</h3><h4 id="业务规则监控"><a href="#业务规则监控" class="headerlink" title="业务规则监控"></a>业务规则监控</h4><ul>
+<li>支付系统支付成功了是否订单系统状态也是已支付</li>
+<li>订单5分钟之后超时，是否有订单5分钟之后还没有超时</li>
+<li>物业费收款成功，通知龙湖没有返回收据号</li>
+<li>支付系统支付金额和订单应付金额不一致</li>
+<li>订单平台和业态订单状态不一致</li>
+<li>支付系统和订单平台支付状态不一致</li>
+<li>券分号可用数量低于某个值报警</li>
+<li>积分发送异常</li>
+</ul>
+<h4 id="开发者程序埋点异常上报"><a href="#开发者程序埋点异常上报" class="headerlink" title="开发者程序埋点异常上报"></a>开发者程序埋点异常上报</h4><p>开发者在开发过程中，主动埋点，在触发了某种异常之后，主动通知开发者。比如：</p>
+<ul>
+<li>当系统无法连接redis，通知开发者</li>
+<li>某个逻辑需要某个文件，当文件没有成功生成，触发报警。</li>
+</ul>
+
         
       </div>
       
@@ -366,7 +427,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -377,7 +438,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -388,7 +449,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -423,7 +484,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#代码生成器"><span class="nav-number">1.</span> <span class="nav-text">代码生成器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DBMaster"><span class="nav-number">2.</span> <span class="nav-text">DBMaster</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Knight"><span class="nav-number">3.</span> <span class="nav-text">Knight</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Wukong"><span class="nav-number">4.</span> <span class="nav-text">Wukong</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#代码生成器"><span class="nav-number">1.</span> <span class="nav-text">代码生成器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概述"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#功能特点"><span class="nav-number">1.2.</span> <span class="nav-text">功能特点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DBMaster"><span class="nav-number">2.</span> <span class="nav-text">DBMaster</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#介绍"><span class="nav-number">2.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特性"><span class="nav-number">2.2.</span> <span class="nav-text">特性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Knight"><span class="nav-number">3.</span> <span class="nav-text">Knight</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是-Knight"><span class="nav-number">3.1.</span> <span class="nav-text">什么是 Knight</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特性-1"><span class="nav-number">3.2.</span> <span class="nav-text">特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要用-Knight"><span class="nav-number">3.3.</span> <span class="nav-text">为什么要用 Knight</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Wukong"><span class="nav-number">4.</span> <span class="nav-text">Wukong</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">4.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设计目的"><span class="nav-number">4.2.</span> <span class="nav-text">设计目的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#具体适应的场景"><span class="nav-number">4.3.</span> <span class="nav-text">具体适应的场景</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#业务规则监控"><span class="nav-number">4.3.1.</span> <span class="nav-text">业务规则监控</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#开发者程序埋点异常上报"><span class="nav-number">4.3.2.</span> <span class="nav-text">开发者程序埋点异常上报</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
