@@ -40,7 +40,7 @@
 
   
   
-  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+  <link href="../../../../lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
 
 
 
@@ -74,9 +74,9 @@
 
 
 
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+<link href="../../../../lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
 
-<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+<link href="../../../../css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
   <meta name="keywords" content="java," />
@@ -88,27 +88,29 @@
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+  <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico?v=5.1.2" />
 
 
 
 
 
 
-<meta name="description" content="概述123public class HashMap&amp;lt;K,V&amp;gt;    extends AbstractMap&amp;lt;K,V&amp;gt;    implements Map&amp;lt;K,V&amp;gt;, Cloneable, Serializable 类图结构 http://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E">
+<meta name="description" content="概要首先看一下 Collection 的类图结构如下：  Collection 是一个接口，它主要有两个分支 List 和 Set。 List 和 Set 是两个接口，他们继承自 Collection ，List 是有序的队列，元素可以重复， Set 是不重复的的集合。 为了减少重复代码，jdk 抽象出了一个 AbstractCollection 抽象类，这个类实现了 Collection 中绝大">
 <meta name="keywords" content="java">
 <meta property="og:type" content="article">
-<meta property="og:title" content="HashMap 详解和源码解析">
-<meta property="og:url" content="http://yoursite.com/2016/10/21/06-深入研究java基础---HashMap/index.html">
+<meta property="og:title" content="Java Collection 架构">
+<meta property="og:url" content="http://yoursite.com/2017/09/07/02-java集合类之Collection-架构/index.html">
 <meta property="og:site_name" content="XiYang&#39;s Blog">
-<meta property="og:description" content="概述123public class HashMap&amp;lt;K,V&amp;gt;    extends AbstractMap&amp;lt;K,V&amp;gt;    implements Map&amp;lt;K,V&amp;gt;, Cloneable, Serializable 类图结构 http://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E">
+<meta property="og:description" content="概要首先看一下 Collection 的类图结构如下：  Collection 是一个接口，它主要有两个分支 List 和 Set。 List 和 Set 是两个接口，他们继承自 Collection ，List 是有序的队列，元素可以重复， Set 是不重复的的集合。 为了减少重复代码，jdk 抽象出了一个 AbstractCollection 抽象类，这个类实现了 Collection 中绝大">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505200086056.png?imageMogr2/thumbnail/!60p/quality/100!">
-<meta property="og:updated_time" content="2017-09-14T08:31:51.000Z">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505116825766.png?imageMogr2/thumbnail/!70p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505117974012.png?imageMogr2/thumbnail/!70p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505119617661.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:updated_time" content="2017-09-14T08:57:04.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="HashMap 详解和源码解析">
-<meta name="twitter:description" content="概述123public class HashMap&amp;lt;K,V&amp;gt;    extends AbstractMap&amp;lt;K,V&amp;gt;    implements Map&amp;lt;K,V&amp;gt;, Cloneable, Serializable 类图结构 http://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E">
-<meta name="twitter:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505200086056.png?imageMogr2/thumbnail/!60p/quality/100!">
+<meta name="twitter:title" content="Java Collection 架构">
+<meta name="twitter:description" content="概要首先看一下 Collection 的类图结构如下：  Collection 是一个接口，它主要有两个分支 List 和 Set。 List 和 Set 是两个接口，他们继承自 Collection ，List 是有序的队列，元素可以重复， Set 是不重复的的集合。 为了减少重复代码，jdk 抽象出了一个 AbstractCollection 抽象类，这个类实现了 Collection 中绝大">
+<meta name="twitter:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505116825766.png?imageMogr2/thumbnail/!70p/quality/100!">
 
 
 
@@ -138,13 +140,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/10/21/06-深入研究java基础---HashMap/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/09/07/02-java集合类之Collection-架构/"/>
 
 
 
 
 
-  <title>HashMap 详解和源码解析 | XiYang's Blog</title>
+  <title>Java Collection 架构 | XiYang's Blog</title>
   
 
 
@@ -210,7 +212,7 @@
       
         
         <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
+          <a href="" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
@@ -220,7 +222,7 @@
       
         
         <li class="menu-item menu-item-tags">
-          <a href="/tags/" rel="section">
+          <a href="" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
             
@@ -230,7 +232,7 @@
       
         
         <li class="menu-item menu-item-categories">
-          <a href="/categories/" rel="section">
+          <a href="" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
@@ -240,7 +242,7 @@
       
         
         <li class="menu-item menu-item-archives">
-          <a href="/archives/" rel="section">
+          <a href="" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
@@ -250,7 +252,7 @@
       
         
         <li class="menu-item menu-item-project">
-          <a href="/project/" rel="section">
+          <a href="" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-life-ring"></i> <br />
             
@@ -260,7 +262,7 @@
       
         
         <li class="menu-item menu-item-about">
-          <a href="/about/" rel="section">
+          <a href="" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
@@ -301,12 +303,12 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/10/21/06-深入研究java基础---HashMap/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="XiYang">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="../../../../images/avatar.gif">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -318,7 +320,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">HashMap 详解和源码解析</h1>
+          <h1 class="post-title" itemprop="name headline">Java Collection 架构</h1>
         
 
         <div class="post-meta">
@@ -330,8 +332,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-10-21T18:12:53+08:00">
-                2016-10-21
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-07T17:52:03+08:00">
+                2017-09-07
               </time>
             
 
@@ -353,7 +355,7 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java-集合/" itemprop="url" rel="index">
+                  <a href="../../../../categories/java-集合/" itemprop="url" rel="index">
                     <span itemprop="name">java 集合</span>
                   </a>
                 </span>
@@ -371,9 +373,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2016/10/21/06-深入研究java基础---HashMap/#comments" itemprop="discussionUrl">
+                <a href="#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2016/10/21/06-深入研究java基础---HashMap/" itemprop="commentCount"></span>
+                        data-disqus-identifier="2017/09/07/02-java集合类之Collection-架构/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -401,10 +403,24 @@
       
 
       
-        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public class HashMap&lt;K,V&gt;</div><div class="line">    extends AbstractMap&lt;K,V&gt;</div><div class="line">    implements Map&lt;K,V&gt;, Cloneable, Serializable</div></pre></td></tr></table></figure>
-<p>类图结构<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505200086056.png?imageMogr2/thumbnail/!60p/quality/100!" alt=""></p>
-<p><a href="http://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/" target="_blank" rel="external">http://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/</a></p>
-<p><a href="http://www.cnblogs.com/skywang12345/p/3323085.html" target="_blank" rel="external">http://www.cnblogs.com/skywang12345/p/3323085.html</a></p>
+        <h2 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h2><p>首先看一下 Collection 的类图结构如下：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505116825766.png?imageMogr2/thumbnail/!70p/quality/100!" alt=""></p>
+<p>Collection 是一个接口，它主要有两个分支 List 和 Set。</p>
+<p>List 和 Set 是两个接口，他们继承自 Collection ，List 是有序的队列，元素可以重复， Set 是不重复的的集合。</p>
+<p>为了减少重复代码，jdk 抽象出了一个 AbstractCollection 抽象类，这个类实现了 Collection 中绝大部分函数，这样在其它的实现类中就可以省去重复的编码。</p>
+<p>AbstractList 和 AbstractSet都继承于AbstractCollection，具体的List实现类继承于AbstractList，而Set的实现类则继承于AbstractSet。</p>
+<h2 id="Collection-类详解"><a href="#Collection-类详解" class="headerlink" title="Collection 类详解"></a>Collection 类详解</h2><p>Collection 的定义如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public interface Collection&lt;E&gt; extends Iterable&lt;E&gt; &#123;</div></pre></td></tr></table></figure></p>
+<p>包含的方法如下：<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505117974012.png?imageMogr2/thumbnail/!70p/quality/100!" alt=""></p>
+<h2 id="List-详解"><a href="#List-详解" class="headerlink" title="List 详解"></a>List 详解</h2><p>接口声明：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public interface List&lt;E&gt; extends Collection&lt;E&gt; &#123;</div></pre></td></tr></table></figure>
+<p>包含的方法：</p>
+<p>![](image:: <a href="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505118343539.png?imageMogr2/thumbnail/!100p/quality/100!）" target="_blank" rel="external">http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505118343539.png?imageMogr2/thumbnail/!100p/quality/100!）</a></p>
+<p>其中带 上箭头 是从 Collection 继承来的，相比于 Collection ，主要增加了一些在指定位置添加、删除、修改、获取对应元素的接口。还有获取List中的子队列。</p>
+<h2 id="Set-详解"><a href="#Set-详解" class="headerlink" title="Set 详解"></a>Set 详解</h2><p>接口声明</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public interface Set&lt;E&gt; extends Collection&lt;E&gt; &#123;</div></pre></td></tr></table></figure>
+<p>包含的方法：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505119617661.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>关于API方面。Set的API和Collection完全一样。</p>
 
       
     </div>
@@ -422,7 +438,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/java/" rel="tag"># java</a>
+            <a href="../../../../tags/java/" rel="tag"># java</a>
           
         </div>
       
@@ -435,8 +451,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/08/05/01-java集合类概述/" rel="next" title="java 集合类概述">
-                <i class="fa fa-chevron-left"></i> java 集合类概述
+              <a href="../../../07/13/一些好玩的前端项目/" rel="next" title="一些好玩的前端项目">
+                <i class="fa fa-chevron-left"></i> 一些好玩的前端项目
               </a>
             
           </div>
@@ -445,8 +461,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/01/12/jsonp解决跨域请求/" rel="prev" title="jsonp 解决跨域请求">
-                jsonp 解决跨域请求 <i class="fa fa-chevron-right"></i>
+              <a href="../../11/03-java集合类之ArrayList/" rel="prev" title="ArrayList 详解和源码解析">
+                ArrayList 详解和源码解析 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -528,7 +544,7 @@
           
             <div class="site-state-item site-state-posts">
             
-              <a href="/archives/">
+              <a href="../../../../archives/">
             
                 <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">日志</span>
@@ -540,7 +556,7 @@
             
             
             <div class="site-state-item site-state-categories">
-              <a href="/categories/index.html">
+              <a href="../../../../categories/index.html">
                 <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">分类</span>
               </a>
@@ -551,8 +567,8 @@
             
             
             <div class="site-state-item site-state-tags">
-              <a href="/tags/index.html">
-                <span class="site-state-item-count">8</span>
+              <a href="../../../../tags/index.html">
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -587,7 +603,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概要"><span class="nav-number">1.</span> <span class="nav-text">概要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Collection-类详解"><span class="nav-number">2.</span> <span class="nav-text">Collection 类详解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#List-详解"><span class="nav-number">3.</span> <span class="nav-text">List 详解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Set-详解"><span class="nav-number">4.</span> <span class="nav-text">Set 详解</span></a></li></ol></div>
             
 
           </div>
@@ -678,57 +694,57 @@
 
 
   
-  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  <script type="text/javascript" src="../../../../lib/jquery/index.js?v=2.1.3"></script>
 
   
-  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="../../../../lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
 
   
-  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  <script type="text/javascript" src="../../../../lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
 
   
-  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script type="text/javascript" src="../../../../lib/velocity/velocity.min.js?v=1.2.1"></script>
 
   
-  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script type="text/javascript" src="../../../../lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
 
   
-  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
-
-
-
-  
-  
-
-
-  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
-
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
-
-
-
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
-
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
-
+  <script type="text/javascript" src="../../../../lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
 
 
   
 
 
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+  <script type="text/javascript" src="../../../../js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/bootstrap.js?v=5.1.2"></script>
 
 
 
@@ -744,9 +760,9 @@
     
       <script type="text/javascript">
         var disqus_config = function () {
-          this.page.url = 'http://yoursite.com/2016/10/21/06-深入研究java基础---HashMap/';
-          this.page.identifier = '2016/10/21/06-深入研究java基础---HashMap/';
-          this.page.title = 'HashMap 详解和源码解析';
+          this.page.url = 'http://yoursite.com2017/09/07/02-java集合类之Collection-架构/';
+          this.page.identifier = '2017/09/07/02-java集合类之Collection-架构/';
+          this.page.title = 'Java Collection 架构';
         };
         var d = document, s = d.createElement('script');
         s.src = 'https://.disqus.com/embed.js';
