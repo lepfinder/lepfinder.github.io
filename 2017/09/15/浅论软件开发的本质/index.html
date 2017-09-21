@@ -104,7 +104,7 @@
 <meta property="og:description" content="从毕业到现在6年了，带上大学的4年，加起来进入这个行业也有了10年了，十年就这么不快不慢的过去了。接触的行业有出版社的资源管理系统、在线学习系统、大数据数据挖掘和电商交易系统。挖过一些坑，也踩过很多雷，回头梳理下开发过和接触过的系统，希望从个人的理解角度探究下软件系统的本质是什么？ 我个人认为在软件开发领域几个核心的概念是：数据存储、数据获取传输和数据展示。每一个软件都承担了其中的一个或几个角色。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505457802737.png?imageMogr2/thumbnail/!100p/quality/100!">
-<meta property="og:updated_time" content="2017-09-18T01:54:05.000Z">
+<meta property="og:updated_time" content="2017-09-21T02:31:11.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅论软件开发的本质">
 <meta name="twitter:description" content="从毕业到现在6年了，带上大学的4年，加起来进入这个行业也有了10年了，十年就这么不快不慢的过去了。接触的行业有出版社的资源管理系统、在线学习系统、大数据数据挖掘和电商交易系统。挖过一些坑，也踩过很多雷，回头梳理下开发过和接触过的系统，希望从个人的理解角度探究下软件系统的本质是什么？ 我个人认为在软件开发领域几个核心的概念是：数据存储、数据获取传输和数据展示。每一个软件都承担了其中的一个或几个角色。">
@@ -210,7 +210,7 @@
       
         
         <li class="menu-item menu-item-home">
-          <a href="" rel="section">
+          <a href="/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
@@ -220,7 +220,7 @@
       
         
         <li class="menu-item menu-item-tags">
-          <a href="" rel="section">
+          <a href="/tags/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
             
@@ -230,7 +230,7 @@
       
         
         <li class="menu-item menu-item-categories">
-          <a href="" rel="section">
+          <a href="/categories/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
@@ -240,7 +240,7 @@
       
         
         <li class="menu-item menu-item-archives">
-          <a href="" rel="section">
+          <a href="/archives/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
@@ -250,7 +250,7 @@
       
         
         <li class="menu-item menu-item-project">
-          <a href="" rel="section">
+          <a href="/project/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-life-ring"></i> <br />
             
@@ -260,7 +260,7 @@
       
         
         <li class="menu-item menu-item-about">
-          <a href="" rel="section">
+          <a href="/about/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
@@ -406,8 +406,19 @@
 <p>为何是这样说呢？</p>
 <p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505457802737.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
 <p>看上面的图，可以套用到大多数的互联网或非互联网软件产品中去。我们每个人每天都在生产大量的数据，也会消费大量的数据。比如视频、图片或文字这些都是数据的一种。</p>
-<p>对于一个常规的开发任务，了解了需求之后</p>
-<p>所有的数据如果要存在，在互联网的世界便需要一些载体。数据分为结构化数据和非结构化数据</p>
+<p>作为软件开发者，我们要做的就是把互联网上用户的数据收集并保存下来，把用户需要的数据拿到并展示给用户。</p>
+<p>比如我现在在写的这个文件，假如我使用Sublime来编写，Sublime就是一个软件，这个文章的源文件保存到本地磁盘上，本地磁盘就是一个存储介质，Sublime打开文件便是数据的展示。假如我把源文件上传到github，打开浏览器依然可以看到文件的内容，此时数据便存储到了github远程的服务器上，展示的载体便变为了浏览器。</p>
+<p>日常的软件开发也是如此，我们接到一个需求，进入开发之前首先要考虑的便是数据模型的抽象和设计，我们需要保存哪些数据，数据会存放到什么地方，应该给用户如何展示，展示的形式是什么样子的。</p>
+<p>对应到具体的开发，比如我们要做一个会员系统，提供会员注册、登录和管理等功能，作为一个java web的开发人员，使用的技术栈有：</p>
+<ul>
+<li>spring MVC/spring 负责web业务处理</li>
+<li>mybatis/druid 负责mysql数据的获取</li>
+<li>mysql 存储用户基础信息</li>
+<li>七牛 存储用户头像</li>
+<li>html/js/angularjs 前端展示</li>
+</ul>
+<p>对于普通的用户来讲，注册只需要在浏览器填写用户名，密码，点击提交即可，数据会在服务器端做验证，并保存到数据库。用户登录的时候，从数据库获取数据做匹配，完成登录的动作。</p>
+<p>每一个业务流程都是类似的框架结构，数据在不同的端做流转，转化。开发人员的核心价值便是管理这些数据，正确的收集，正确的存储，正确的获取以及有效的展示。</p>
 
       
     </div>
@@ -524,7 +535,7 @@
             
               <a href="../../../../archives/">
             
-                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-count">17</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -535,7 +546,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="../../../../categories/index.html">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -546,7 +557,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="../../../../tags/index.html">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

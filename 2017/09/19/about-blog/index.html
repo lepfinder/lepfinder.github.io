@@ -95,18 +95,21 @@
 
 
 
-<meta name="description" content="我日常的文档大部分是用markdown来管理的，日积月累也积攒了很多技术和非技术的文章。 markdown 简介基础语法如何快速的在 markdown 文档中插入图片hexo 简介 A fast, simple &amp;amp; powerful blog framework  Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽">
+<meta name="description" content="我日常的文档大部分是用markdown来管理的，日积月累也积攒了很多技术和非技术的文章。最常用的工具是sublime + markdown preview，基本上可以满足大部分日常文档的编写需求。但是大部分是一些草稿或记录，一直没有找到很好的博客解决方案，直到我发现了hexo。本文是我在日常编写文档和使用hexo搭建博客中使用到的一些工具。 markdown 简介markdown 现在已经成了我日">
 <meta name="keywords" content="hexo,自建博客">
 <meta property="og:type" content="article">
 <meta property="og:title" content="关于自建博客的一些东西">
 <meta property="og:url" content="http://yoursite.com/2017/09/19/about-blog/index.html">
 <meta property="og:site_name" content="XiYang&#39;s Blog">
-<meta property="og:description" content="我日常的文档大部分是用markdown来管理的，日积月累也积攒了很多技术和非技术的文章。 markdown 简介基础语法如何快速的在 markdown 文档中插入图片hexo 简介 A fast, simple &amp;amp; powerful blog framework  Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽">
+<meta property="og:description" content="我日常的文档大部分是用markdown来管理的，日积月累也积攒了很多技术和非技术的文章。最常用的工具是sublime + markdown preview，基本上可以满足大部分日常文档的编写需求。但是大部分是一些草稿或记录，一直没有找到很好的博客解决方案，直到我发现了hexo。本文是我在日常编写文档和使用hexo搭建博客中使用到的一些工具。 markdown 简介markdown 现在已经成了我日">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-09-19T01:59:34.000Z">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505814628540.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/livereload-demo.gif">
+<meta property="og:updated_time" content="2017-09-20T03:48:11.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于自建博客的一些东西">
-<meta name="twitter:description" content="我日常的文档大部分是用markdown来管理的，日积月累也积攒了很多技术和非技术的文章。 markdown 简介基础语法如何快速的在 markdown 文档中插入图片hexo 简介 A fast, simple &amp;amp; powerful blog framework  Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽">
+<meta name="twitter:description" content="我日常的文档大部分是用markdown来管理的，日积月累也积攒了很多技术和非技术的文章。最常用的工具是sublime + markdown preview，基本上可以满足大部分日常文档的编写需求。但是大部分是一些草稿或记录，一直没有找到很好的博客解决方案，直到我发现了hexo。本文是我在日常编写文档和使用hexo搭建博客中使用到的一些工具。 markdown 简介markdown 现在已经成了我日">
+<meta name="twitter:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505814628540.png?imageMogr2/thumbnail/!100p/quality/100!">
 
 
 
@@ -208,7 +211,7 @@
       
         
         <li class="menu-item menu-item-home">
-          <a href="" rel="section">
+          <a href="/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
@@ -218,7 +221,7 @@
       
         
         <li class="menu-item menu-item-tags">
-          <a href="" rel="section">
+          <a href="/tags/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
             
@@ -228,7 +231,7 @@
       
         
         <li class="menu-item menu-item-categories">
-          <a href="" rel="section">
+          <a href="/categories/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
@@ -238,7 +241,7 @@
       
         
         <li class="menu-item menu-item-archives">
-          <a href="" rel="section">
+          <a href="/archives/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
@@ -248,7 +251,7 @@
       
         
         <li class="menu-item menu-item-project">
-          <a href="" rel="section">
+          <a href="/project/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-life-ring"></i> <br />
             
@@ -258,7 +261,7 @@
       
         
         <li class="menu-item menu-item-about">
-          <a href="" rel="section">
+          <a href="/about/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
@@ -377,12 +380,47 @@
       
 
       
-        <p>我日常的文档大部分是用markdown来管理的，日积月累也积攒了很多技术和非技术的文章。</p>
-<h2 id="markdown-简介"><a href="#markdown-简介" class="headerlink" title="markdown 简介"></a>markdown 简介</h2><h3 id="基础语法"><a href="#基础语法" class="headerlink" title="基础语法"></a>基础语法</h3><h3 id="如何快速的在-markdown-文档中插入图片"><a href="#如何快速的在-markdown-文档中插入图片" class="headerlink" title="如何快速的在 markdown 文档中插入图片"></a>如何快速的在 markdown 文档中插入图片</h3><h2 id="hexo-简介"><a href="#hexo-简介" class="headerlink" title="hexo 简介"></a>hexo 简介</h2><blockquote>
+        <p>我日常的文档大部分是用markdown来管理的，日积月累也积攒了很多技术和非技术的文章。最常用的工具是sublime + markdown preview，基本上可以满足大部分日常文档的编写需求。但是大部分是一些草稿或记录，一直没有找到很好的博客解决方案，直到我发现了<a href="https://hexo.io/" target="_blank" rel="external">hexo</a>。本文是我在日常编写文档和使用hexo搭建博客中使用到的一些工具。</p>
+<h2 id="markdown-简介"><a href="#markdown-简介" class="headerlink" title="markdown 简介"></a>markdown 简介</h2><p>markdown 现在已经成了我日常工作和学习的一部分了，惊艳于它简单的语法和自由的表达方式，让人沉浸于写作的乐趣，让人更专注与写作和技术本身。</p>
+<p>基础语法可以参考 <a href="http://wowubuntu.com/markdown/" target="_blank" rel="external">http://wowubuntu.com/markdown/</a>。</p>
+<h2 id="hexo-简介"><a href="#hexo-简介" class="headerlink" title="hexo 简介"></a>hexo 简介</h2><blockquote>
 <p>A fast, simple &amp; powerful blog framework</p>
 </blockquote>
 <p><a href="https://hexo.io/zh-cn/docs/index.html" target="_blank" rel="external">Hexo</a> 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
-<h3 id="deploy-如何打造自己的博客"><a href="#deploy-如何打造自己的博客" class="headerlink" title="deploy 如何打造自己的博客"></a>deploy 如何打造自己的博客</h3><p>hexo 是一个本地的静态博客框架工具，可以将我们平时的文章渲染为最终的 html 代码</p>
+<h3 id="部署到哪里"><a href="#部署到哪里" class="headerlink" title="部署到哪里"></a>部署到哪里</h3><p>hexo 是一个本地的静态博客框架工具，可以将我们平时的文章渲染为最终的 html 代码，但是如何将文章放到公网上，让其它人也可以访问呢？当然可以买一个主机，自己搭建服务器。更为方便的是可以使用github来托管博客。</p>
+<p><a href="https://pages.github.com/" target="_blank" rel="external">GitHub Pages</a> 本用于介绍托管在GitHub的项目，不过，由于他的空间免费稳定，用来做搭建一个博客再好不过了。</p>
+<p>简单的步骤：</p>
+<ol>
+<li>申请 github page</li>
+<li><p>配置hexo deploy</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># Deployment</div><div class="line">## Docs: https://hexo.io/docs/deployment.html</div><div class="line">deploy:</div><div class="line">  type: git</div><div class="line">  repo: https://github.com/lepfinder/lepfinder.github.io.git</div><div class="line">  branch: master</div></pre></td></tr></table></figure>
+</li>
+<li><p>安装git</p>
+</li>
+<li>在本地blog目录执行发布</li>
+</ol>
+<h2 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h2><h3 id="如何快速的在-markdown-文档中插入图片"><a href="#如何快速的在-markdown-文档中插入图片" class="headerlink" title="如何快速的在 markdown 文档中插入图片"></a>如何快速的在 markdown 文档中插入图片</h3><p>插图是编写文档必不可少的一个动作，如何快速的在markdown文本中插入图片呢？我本地使用 “Alfred 工作流 + 七牛云” 外链的方式。使用起来非常便捷：</p>
+<ol>
+<li>command + control + shift + 4 完成截图</li>
+<li>command + control + shift + V 完成图片上传到七牛</li>
+<li>command + V 粘贴外链地址到指定位置（如果光标此时在编辑器中，这一步其实是自动的）</li>
+</ol>
+<p>具体使用方法参考 <a href="">简化markdown写作中的贴图流程</a></p>
+<h3 id="如何画出好看的图？"><a href="#如何画出好看的图？" class="headerlink" title="如何画出好看的图？"></a>如何画出好看的图？</h3><p>推荐 <a href="https://www.omnigroup.com/omnigraffle" target="_blank" rel="external">OmniGraffle</a>，下面是一个截图：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505814628540.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h3 id="如何在修改完文章后自动渲染"><a href="#如何在修改完文章后自动渲染" class="headerlink" title="如何在修改完文章后自动渲染"></a>如何在修改完文章后自动渲染</h3><p>推荐使用livereload，我使用的是lepture写的一个python的库，<a href="https://github.com/lepture/python-livereload" target="_blank" rel="external">项目地址</a>。<br>livereload 可以做什么事情呢？比如作为一个前端开发，每次写完html或js代码之后，保存完，需要去浏览器手动刷新页面才能看到修改后的效果，能不能文件发生变化之后浏览器自动刷新呢，这样将会给实际的开发带来很大的便利，于是livereload便出场了。</p>
+<p>使用步骤：</p>
+<ol>
+<li>下载安装 server 端，即<a href="https://github.com/lepture/python-livereload" target="_blank" rel="external">python-livereload</a></li>
+<li><p>进入需要监控的地址，比如 </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd /Users/xiexiyang/Documents/myblog</div><div class="line">livereload</div></pre></td></tr></table></figure>
+</li>
+<li><p>在浏览器中激活chrome插件</p>
+</li>
+</ol>
+<p>效果图：<img src="http://7xo9p3.com1.z0.glb.clouddn.com/livereload-demo.gif" alt=""></p>
+<h3 id="如何在文中中插入-gif-动图"><a href="#如何在文中中插入-gif-动图" class="headerlink" title="如何在文中中插入 gif 动图"></a>如何在文中中插入 gif 动图</h3><p>推荐使用 <a href="https://www.cockos.com/licecap/" target="_blank" rel="external">licecap</a>。</p>
+<p>我上面的 livereload 动图就是使用的licecap录制的。</p>
 
       
     </div>
@@ -506,7 +544,7 @@
             
               <a href="../../../../archives/">
             
-                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-count">17</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -517,7 +555,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="../../../../categories/index.html">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -528,7 +566,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="../../../../tags/index.html">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -563,7 +601,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#markdown-简介"><span class="nav-number">1.</span> <span class="nav-text">markdown 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基础语法"><span class="nav-number">1.1.</span> <span class="nav-text">基础语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何快速的在-markdown-文档中插入图片"><span class="nav-number">1.2.</span> <span class="nav-text">如何快速的在 markdown 文档中插入图片</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo-简介"><span class="nav-number">2.</span> <span class="nav-text">hexo 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#deploy-如何打造自己的博客"><span class="nav-number">2.1.</span> <span class="nav-text">deploy 如何打造自己的博客</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#markdown-简介"><span class="nav-number">1.</span> <span class="nav-text">markdown 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo-简介"><span class="nav-number">2.</span> <span class="nav-text">hexo 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#部署到哪里"><span class="nav-number">2.1.</span> <span class="nav-text">部署到哪里</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其它"><span class="nav-number">3.</span> <span class="nav-text">其它</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何快速的在-markdown-文档中插入图片"><span class="nav-number">3.1.</span> <span class="nav-text">如何快速的在 markdown 文档中插入图片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何画出好看的图？"><span class="nav-number">3.2.</span> <span class="nav-text">如何画出好看的图？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何在修改完文章后自动渲染"><span class="nav-number">3.3.</span> <span class="nav-text">如何在修改完文章后自动渲染</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何在文中中插入-gif-动图"><span class="nav-number">3.4.</span> <span class="nav-text">如何在文中中插入 gif 动图</span></a></li></ol></li></ol></div>
             
 
           </div>

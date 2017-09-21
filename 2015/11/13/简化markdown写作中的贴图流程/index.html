@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="../../../../lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="../../../../lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="../../../../css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="工具,markdown," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="一直很喜欢用markdown写文章，但是在markdown中贴图很麻烦，记得最早的时候我会将图片保存到本地，然后在markdown中使用相对路径显示。后来可以将图片放到图床上，然后在文档中使用链接。 最早一直使用ST写markdown的文档然后用了一段时间为知笔记再后来发现了这篇文章 http://tianweishu.com/2015/10/16/simplify-the-img-upload-">
+<meta name="keywords" content="工具,markdown">
+<meta property="og:type" content="article">
+<meta property="og:title" content="简化markdown写作中的贴图流程">
+<meta property="og:url" content="http://yoursite.com/2015/11/13/简化markdown写作中的贴图流程/index.html">
+<meta property="og:site_name" content="XiYang&#39;s Blog">
+<meta property="og:description" content="一直很喜欢用markdown写文章，但是在markdown中贴图很麻烦，记得最早的时候我会将图片保存到本地，然后在markdown中使用相对路径显示。后来可以将图片放到图床上，然后在文档中使用链接。 最早一直使用ST写markdown的文档然后用了一段时间为知笔记再后来发现了这篇文章 http://tianweishu.com/2015/10/16/simplify-the-img-upload-">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1447403343420.png?imageMogr2/thumbnail/!50p/quality/100!">
+<meta property="og:updated_time" content="2017-09-20T01:21:29.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="简化markdown写作中的贴图流程">
+<meta name="twitter:description" content="一直很喜欢用markdown写文章，但是在markdown中贴图很麻烦，记得最早的时候我会将图片保存到本地，然后在markdown中使用相对路径显示。后来可以将图片放到图床上，然后在文档中使用链接。 最早一直使用ST写markdown的文档然后用了一段时间为知笔记再后来发现了这篇文章 http://tianweishu.com/2015/10/16/simplify-the-img-upload-">
+<meta name="twitter:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1447403343420.png?imageMogr2/thumbnail/!50p/quality/100!">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2015/11/13/简化markdown写作中的贴图流程/"/>
+
+
+
+
+
+  <title>简化markdown写作中的贴图流程 | XiYang's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?bffcaa4817f1c175af0805eb96d7e7ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">XiYang's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">让一切慢下来，体验周边的美好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-project">
+          <a href="/project/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-life-ring"></i> <br />
+            
+            个人项目
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">简化markdown写作中的贴图流程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-11-13T16:02:00+08:00">
+                2015-11-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../../../categories/工具/" itemprop="url" rel="index">
+                    <span itemprop="name">工具</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2015/11/13/简化markdown写作中的贴图流程/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>一直很喜欢用markdown写文章，但是在markdown中贴图很麻烦，记得最早的时候我会将图片保存到本地，然后在markdown中使用相对路径显示。后来可以将图片放到图床上，然后在文档中使用链接。</p>
+<p>最早一直使用ST写markdown的文档<br>然后用了一段时间为知笔记<br>再后来发现了这篇文章 <a href="http://tianweishu.com/2015/10/16/simplify-the-img-upload-in-markdown/" target="_blank" rel="external">http://tianweishu.com/2015/10/16/simplify-the-img-upload-in-markdown/</a></p>
+<p>结合自己的实践，记录一下实现方案<br>1、申请七牛的账号，这个就不多说了，这里给七牛做一个广告，标准版10G空间，API也简单好用,<a href="https://www.qiniu.com/" target="_blank" rel="external">传送门</a><br>2、创建 Alfred 工作流，实现流程的自动化</p>
+<p>先放一个完成后的效果图：<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1447403343420.png?imageMogr2/thumbnail/!50p/quality/100!" alt=""></p>
+<p>简单的步骤就是：</p>
+<ol>
+<li>创建一个 trigger，快捷键自己设置</li>
+<li>创建一个 run script，选择语言为 python</li>
+<li>创建一个 output 可以设置一个系统提醒，在完成之后右上角提示。</li>
+</ol>
+<p>run script 的脚本如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div></pre></td><td class="code"><pre><div class="line">query = <span class="string">"&#123;query&#125;"</span></div><div class="line"><span class="comment"># -*- coding: utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> os</div><div class="line"><span class="keyword">import</span> time</div><div class="line"><span class="keyword">from</span> qiniu <span class="keyword">import</span> Auth, put_file</div><div class="line"><span class="keyword">from</span> AppKit <span class="keyword">import</span> NSPasteboard, NSPasteboardTypePNG, NSPasteboardTypeTIFF</div><div class="line"></div><div class="line"></div><div class="line">access_key = <span class="string">'你自己的 AK'</span> <span class="comment"># AK</span></div><div class="line">secret_key = <span class="string">'你自己的 SK-3'</span> <span class="comment"># SK</span></div><div class="line"></div><div class="line">bucket_name = <span class="string">'lepfinder-wiki'</span> <span class="comment"># 七牛空间名</span></div><div class="line"></div><div class="line">q = Auth(access_key, secret_key)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">upload_qiniu</span><span class="params">(path)</span>:</span></div><div class="line">    <span class="string">''' upload file to qiniu'''</span></div><div class="line">    dirname, filename = os.path.split(path)</div><div class="line">    key = <span class="string">'markdown/%s'</span> % filename <span class="comment"># upload to qiniu's markdown dir</span></div><div class="line"></div><div class="line">    token = q.upload_token(bucket_name, key)</div><div class="line">    ret, info = put_file(token, key, path, check_crc=<span class="keyword">True</span>)</div><div class="line">    <span class="keyword">return</span> ret != <span class="keyword">None</span> <span class="keyword">and</span> ret[<span class="string">'key'</span>] == key</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_paste_img_file</span><span class="params">()</span>:</span></div><div class="line">    pb = NSPasteboard.generalPasteboard()</div><div class="line">    data_type = pb.types()</div><div class="line">    <span class="comment"># if img file</span></div><div class="line">    <span class="keyword">print</span> data_type</div><div class="line">    now = int(time.time() * <span class="number">1000</span>) <span class="comment"># used for filename</span></div><div class="line">    <span class="keyword">if</span> NSPasteboardTypePNG <span class="keyword">in</span> data_type:</div><div class="line">        <span class="comment"># png</span></div><div class="line">        data = pb.dataForType_(NSPasteboardTypePNG)</div><div class="line">        filename = <span class="string">'%s.png'</span> % now</div><div class="line">        filepath = <span class="string">'/tmp/%s'</span> % filename</div><div class="line">        ret = data.writeToFile_atomically_(filepath, <span class="keyword">False</span>)</div><div class="line">        <span class="keyword">if</span> ret:</div><div class="line">            <span class="keyword">return</span> filepath</div><div class="line">    <span class="keyword">elif</span> NSPasteboardTypeTIFF <span class="keyword">in</span> data_type:</div><div class="line">        <span class="comment"># tiff</span></div><div class="line">        data = pb.dataForType_(NSPasteboardTypeTIFF)</div><div class="line">        filename = <span class="string">'%s.tiff'</span> % now</div><div class="line">        filepath = <span class="string">'/tmp/%s'</span> % filename</div><div class="line">        ret = data.writeToFile_atomically_(filepath, <span class="keyword">False</span>)</div><div class="line">        <span class="keyword">if</span> ret:</div><div class="line">            <span class="keyword">return</span> filepath</div><div class="line">    <span class="keyword">elif</span> NSPasteboardTypeString <span class="keyword">in</span> data_type:</div><div class="line">        <span class="comment"># string todo, recognise url of png &amp; jpg</span></div><div class="line">        <span class="keyword">pass</span></div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">	url = <span class="string">"http://7xo9p3.com1.z0.glb.clouddn.com/markdown"</span></div><div class="line"></div><div class="line">	img_file = get_paste_img_file()</div><div class="line">	<span class="keyword">if</span> img_file:</div><div class="line">	    <span class="comment"># has file</span></div><div class="line">	    ret = upload_qiniu(img_file)</div><div class="line">	    <span class="keyword">if</span> ret:</div><div class="line">	        <span class="comment"># upload success</span></div><div class="line">	        name = os.path.split(img_file)[<span class="number">1</span>]</div><div class="line">	        markdown_url = <span class="string">"![](%s/%s?imageMogr2/thumbnail/!50p/quality/100!)"</span> % (url, name)</div><div class="line">	        <span class="comment"># make it to clipboard</span></div><div class="line">	        os.system(<span class="string">"echo '%s' | pbcopy"</span> % markdown_url)</div><div class="line">	        os.system(<span class="string">'osascript -e \'tell application "System Events" to keystroke "v" using command down\''</span>)</div><div class="line">	    <span class="keyword">else</span>: </div><div class="line">	    	<span class="keyword">print</span> <span class="string">"upload_failed"</span></div><div class="line">	<span class="keyword">else</span>:</div><div class="line">	    <span class="keyword">print</span> <span class="string">"get img file failed"</span></div></pre></td></tr></table></figure>
+<h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><ol>
+<li>command + control + shift + 4 完成截图</li>
+<li>command + control + shift + V 完成图片上传到七牛</li>
+<li>command + V 粘贴外链地址到指定位置（如果光标此时在编辑器中，这一步其实是自动的）</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="../../../../tags/工具/" rel="tag"># 工具</a>
+          
+            <a href="../../../../tags/markdown/" rel="tag"># markdown</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="../../../../2013/03/20/snow/" rel="next" title="意料之外的大雪">
+                <i class="fa fa-chevron-left"></i> 意料之外的大雪
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="../../../../2016/03/14/我的读书史/" rel="prev" title="我的读书史">
+                我的读书史 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <p class="site-author-name" itemprop="name">XiYang</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="../../../../archives/">
+            
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="../../../../categories/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="../../../../tags/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用方法"><span class="nav-number">1.</span> <span class="nav-text">使用方法</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XiYang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="../../../../lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com2015/11/13/简化markdown写作中的贴图流程/';
+          this.page.identifier = '2015/11/13/简化markdown写作中的贴图流程/';
+          this.page.title = '简化markdown写作中的贴图流程';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

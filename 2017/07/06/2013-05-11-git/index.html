@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="../../../../lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="../../../../lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="../../../../css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="git," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="git版本控制使用基础用法">
+<meta name="keywords" content="git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="git 基础用法和命令">
+<meta property="og:url" content="http://yoursite.com/2017/07/06/2013-05-11-git/index.html">
+<meta property="og:site_name" content="XiYang&#39;s Blog">
+<meta property="og:description" content="git版本控制使用基础用法">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/images/git/git-three-state">
+<meta property="og:updated_time" content="2017-09-20T08:55:18.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="git 基础用法和命令">
+<meta name="twitter:description" content="git版本控制使用基础用法">
+<meta name="twitter:image" content="http://yoursite.com/images/git/git-three-state">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/07/06/2013-05-11-git/"/>
+
+
+
+
+
+  <title>git 基础用法和命令 | XiYang's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?bffcaa4817f1c175af0805eb96d7e7ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">XiYang's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">让一切慢下来，体验周边的美好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-project">
+          <a href="/project/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-life-ring"></i> <br />
+            
+            个人项目
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">git 基础用法和命令</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-06T16:02:32+08:00">
+                2017-07-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../../../categories/工具/" itemprop="url" rel="index">
+                    <span itemprop="name">工具</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/07/06/2013-05-11-git/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  git版本控制使用基础用法
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文是《git权威指南》和《pro git》的读书笔记。主要是一些命令的记录和对一些概念的理解。讲解的非常详细，强烈推荐这两本书。</p>
+<h2 id="爱上Git的理由"><a href="#爱上Git的理由" class="headerlink" title="爱上Git的理由"></a>爱上Git的理由</h2><ol>
+<li>每日工作备份</li>
+<li>异地协同办公</li>
+<li><p>现场版本控制</p>
+<p> 所谓现场版本控制，就是在客户现场或在产品部署的现场进行源代码的修改，并在修改过程中进行版本控制，<br>以便在完成修改后能够将修改结果甚至修改过程一并带走，并能够将修改结果合并至项目对应的代码库中。</p>
+</li>
+<li><p>避免引入辅助目录</p>
+<p> 比如svn在每一个目录下都创建了.svn目录</p>
+</li>
+</ol>
+<h2 id="git-起步"><a href="#git-起步" class="headerlink" title="git 起步"></a>git 起步</h2><h3 id="三种状态"><a href="#三种状态" class="headerlink" title="三种状态"></a>三种状态</h3><p>git 管理项目时，文件流转的三个工作区域：git本地数据目录，工作目录以及暂存区域。任何一个文件在Git内部都只有三种状态：</p>
+<ul>
+<li>committed(已提交)</li>
+<li>modified(已修改)</li>
+<li>staged(已暂存)</li>
+</ul>
+<p><img src="/images/git/git-three-state" alt="three states"></p>
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="git-配置"><a href="#git-配置" class="headerlink" title="git 配置"></a>git 配置</h3><p>git config可以用来配置和读取相应的工作环境变量。变量存放与三个地方：</p>
+<ul>
+<li>/etc/gitconfig文件：系统中对所有用户都使用的配置，配置时添加–system选项。</li>
+<li>~/.gitconfig：用户目录下的配置文件适用于该用户。配置时使用–global选项。</li>
+<li>.git/config：当前项目的git目录中的配置文件，仅对当前项目有效。</li>
+</ul>
+<p>命令示例：</p>
+<pre><code>git config --global user.name &quot;xiyang&quot;   
+git config --global user.email &quot;sdlgxxy@gmail.com&quot;
+git config --global color.ui true
+git config --global alias.co checkout
+git config --global alias.ci commit
+git config --global alias.st status
+git config --global alias.br branch
+git config --global core.editor &quot;vim&quot;
+git config --global merge.tool &quot;vimdiff&quot;
+git config --list    查看已有的配置信息
+</code></pre><h3 id="基础命令"><a href="#基础命令" class="headerlink" title="基础命令"></a>基础命令</h3><p>查看/添加/提交/删除/找回/重置修改文件</p>
+<pre><code>git help &lt;command&gt;  # 显示command的help
+git show            # 显示某次提交的内容
+git show $id
+
+git co  -- &lt;file&gt;   # 抛弃工作区修改
+git co  .           # 抛弃工作区修改
+
+git add &lt;file&gt;      # 将工作文件修改提交到本地暂存区
+git add .           # 将所有修改过的工作文件提交暂存区
+
+git rm &lt;file&gt;       # 从版本库中删除文件
+git rm &lt;file&gt; --cached  # 从版本库中删除文件，但不删除文件
+
+git reset &lt;file&gt;    # 从暂存区恢复到工作文件
+git reset -- .      # 从暂存区恢复到工作文件
+git reset --hard    # 恢复最近一次提交过的状态，即放弃上次提交后的所有本次修改
+
+git ci &lt;file&gt;
+git ci .
+git ci -a           # 将git add, git rm和git ci等操作都合并在一起做
+git ci -am &quot;some comments&quot;
+git ci --amend      # 修改最后一次提交记录
+
+git revert &lt;$id&gt;    # 恢复某次提交的状态，恢复动作本身也创建了一次提交对象
+git revert HEAD     # 恢复最后一次提交的状态
+</code></pre><p>git init可以初始化版本库，执行git add 将文件放到暂存区，git commit后提交文件到版本库。</p>
+<h3 id="设置忽略某些文件"><a href="#设置忽略某些文件" class="headerlink" title="设置忽略某些文件"></a>设置忽略某些文件</h3><p>如果某些文件无需纳入 git 的管理，也不希望他们总出现untracked列表中。可以创建一个.gitignore文件。</p>
+<pre><code># 注释行
+*.pyc        # 忽略所有的pyc文件
+!lib.pyc    # lib.pyc除外
+/TODO        # 忽略根目录下的TODO文件
+build/        # 忽略build目录下所有的文件        
+doc/*.txt    # doc目录下所有的txt文件
+</code></pre><h3 id="git-diff"><a href="#git-diff" class="headerlink" title="git diff"></a>git diff</h3><pre><code>git diff B A             比较里程碑B和里程碑A
+git diff A               比较工作区和里程碑A    
+git diff --cached A      比较暂存区和里程碑A    
+git diff                 比较工作区和暂存区    
+git diff --cached        比较暂存区额HEAD    
+git diff HEAD            比较工作区和HEAD    
+</code></pre><h3 id="查看提交日志"><a href="#查看提交日志" class="headerlink" title="查看提交日志"></a>查看提交日志</h3><pre><code>git log
+git log    --pretty=fuller
+git log &lt;file&gt;      # 查看该文件每次提交记录
+git log -p &lt;file&gt;   # 查看每次详细修改内容的diff
+git log -p -2       # 查看最近两次详细修改
+git log --stat      # 查看提交统计信息
+</code></pre><h2 id="暂存区"><a href="#暂存区" class="headerlink" title="暂存区"></a>暂存区</h2><pre><code>git stash  保存当前的工作进度，会分别对暂存区和工作区的状态进行保存。
+git stash list 显示进度列表  
+git stash pop 恢复最近保存的工作进度
+git stash save &quot;message&quot; 保存工作进度的同时，指定说明
+git stash drop [&lt;stash&gt;] 删除一个存储进度
+git stash clear 删除所有存储的进度
+git stash branch &lt;btanchname&gt; &lt;stash&gt; 基于进度创建分支
+</code></pre><h2 id="重置操作"><a href="#重置操作" class="headerlink" title="重置操作"></a>重置操作</h2><pre><code>git reset / git rest HAED    使用HEAD执行的目录树重置暂存区，工作区不受影响
+git reset --soft HEAD^ 工作区和暂存区不改变，但是引用向前回退一次
+git reset HEAD^ 工作区不改变，暂存区回退到上一次提交之前
+git reset --mixed HEAD^ 同上
+git reset --hard  HEAD^ 彻底撤销最近提交。引用回退到前一次，工作区和暂存区都改变。
+</code></pre><h2 id="git-本地分支管理"><a href="#git-本地分支管理" class="headerlink" title="git 本地分支管理"></a>git 本地分支管理</h2><p>查看/切换/创建和删除分支</p>
+<pre><code>git br -r           # 查看远程分支
+git br &lt;new_branch&gt; # 创建新的分支
+git br -v           # 查看各个分支最后提交信息
+git br --merged     # 查看已经被合并到当前分支的分支
+git br --no-merged  # 查看尚未被合并到当前分支的分支
+
+git co &lt;branch&gt;     # 切换到某个分支
+git co -b &lt;new_branch&gt; # 创建新的分支，并且切换过去
+git co -b &lt;new_branch&gt; &lt;branch&gt;  # 基于branch创建新的new_branch
+
+git co $id          # 把某次历史提交记录checkout出来，但无分支信息，切换到其他分支会自动删除
+git co $id -b &lt;new_branch&gt;  # 把某次历史提交记录checkout出来，创建成一个分支
+
+git br -d &lt;branch&gt;  # 删除某个分支
+git br -D &lt;branch&gt;  # 强制删除某个分支 (未被合并的分支被删除的时候需要强制)
+</code></pre><p>分支合并和rebase</p>
+<pre><code>git merge &lt;branch&gt;               # 将branch分支合并到当前分支
+git merge origin/master --no-ff  # 不要Fast-Foward合并，这样可以生成merge提交
+
+git rebase master &lt;branch&gt;       # 将master rebase到branch，相当于：
+git co &lt;branch&gt; &amp;&amp; git rebase master &amp;&amp; git co master &amp;&amp; git merge &lt;branch&gt;
+</code></pre><p>o</p>
+<h2 id="git-远程分支管理"><a href="#git-远程分支管理" class="headerlink" title="git 远程分支管理"></a>git 远程分支管理</h2><pre><code>git pull                         # 抓取远程仓库所有分支更新并合并到本地
+git pull --no-ff                 # 抓取远程仓库所有分支更新并合并到本地，不要快进合并
+git fetch origin                 # 抓取远程仓库更新
+git merge origin/master          # 将远程主分支合并到本地当前分支
+git co --track origin/branch     # 跟踪某个远程分支创建相应的本地分支
+git co -b &lt;local_branch&gt; origin/&lt;remote_branch&gt;  # 基于远程分支创建本地分支，功能同上
+
+git push                         # push所有分支
+git push origin master           # 将本地主分支推到远程主分支
+git push -u origin master        # 将本地主分支推到远程(如无远程主分支则创建，用于初始化远程仓库)
+git push origin &lt;local_branch&gt;   # 创建远程分支， origin是远程仓库名
+git push origin &lt;local_branch&gt;:&lt;remote_branch&gt;  # 创建远程分支
+git push origin :&lt;remote_branch&gt;  #先删除本地分支(git br -d &lt;branch&gt;)，然后再push删除远程分支
+</code></pre><h2 id="git-远程仓库管理"><a href="#git-远程仓库管理" class="headerlink" title="git 远程仓库管理"></a>git 远程仓库管理</h2><pre><code>git remote -v                    # 查看远程服务器地址和仓库名称
+git remote show origin           # 查看远程服务器仓库状态
+git remote add origin git@github:robbin/robbin_site.git         # 添加远程仓库地址
+git remote set-url origin git@github.com:robbin/robbin_site.git # 设置远程仓库地址(用于修改远程仓库地址)
+git remote rm &lt;repository&gt;       # 删除远程仓库
+</code></pre><h2 id="git-blame"><a href="#git-blame" class="headerlink" title="git blame"></a>git blame</h2><pre><code>文件追溯
+</code></pre><h2 id="删除版本库中没有引用的对象"><a href="#删除版本库中没有引用的对象" class="headerlink" title="删除版本库中没有引用的对象"></a>删除版本库中没有引用的对象</h2><blockquote>
+<p>如果不小心把一些无用的文件提交到暂存区，撤回后文件并没有从版本库中上删除，可以使用如下命令清理。</p>
+</blockquote>
+<pre><code>git fsck    查看版本库中包含的没有被任何引用关联的松散对象
+git prune    清理这些对象
+</code></pre><h2 id="git-里程碑"><a href="#git-里程碑" class="headerlink" title="git 里程碑"></a>git 里程碑</h2><pre><code>git tag                &lt;tagname&gt; [&lt;commit&gt;]
+git tag -a            &lt;tagname&gt; [&lt;commit&gt;]
+git tag -m &lt;msg&gt;    &lt;tagname&gt; [&lt;commit&gt;]
+git tag -s            &lt;tagname&gt; [&lt;commit&gt;]
+git tag -u &lt;key-id&gt; &lt;tagname&gt; [&lt;commit&gt;]
+</code></pre>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="../../../../tags/git/" rel="tag"># git</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="../../../06/14/论工具的重要性/" rel="next" title="论工具的重要性">
+                <i class="fa fa-chevron-left"></i> 论工具的重要性
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="../2013-09-26-python/" rel="prev" title="python 学习笔记">
+                python 学习笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <p class="site-author-name" itemprop="name">XiYang</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="../../../../archives/">
+            
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="../../../../categories/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="../../../../tags/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#爱上Git的理由"><span class="nav-number">1.</span> <span class="nav-text">爱上Git的理由</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#git-起步"><span class="nav-number">2.</span> <span class="nav-text">git 起步</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#三种状态"><span class="nav-number">2.1.</span> <span class="nav-text">三种状态</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用命令"><span class="nav-number">3.</span> <span class="nav-text">常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#git-配置"><span class="nav-number">3.1.</span> <span class="nav-text">git 配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基础命令"><span class="nav-number">3.2.</span> <span class="nav-text">基础命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置忽略某些文件"><span class="nav-number">3.3.</span> <span class="nav-text">设置忽略某些文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-diff"><span class="nav-number">3.4.</span> <span class="nav-text">git diff</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看提交日志"><span class="nav-number">3.5.</span> <span class="nav-text">查看提交日志</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#暂存区"><span class="nav-number">4.</span> <span class="nav-text">暂存区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重置操作"><span class="nav-number">5.</span> <span class="nav-text">重置操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#git-本地分支管理"><span class="nav-number">6.</span> <span class="nav-text">git 本地分支管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#git-远程分支管理"><span class="nav-number">7.</span> <span class="nav-text">git 远程分支管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#git-远程仓库管理"><span class="nav-number">8.</span> <span class="nav-text">git 远程仓库管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#git-blame"><span class="nav-number">9.</span> <span class="nav-text">git blame</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#删除版本库中没有引用的对象"><span class="nav-number">10.</span> <span class="nav-text">删除版本库中没有引用的对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#git-里程碑"><span class="nav-number">11.</span> <span class="nav-text">git 里程碑</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XiYang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="../../../../lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com2017/07/06/2013-05-11-git/';
+          this.page.identifier = '2017/07/06/2013-05-11-git/';
+          this.page.title = 'git 基础用法和命令';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

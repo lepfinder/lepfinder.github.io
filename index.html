@@ -204,7 +204,7 @@
       
         
         <li class="menu-item menu-item-home">
-          <a href="" rel="section">
+          <a href="/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
@@ -214,7 +214,7 @@
       
         
         <li class="menu-item menu-item-tags">
-          <a href="" rel="section">
+          <a href="/tags/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
             
@@ -224,7 +224,7 @@
       
         
         <li class="menu-item menu-item-categories">
-          <a href="" rel="section">
+          <a href="/categories/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
@@ -234,7 +234,7 @@
       
         
         <li class="menu-item menu-item-archives">
-          <a href="" rel="section">
+          <a href="/archives/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
@@ -244,7 +244,7 @@
       
         
         <li class="menu-item menu-item-project">
-          <a href="" rel="section">
+          <a href="/project/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-life-ring"></i> <br />
             
@@ -254,7 +254,7 @@
       
         
         <li class="menu-item menu-item-about">
-          <a href="" rel="section">
+          <a href="/about/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
@@ -377,12 +377,47 @@
       
         
           
-            <p>我日常的文档大部分是用markdown来管理的，日积月累也积攒了很多技术和非技术的文章。</p>
-<h2 id="markdown-简介"><a href="#markdown-简介" class="headerlink" title="markdown 简介"></a>markdown 简介</h2><h3 id="基础语法"><a href="#基础语法" class="headerlink" title="基础语法"></a>基础语法</h3><h3 id="如何快速的在-markdown-文档中插入图片"><a href="#如何快速的在-markdown-文档中插入图片" class="headerlink" title="如何快速的在 markdown 文档中插入图片"></a>如何快速的在 markdown 文档中插入图片</h3><h2 id="hexo-简介"><a href="#hexo-简介" class="headerlink" title="hexo 简介"></a>hexo 简介</h2><blockquote>
+            <p>我日常的文档大部分是用markdown来管理的，日积月累也积攒了很多技术和非技术的文章。最常用的工具是sublime + markdown preview，基本上可以满足大部分日常文档的编写需求。但是大部分是一些草稿或记录，一直没有找到很好的博客解决方案，直到我发现了<a href="https://hexo.io/" target="_blank" rel="external">hexo</a>。本文是我在日常编写文档和使用hexo搭建博客中使用到的一些工具。</p>
+<h2 id="markdown-简介"><a href="#markdown-简介" class="headerlink" title="markdown 简介"></a>markdown 简介</h2><p>markdown 现在已经成了我日常工作和学习的一部分了，惊艳于它简单的语法和自由的表达方式，让人沉浸于写作的乐趣，让人更专注与写作和技术本身。</p>
+<p>基础语法可以参考 <a href="http://wowubuntu.com/markdown/" target="_blank" rel="external">http://wowubuntu.com/markdown/</a>。</p>
+<h2 id="hexo-简介"><a href="#hexo-简介" class="headerlink" title="hexo 简介"></a>hexo 简介</h2><blockquote>
 <p>A fast, simple &amp; powerful blog framework</p>
 </blockquote>
 <p><a href="https://hexo.io/zh-cn/docs/index.html" target="_blank" rel="external">Hexo</a> 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
-<h3 id="deploy-如何打造自己的博客"><a href="#deploy-如何打造自己的博客" class="headerlink" title="deploy 如何打造自己的博客"></a>deploy 如何打造自己的博客</h3><p>hexo 是一个本地的静态博客框架工具，可以将我们平时的文章渲染为最终的 html 代码</p>
+<h3 id="部署到哪里"><a href="#部署到哪里" class="headerlink" title="部署到哪里"></a>部署到哪里</h3><p>hexo 是一个本地的静态博客框架工具，可以将我们平时的文章渲染为最终的 html 代码，但是如何将文章放到公网上，让其它人也可以访问呢？当然可以买一个主机，自己搭建服务器。更为方便的是可以使用github来托管博客。</p>
+<p><a href="https://pages.github.com/" target="_blank" rel="external">GitHub Pages</a> 本用于介绍托管在GitHub的项目，不过，由于他的空间免费稳定，用来做搭建一个博客再好不过了。</p>
+<p>简单的步骤：</p>
+<ol>
+<li>申请 github page</li>
+<li><p>配置hexo deploy</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># Deployment</div><div class="line">## Docs: https://hexo.io/docs/deployment.html</div><div class="line">deploy:</div><div class="line">  type: git</div><div class="line">  repo: https://github.com/lepfinder/lepfinder.github.io.git</div><div class="line">  branch: master</div></pre></td></tr></table></figure>
+</li>
+<li><p>安装git</p>
+</li>
+<li>在本地blog目录执行发布</li>
+</ol>
+<h2 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h2><h3 id="如何快速的在-markdown-文档中插入图片"><a href="#如何快速的在-markdown-文档中插入图片" class="headerlink" title="如何快速的在 markdown 文档中插入图片"></a>如何快速的在 markdown 文档中插入图片</h3><p>插图是编写文档必不可少的一个动作，如何快速的在markdown文本中插入图片呢？我本地使用 “Alfred 工作流 + 七牛云” 外链的方式。使用起来非常便捷：</p>
+<ol>
+<li>command + control + shift + 4 完成截图</li>
+<li>command + control + shift + V 完成图片上传到七牛</li>
+<li>command + V 粘贴外链地址到指定位置（如果光标此时在编辑器中，这一步其实是自动的）</li>
+</ol>
+<p>具体使用方法参考 <a href="">简化markdown写作中的贴图流程</a></p>
+<h3 id="如何画出好看的图？"><a href="#如何画出好看的图？" class="headerlink" title="如何画出好看的图？"></a>如何画出好看的图？</h3><p>推荐 <a href="https://www.omnigroup.com/omnigraffle" target="_blank" rel="external">OmniGraffle</a>，下面是一个截图：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505814628540.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h3 id="如何在修改完文章后自动渲染"><a href="#如何在修改完文章后自动渲染" class="headerlink" title="如何在修改完文章后自动渲染"></a>如何在修改完文章后自动渲染</h3><p>推荐使用livereload，我使用的是lepture写的一个python的库，<a href="https://github.com/lepture/python-livereload" target="_blank" rel="external">项目地址</a>。<br>livereload 可以做什么事情呢？比如作为一个前端开发，每次写完html或js代码之后，保存完，需要去浏览器手动刷新页面才能看到修改后的效果，能不能文件发生变化之后浏览器自动刷新呢，这样将会给实际的开发带来很大的便利，于是livereload便出场了。</p>
+<p>使用步骤：</p>
+<ol>
+<li>下载安装 server 端，即<a href="https://github.com/lepture/python-livereload" target="_blank" rel="external">python-livereload</a></li>
+<li><p>进入需要监控的地址，比如 </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd /Users/xiexiyang/Documents/myblog</div><div class="line">livereload</div></pre></td></tr></table></figure>
+</li>
+<li><p>在浏览器中激活chrome插件</p>
+</li>
+</ol>
+<p>效果图：<img src="http://7xo9p3.com1.z0.glb.clouddn.com/livereload-demo.gif" alt=""></p>
+<h3 id="如何在文中中插入-gif-动图"><a href="#如何在文中中插入-gif-动图" class="headerlink" title="如何在文中中插入 gif 动图"></a>如何在文中中插入 gif 动图</h3><p>推荐使用 <a href="https://www.cockos.com/licecap/" target="_blank" rel="external">licecap</a>。</p>
+<p>我上面的 livereload 动图就是使用的licecap录制的。</p>
 
           
         
@@ -540,8 +575,19 @@
 <p>为何是这样说呢？</p>
 <p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505457802737.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
 <p>看上面的图，可以套用到大多数的互联网或非互联网软件产品中去。我们每个人每天都在生产大量的数据，也会消费大量的数据。比如视频、图片或文字这些都是数据的一种。</p>
-<p>对于一个常规的开发任务，了解了需求之后</p>
-<p>所有的数据如果要存在，在互联网的世界便需要一些载体。数据分为结构化数据和非结构化数据</p>
+<p>作为软件开发者，我们要做的就是把互联网上用户的数据收集并保存下来，把用户需要的数据拿到并展示给用户。</p>
+<p>比如我现在在写的这个文件，假如我使用Sublime来编写，Sublime就是一个软件，这个文章的源文件保存到本地磁盘上，本地磁盘就是一个存储介质，Sublime打开文件便是数据的展示。假如我把源文件上传到github，打开浏览器依然可以看到文件的内容，此时数据便存储到了github远程的服务器上，展示的载体便变为了浏览器。</p>
+<p>日常的软件开发也是如此，我们接到一个需求，进入开发之前首先要考虑的便是数据模型的抽象和设计，我们需要保存哪些数据，数据会存放到什么地方，应该给用户如何展示，展示的形式是什么样子的。</p>
+<p>对应到具体的开发，比如我们要做一个会员系统，提供会员注册、登录和管理等功能，作为一个java web的开发人员，使用的技术栈有：</p>
+<ul>
+<li>spring MVC/spring 负责web业务处理</li>
+<li>mybatis/druid 负责mysql数据的获取</li>
+<li>mysql 存储用户基础信息</li>
+<li>七牛 存储用户头像</li>
+<li>html/js/angularjs 前端展示</li>
+</ul>
+<p>对于普通的用户来讲，注册只需要在浏览器填写用户名，密码，点击提交即可，数据会在服务器端做验证，并保存到数据库。用户登录的时候，从数据库获取数据做匹配，完成登录的动作。</p>
+<p>每一个业务流程都是类似的框架结构，数据在不同的端做流转，转化。开发人员的核心价值便是管理这些数据，正确的收集，正确的存储，正确的获取以及有效的展示。</p>
 
           
         
@@ -1506,7 +1552,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com2017/01/12/jsonp解决跨域请求/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com2017/07/06/2013-09-26-python/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="XiYang">
@@ -1525,7 +1571,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="2017/01/12/jsonp解决跨域请求/" itemprop="url">jsonp 解决跨域请求</a></h1>
+                <a class="post-title-link" href="2017/07/06/2013-09-26-python/" itemprop="url">python 学习笔记</a></h1>
         
 
         <div class="post-meta">
@@ -1537,8 +1583,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-12T09:08:28+08:00">
-                2017-01-12
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-06T16:02:32+08:00">
+                2017-07-06
               </time>
             
 
@@ -1560,8 +1606,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="categories/前端/" itemprop="url" rel="index">
-                    <span itemprop="name">前端</span>
+                  <a href="categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
                   </a>
                 </span>
 
@@ -1578,9 +1624,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="2017/01/12/jsonp解决跨域请求/#comments" itemprop="discussionUrl">
+                <a href="2017/07/06/2013-09-26-python/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/01/12/jsonp解决跨域请求/" itemprop="commentCount"></span>
+                        data-disqus-identifier="2017/07/06/2013-09-26-python/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -1609,25 +1655,14 @@
 
       
         
-          
-            <h2 id="什么是跨域请求"><a href="#什么是跨域请求" class="headerlink" title="什么是跨域请求"></a>什么是跨域请求</h2><p>浏览器的同源策略限制从一个源加载的文档或脚本与来自另一个源的资源进行交互。<br>如果协议，端口和主机对于两个页面是相同的，则两个页面具有相同的源，否则就是不同源的。<br>如果要在js里发起跨域请求，则要进行一些特殊处理了。</p>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>最简单的有两种解决方式：</p>
-<ol>
-<li>可以把请求发到自己的服务端，再通过后台代码发起请求，再将数据返回前端。</li>
-<li>使用jsonp</li>
-</ol>
-<p>第一种需要在服务器端做额外开发，而且频繁修改也需要频繁的改服务器端，一般不建议使用。下面看一下使用jsonp解决跨域问题的解决方案：</p>
-<h3 id="什么是jsonp"><a href="#什么是jsonp" class="headerlink" title="什么是jsonp"></a>什么是jsonp</h3><p>JSONP 和 JSON 看着很像，他们分别是什么呢？</p>
-<p>JSON(JavaScript Object Notation) 是一种轻量级的数据交换格式。对于JSON大家应该是很了解了吧，不是很清楚的朋友可以去json.org上了解下，简单易懂。</p>
-<p>JSONP是JSON with Padding的略称。它是一个非官方的协议，它允许在服务器端集成Script tags返回至客户端，通过javascript callback的形式实现跨域访问（这仅仅是JSONP简单的实现形式）。</p>
-<h2 id="实现演示"><a href="#实现演示" class="headerlink" title="实现演示"></a>实现演示</h2><h3 id="前端代码"><a href="#前端代码" class="headerlink" title="前端代码"></a>前端代码</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">$.ajax(&#123;</div><div class="line">     type: <span class="string">"get"</span>,</div><div class="line">     <span class="keyword">async</span>: <span class="literal">false</span>,</div><div class="line">     url: <span class="string">"http://wukong.iqdnet.cn/wukongbg/admin/monitorList/test"</span>,</div><div class="line">     dataType: <span class="string">"jsonp"</span>,</div><div class="line">     jsonp: <span class="string">"callbackparam"</span>,<span class="comment">//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)</span></div><div class="line">     success: <span class="function"><span class="keyword">function</span>(<span class="params">json</span>)</span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(json);</div><div class="line">        alert(json);</div><div class="line">     &#125;,</div><div class="line">     error: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">        alert(<span class="string">'fail'</span>);</div><div class="line">     &#125;</div><div class="line"> &#125;);</div></pre></td></tr></table></figure>
-<h3 id="服务器端"><a href="#服务器端" class="headerlink" title="服务器端"></a>服务器端</h3><p>在controller中定义一个方法 <code>test</code> 返回JSON的数据</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * test</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"test"</span>,method= RequestMethod.GET)</div><div class="line"><span class="meta">@ResponseBody</span></div><div class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">test</span><span class="params">(String callbackparam,HttpServletRequest request,MonitorListParams monitorListParams)</span> </span>&#123;</div><div class="line">    logger.info(<span class="string">"find monitorList list."</span>);</div><div class="line"></div><div class="line">    System.out.println(System.getProperty(<span class="string">"env"</span>));</div><div class="line"></div><div class="line">    ModelResult modelResult = <span class="keyword">new</span> ModelResult(ModelResult.CODE_200);</div><div class="line">    ResultPage&lt;MonitorList&gt; resultPage = <span class="keyword">null</span>;</div><div class="line">    resultPage = monitorListService.getResultPage(monitorListParams);</div><div class="line">    modelResult.setMessage(<span class="string">"查询成功"</span>);</div><div class="line">    modelResult.setResultPage(resultPage);</div><div class="line"></div><div class="line">    String content = JSON.toJSONString(modelResult);</div><div class="line"></div><div class="line">    content = callbackparam +<span class="string">"("</span>+content+<span class="string">")"</span>;</div><div class="line">    <span class="keyword">return</span> content;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1484107901127.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1484107880451.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="http://api.jquery.com/jQuery.ajax/" target="_blank" rel="external">Jquery 文档</a></p>
-
-          
+          字符串、文件、目录、列表和网络的一些笔记
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="2017/07/06/2013-09-26-python/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1674,7 +1709,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com2016/10/21/06-深入研究java基础-HashMap/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com2017/07/06/2013-05-11-git/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="XiYang">
@@ -1693,7 +1728,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="2016/10/21/06-深入研究java基础-HashMap/" itemprop="url">HashMap 详解和源码解析</a></h1>
+                <a class="post-title-link" href="2017/07/06/2013-05-11-git/" itemprop="url">git 基础用法和命令</a></h1>
         
 
         <div class="post-meta">
@@ -1705,8 +1740,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-10-21T18:12:53+08:00">
-                2016-10-21
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-06T16:02:32+08:00">
+                2017-07-06
               </time>
             
 
@@ -1728,8 +1763,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="categories/java-集合/" itemprop="url" rel="index">
-                    <span itemprop="name">java 集合</span>
+                  <a href="categories/工具/" itemprop="url" rel="index">
+                    <span itemprop="name">工具</span>
                   </a>
                 </span>
 
@@ -1746,9 +1781,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="2016/10/21/06-深入研究java基础-HashMap/#comments" itemprop="discussionUrl">
+                <a href="2017/07/06/2013-05-11-git/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2016/10/21/06-深入研究java基础-HashMap/" itemprop="commentCount"></span>
+                        data-disqus-identifier="2017/07/06/2013-05-11-git/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -1777,13 +1812,14 @@
 
       
         
-          
-            <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public class HashMap&lt;K,V&gt;</div><div class="line">    extends AbstractMap&lt;K,V&gt;</div><div class="line">    implements Map&lt;K,V&gt;, Cloneable, Serializable</div></pre></td></tr></table></figure>
-<p>类图结构<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505200086056.png?imageMogr2/thumbnail/!60p/quality/100!" alt=""></p>
-<p><a href="http://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/" target="_blank" rel="external">http://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/</a></p>
-<p><a href="http://www.cnblogs.com/skywang12345/p/3323085.html" target="_blank" rel="external">http://www.cnblogs.com/skywang12345/p/3323085.html</a></p>
-
-          
+          git版本控制使用基础用法
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="2017/07/06/2013-05-11-git/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1830,7 +1866,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com2016/08/05/01-java集合类概述/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com2017/06/14/论工具的重要性/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="XiYang">
@@ -1849,7 +1885,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="2016/08/05/01-java集合类概述/" itemprop="url">java 集合类概述</a></h1>
+                <a class="post-title-link" href="2017/06/14/论工具的重要性/" itemprop="url">论工具的重要性</a></h1>
         
 
         <div class="post-meta">
@@ -1861,8 +1897,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-08-05T11:58:13+08:00">
-                2016-08-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-14T09:38:30+08:00">
+                2017-06-14
               </time>
             
 
@@ -1884,8 +1920,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="categories/java-集合/" itemprop="url" rel="index">
-                    <span itemprop="name">java 集合</span>
+                  <a href="categories/随笔/" itemprop="url" rel="index">
+                    <span itemprop="name">随笔</span>
                   </a>
                 </span>
 
@@ -1902,9 +1938,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="2016/08/05/01-java集合类概述/#comments" itemprop="discussionUrl">
+                <a href="2017/06/14/论工具的重要性/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2016/08/05/01-java集合类概述/" itemprop="commentCount"></span>
+                        data-disqus-identifier="2017/06/14/论工具的重要性/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -1934,22 +1970,37 @@
       
         
           
-            <p>在java中一切皆是对象，集合就是盛放对象的容器，根据不同的数据结构（集合、链表、队列、栈、数组、映射等）对应不同的集合类。java的集合类都在java.util包下。为了处理多线程环境下的并发安全问题，java5还在java.util.concurrent包下提供了一些多线程支持的集合类。本文暂不包含并发集合包。</p>
-<p>java 集合主要可以分为如下4个部分：List列表、Set集合、Map映射和工具类（Iterator迭代器、Enumeration枚举类、Arrays和Collections）。如下图所示：</p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505102536216.png?imageMogr2/thumbnail/!50p/quality/100!" alt=""></p>
-<p>整体的框架图如下：</p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1470370421012.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<p>梳理出主干我们常用的集合类如下：</p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505102962855.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<p>最主要的两个接口 Collection 和 Map</p>
-<p>1 、 Collections 包含了 List 和 Set 两种不同的数据集合。</p>
+            <p>最近看了一篇文章:<a href="http://www.techug.com/post/the-effective-engineer.html" target="_blank" rel="external">《顶级程序员和普通程序员在思维模式上的5个区别！》</a></p>
+<p>《The Effective Engineer》的作者在写书的过程中，为了了解那些顶级程序员和普通程序员的区别，采访了很多硅谷顶级科技公司的顶尖软件工程师。他发现这些给世界带来巨大影响的的工程师们至少有以下5个共同的思维模式：</p>
 <ul>
-<li>List 是一个有序的队列，包含了常用的 ArrayList，LinkedList、Vector和Stack 类。</li>
-<li>Set 是一个不允许重复元素的集合，包含有 HashSet、TreeSet。HashSet依赖于HashMap，TreeSet依赖于TreeMap</li>
+<li>1.勇于去研究你不懂的代码</li>
+<li>2.精通代码调试(debug)</li>
+<li>3.重视能够节约时间的工具</li>
+<li>4.优化你的迭代速度</li>
+<li>5.系统性的思考方式</li>
 </ul>
-<p>2、 Map 是表示键值对映射的结构。</p>
-<p>AbstractMap 是一个抽象类，它实现了Map接口中的大部分API，而HashMap、TreeMap、WeakHashMap都是继承于AbstractMap。<br>HashTable继承于Dictionary，但它实现了Map接口。</p>
-<p>Arrays 和 Collections 是两个常用的工具类。</p>
+<p>其中第三条 <strong>重视能够节约时间的工具</strong> 带给我很多启发</p>
+<blockquote>
+<p>曾经在Facebook担任技术总监的Bobby Johnson描述过，高效率的程序员都把时间花在制作工具上。<br>很多人也认为工具是很重要的，但是他们并没有花时间去制作、整合自己的工具。但是，Jonson团队最出色的员工耗费了他们1/3的时间在工具制作上，这些工具可以用来发布代码，监控系统，以及能让他们花更少的时间去做更多事情。<br>总之，不要花时间去做机器可以代替你去做的事情。</p>
+</blockquote>
+<p>对于大部分初级工程师来说，大部分的工作内容都是一些重复的业务代码，如果只是被动的编写业务，可能很难有长进，很多人会抱怨整天就是写增删改查的代码，没有技术含量，不能学到新东西，殊不知工作中大部分就是这样的工作。</p>
+<p>infoQ负责出品的王概凯写的&lt;&lt;聊聊架构&gt;&gt;第一篇关于生命周期最后有一段话：</p>
+<blockquote>
+<p>非核心生命周期拆分出来成为服务后，这个服务不再仅仅给一个人使用，而变成了所有人能能够共享。<br>非核心生命周期一旦拆分出来后，往往就变成了一个通用的服务，反而获得了更大的生命力，不再局限于原有的大生命周期。对非核心生命周期的掌握，慢慢也就成为了一个一个的职业。<br>而原有的大生命周期则变的更加精简，可以更加专注于自己的核心生命周期活动，以节省更多的时间。</p>
+</blockquote>
+<p>在日常的后台开发中，会有很多通用的需求，是每次遇到复制拷贝一份代码快速实现功能呢，还是可以抽取出一个公共服务或通用的组件提供给大家使用呢？</p>
+<p>假如仅仅为了实现需求，正好自己以前写过类似或则网上有别人的代码，然后自己复制拷贝一份，长远来看其实是一直在做重复的工作，也很难有成长，假如同样的事情做了5遍，10遍充其量你也只是比别人熟练一下而已。</p>
+<p>那工作中有哪些是通用的并且是可以抽取出来的功能呢？或者说是非核心生命周期。考虑如下的几个场景：</p>
+<h4 id="后台文件导出"><a href="#后台文件导出" class="headerlink" title="后台文件导出"></a>后台文件导出</h4><p>文件导出是一个通用的需求且很常见，在日常的开发中此类的需求和开发会非常频繁，常见的做法是引入POI的包，从数据库中获取到数据，然后调用POI的接口生成excel文件，输出给浏览器。</p>
+<p>需要手工做一次java对象到excel列的映射，如果需求字段有变更，一般情况下需要修改代码上线。</p>
+<p>假如导出的数据量特别大，后台也比较耗时，则同步的方式很容易造成超时，一般会做成异步导出，异步下载，则需要很多额外的开发，假如有多个系统都需要，那就需要在多个系统都实现一遍。</p>
+<p>假如导出的服务在线上的应用中，大量频繁的导出会请求到数据库主库上，会给数据库造成很大的压力，这个时候需要做读写分离。假如需要占用很多内存，有可能影响线上业务，则需要对导出做服务拆分。</p>
+<p>另外还有跨数据库访问的问题。是不是可以在接到这种需求的时候不需要写代码，基于配置式完成功能呢？</p>
+<h4 id="调度系统"><a href="#调度系统" class="headerlink" title="调度系统"></a>调度系统</h4><p>我们知道java中使用quartz可以很方便的配置定时调度，但是很多定时任务都要求在同一时间只能有一个任务执行。如何保证呢？方法有很多。但是是不是可以提供一个调度系统可以让各业务系统不需要都自己实现一套。</p>
+<h4 id="业务监控报警"><a href="#业务监控报警" class="headerlink" title="业务监控报警"></a>业务监控报警</h4><p>分布式系统中分布式事务问题是一个通用的问题，很难去保证在分布式系统下多个系统的一致性问题，一般业界的通用做法是保证数据的最终一致性。</p>
+<p>但是如何发现业务的异常呢？比如订单在支付系统支付成功，但是订单平台支付状态还是未支付。</p>
+<h4 id="代码生成"><a href="#代码生成" class="headerlink" title="代码生成"></a>代码生成</h4><p>在很多的创业公司，或中小型项目开发的公司，会面临大量新系统的开发，每次搭建项目的基础代码都会非常耗费时间，而且里面有大量的配置文件和配置项。<br>如何快速生成项目模板，省去基础的框架配置呢？</p>
+<p>以上的四个场景在我们当前的公司都有独立的系统和工具去支撑对应的需求，每一个系统在不断的迭代过程中都焕发了自己更强大的生命力。</p>
 
           
         
@@ -2034,7 +2085,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-count">17</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2045,7 +2096,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="categories/index.html">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2056,7 +2107,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="tags/index.html">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
