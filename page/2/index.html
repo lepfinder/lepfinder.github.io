@@ -295,6 +295,1088 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/09/11/03-java集合类之ArrayList/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="../../2017/09/11/03-java集合类之ArrayList/" itemprop="url">ArrayList 详解和源码解析</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-11T17:33:37+08:00">
+                2017-09-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../categories/java-集合/" itemprop="url" rel="index">
+                    <span itemprop="name">java 集合</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="../../2017/09/11/03-java集合类之ArrayList/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/09/11/03-java集合类之ArrayList/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>ArrayList 是一个数组队列，相当于 动态数组。与Java中的数组相比，它的容量能动态增长。它继承于AbstractList，实现了List, RandomAccess, Cloneable, java.io.Serializable这些接口。</p>
+<p>ArrayList 继承了AbstractList，实现了List。它是一个数组队列，提供了相关的添加、删除、修改、遍历等功能。<br>ArrayList 实现了RandmoAccess接口，即提供了随机访问功能。RandmoAccess是java中用来被List实现，为List提供快速访问功能的。在ArrayList中，我们即可以通过元素的序号快速获取元素对象；这就是快速随机访问。稍后，我们会比较List的“快速随机访问”和“通过Iterator迭代器访问”的效率。</p>
+<p>ArrayList 实现了Cloneable接口，即覆盖了函数clone()，能被克隆。</p>
+<p>ArrayList 实现java.io.Serializable接口，这意味着ArrayList支持序列化，能通过序列化去传输。</p>
+<p>和Vector不同，ArrayList中的操作不是线程安全的！所以，建议在单线程中才使用ArrayList，而在多线程中可以选择Vector或者CopyOnWriteArrayList。</p>
+<h3 id="ArrayList-构造函数"><a href="#ArrayList-构造函数" class="headerlink" title="ArrayList 构造函数"></a>ArrayList 构造函数</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 默认构造函数</span></div><div class="line">ArrayList()</div><div class="line"></div><div class="line"><span class="comment">// capacity是ArrayList的默认容量大小。当由于增加数据导致容量不足时，容量会添加上一次容量大小的一半。</span></div><div class="line">ArrayList(<span class="keyword">int</span> capacity)</div><div class="line"></div><div class="line"><span class="comment">// 创建一个包含collection的ArrayList</span></div><div class="line">ArrayList(Collection&lt;? extends E&gt; collection)</div></pre></td></tr></table></figure>
+<h3 id="ArrayList-类图结构如下"><a href="#ArrayList-类图结构如下" class="headerlink" title="ArrayList 类图结构如下"></a>ArrayList 类图结构如下</h3><p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505122462998.png?imageMogr2/thumbnail/!80p/quality/100!" alt=""></p>
+<h2 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h2><p>ArrayList 中有两个重要的变量 </p>
+<ul>
+<li>private transient Object[] elementData;<ul>
+<li>elementData 是一个Object的数组，JDK 实现了一个动态数组，可以动态的增加数组的大小，初始的大小是10。</li>
+</ul>
+</li>
+<li>private int size;<ul>
+<li>size 标示了动态数组的实际大小</li>
+</ul>
+</li>
+</ul>
+<p>构造函数：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * 创建一个指定容量大小的空数组</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">(<span class="keyword">int</span> initialCapacity)</span> </span>&#123;</div><div class="line">    <span class="keyword">super</span>();</div><div class="line">    <span class="keyword">if</span> (initialCapacity &lt; <span class="number">0</span>)</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Illegal Capacity: "</span>+</div><div class="line">                                           initialCapacity);</div><div class="line">    <span class="keyword">this</span>.elementData = <span class="keyword">new</span> Object[initialCapacity];</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * 创建一个空数组</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">super</span>();</div><div class="line">    <span class="keyword">this</span>.elementData = EMPTY_ELEMENTDATA;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * 创建一个包含传递进来的元素的数组</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">(Collection&lt;? extends E&gt; c)</span> </span>&#123;</div><div class="line">    elementData = c.toArray();</div><div class="line">    size = elementData.length;</div><div class="line">    <span class="comment">// c.toArray might (incorrectly) not return Object[] (see 6260652)</span></div><div class="line">    <span class="keyword">if</span> (elementData.getClass() != Object[].class)</div><div class="line">        elementData = Arrays.copyOf(elementData, size, Object[].class);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>add方法的实现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 添加一个元素</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</div><div class="line">    ensureCapacityInternal(size + <span class="number">1</span>);  <span class="comment">// Increments modCount!!</span></div><div class="line">    elementData[size++] = e;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 确定容量</span></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureCapacityInternal</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (elementData == EMPTY_ELEMENTDATA) &#123; </div><div class="line">        minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ensureExplicitCapacity(minCapacity);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureExplicitCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    modCount++;</div><div class="line"></div><div class="line">    <span class="comment">// overflow-conscious code</span></div><div class="line">    <span class="keyword">if</span> (minCapacity - elementData.length &gt; <span class="number">0</span>)</div><div class="line">        grow(minCapacity);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">grow</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    <span class="comment">// overflow-conscious code</span></div><div class="line">    <span class="keyword">int</span> oldCapacity = elementData.length;</div><div class="line">    <span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</div><div class="line">    <span class="keyword">if</span> (newCapacity - minCapacity &lt; <span class="number">0</span>)</div><div class="line">        newCapacity = minCapacity;</div><div class="line">    <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</div><div class="line">        newCapacity = hugeCapacity(minCapacity);</div><div class="line">    <span class="comment">// minCapacity is usually close to size, so this is a win:</span></div><div class="line">    elementData = Arrays.copyOf(elementData, newCapacity);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">hugeCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (minCapacity &lt; <span class="number">0</span>) <span class="comment">// overflow</span></div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> OutOfMemoryError();</div><div class="line">    <span class="keyword">return</span> (minCapacity &gt; MAX_ARRAY_SIZE) ?</div><div class="line">        Integer.MAX_VALUE :</div><div class="line">        MAX_ARRAY_SIZE;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>ArrayList 默认的构造函数，创建的是一个空数组，是在第一次添加对象的时候做的初始化。</li>
+<li>添加元素的时候如果容量不足，会进行扩容，新的容量会之前的1.5倍</li>
+<li>最大的容量为 Integer.MAX_VALUE</li>
+</ul>
+<h2 id="遍历的三种方式"><a href="#遍历的三种方式" class="headerlink" title="遍历的三种方式"></a>遍历的三种方式</h2><p>ArrayList支持3种遍历方式</p>
+<p>(01) 第一种，通过迭代器遍历。即通过Iterator去遍历。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Integer value = <span class="keyword">null</span>;</div><div class="line">Iterator iter = list.iterator();</div><div class="line"><span class="keyword">while</span> (iter.hasNext()) &#123;</div><div class="line">    value = (Integer)iter.next();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>(02) 第二种，随机访问，通过索引值去遍历。<br>由于ArrayList实现了RandomAccess接口，它支持通过索引值去随机访问元素。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Integer value = <span class="keyword">null</span>;</div><div class="line"><span class="keyword">int</span> size = list.size();</div><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;size; i++) &#123;</div><div class="line">    value = (Integer)list.get(i);        </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>(03) 第三种，for循环遍历。如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Integer value = <span class="keyword">null</span>;</div><div class="line"><span class="keyword">for</span> (Integer integ:list) &#123;</div><div class="line">    value = integ;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="ConcurrentModificationException"><a href="#ConcurrentModificationException" class="headerlink" title="ConcurrentModificationException"></a>ConcurrentModificationException</h2><p>AbstractList 中有一个成员变量 modCount, 记录了数据在结构上变化的次数，比如添加或删除一个元素的次数<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// The number of times this list has been structurally modified</span></div><div class="line"><span class="keyword">protected</span> <span class="keyword">transient</span> <span class="keyword">int</span> modCount = <span class="number">0</span>;</div></pre></td></tr></table></figure></p>
+<p>在Java中的fail-fast机制中有介绍过。在使用迭代器遍历元素的时候，在对集合进行删除的时候一定要注意，使用不当有可能发生ConcurrentModificationException。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/09/07/02-java集合类之Collection-架构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="../../2017/09/07/02-java集合类之Collection-架构/" itemprop="url">Java Collection 架构</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-07T17:52:03+08:00">
+                2017-09-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../categories/java-集合/" itemprop="url" rel="index">
+                    <span itemprop="name">java 集合</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="../../2017/09/07/02-java集合类之Collection-架构/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/09/07/02-java集合类之Collection-架构/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h2><p>首先看一下 Collection 的类图结构如下：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505116825766.png?imageMogr2/thumbnail/!70p/quality/100!" alt=""></p>
+<p>Collection 是一个接口，它主要有两个分支 List 和 Set。</p>
+<p>List 和 Set 是两个接口，他们继承自 Collection ，List 是有序的队列，元素可以重复， Set 是不重复的的集合。</p>
+<p>为了减少重复代码，jdk 抽象出了一个 AbstractCollection 抽象类，这个类实现了 Collection 中绝大部分函数，这样在其它的实现类中就可以省去重复的编码。</p>
+<p>AbstractList 和 AbstractSet都继承于AbstractCollection，具体的List实现类继承于AbstractList，而Set的实现类则继承于AbstractSet。</p>
+<h2 id="Collection-类详解"><a href="#Collection-类详解" class="headerlink" title="Collection 类详解"></a>Collection 类详解</h2><p>Collection 的定义如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public interface Collection&lt;E&gt; extends Iterable&lt;E&gt; &#123;</div></pre></td></tr></table></figure></p>
+<p>包含的方法如下：<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505117974012.png?imageMogr2/thumbnail/!70p/quality/100!" alt=""></p>
+<h2 id="List-详解"><a href="#List-详解" class="headerlink" title="List 详解"></a>List 详解</h2><p>接口声明：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public interface List&lt;E&gt; extends Collection&lt;E&gt; &#123;</div></pre></td></tr></table></figure>
+<p>包含的方法：</p>
+<p>![](image:: <a href="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505118343539.png?imageMogr2/thumbnail/!100p/quality/100!）" target="_blank" rel="external">http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505118343539.png?imageMogr2/thumbnail/!100p/quality/100!）</a></p>
+<p>其中带 上箭头 是从 Collection 继承来的，相比于 Collection ，主要增加了一些在指定位置添加、删除、修改、获取对应元素的接口。还有获取List中的子队列。</p>
+<h2 id="Set-详解"><a href="#Set-详解" class="headerlink" title="Set 详解"></a>Set 详解</h2><p>接口声明</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public interface Set&lt;E&gt; extends Collection&lt;E&gt; &#123;</div></pre></td></tr></table></figure>
+<p>包含的方法：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505119617661.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>关于API方面。Set的API和Collection完全一样。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/07/13/一些好玩的前端项目/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="../../2017/07/13/一些好玩的前端项目/" itemprop="url">一些好玩的前端项目</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-13T00:00:00+08:00">
+                2017-07-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../categories/前端/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="../../2017/07/13/一些好玩的前端项目/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/07/13/一些好玩的前端项目/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="web-代码编辑器"><a href="#web-代码编辑器" class="headerlink" title="web 代码编辑器"></a>web 代码编辑器</h2><p><a href="https://ace.c9.io/#nav=howto&amp;api=editor" target="_blank" rel="external">https://ace.c9.io/#nav=howto&amp;api=editor</a></p>
+<p>Features</p>
+<ul>
+<li>Syntax highlighting for over 110 languages (TextMate/Sublime Text.tmlanguage files can be imported)</li>
+<li>Over 20 themes (TextMate/Sublime Text .tmtheme files can be imported)</li>
+<li>Automatic indent and outdent</li>
+<li>An optional command line</li>
+<li>Handles huge documents (four million lines seems to be the limit!)</li>
+<li>Fully customizable key bindings including vim and Emacs modes</li>
+<li>Search and replace with regular expressions</li>
+<li>Highlight matching parentheses</li>
+<li>Toggle between soft tabs and real tabs</li>
+<li>Displays hidden characters</li>
+<li>Drag and drop text using the mouse</li>
+<li>Line wrapping</li>
+<li>Code folding</li>
+<li>Multiple cursors and selections</li>
+<li>Live syntax checker (currently JavaScript/CoffeeScript/CSS/XQuery)</li>
+<li>Cut, copy, and paste functionality</li>
+</ul>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505393675359.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h2 id="web-diff工具"><a href="#web-diff工具" class="headerlink" title="web diff工具"></a>web diff工具</h2><p><a href="http://www.mergely.com/doc" target="_blank" rel="external">http://www.mergely.com/doc</a></p>
+<blockquote>
+<p>Mergely is a powerful online diff and merge editor and javascript library that highlights changes in text. It can be embedded within your own Web application to compare files, text, C, C++, Java, HTML, XML, CSS, and javascript. Download Mergely, and refer to the reference manual. Please refer to the the license agreement.</p>
+</blockquote>
+<ul>
+<li>Browser-based differencing tool</li>
+<li>Diff or Merge changes in your own web applications</li>
+<li>Always available</li>
+<li>Free and GPLv3</li>
+<li>Commercial license available</li>
+<li>Share diffs online for demonstration or discussion</li>
+<li>Simple to use</li>
+<li>Mergely is written with the aid of Code Mirror and jQuery javascript libraries, and uses HTML5 canvas to markup the differences between documents. It will work in most modern browsers.</li>
+</ul>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505393734063.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h2 id="代码高亮"><a href="#代码高亮" class="headerlink" title="代码高亮"></a>代码高亮</h2><p><a href="http://codemirror.net/" target="_blank" rel="external">http://codemirror.net/</a></p>
+<blockquote>
+<p>CodeMirror is a versatile text editor implemented in JavaScript for the browser. It is specialized for editing code, and comes with a number of language modes and addons that implement more advanced editing functionality.</p>
+</blockquote>
+<p>Features</p>
+<ul>
+<li>Support for over 100 languages out of the box</li>
+<li>A powerful, composable language mode system</li>
+<li>Autocompletion (XML)</li>
+<li>Code folding</li>
+<li>Configurable keybindings</li>
+<li>Vim, Emacs, and Sublime Text bindings</li>
+<li>Search and replace interface</li>
+<li>Bracket and tag matching</li>
+<li>Support for split views</li>
+<li>Linter integration</li>
+<li>Mixing font sizes and styles</li>
+<li>Various themes</li>
+<li>Able to resize to fit content</li>
+<li>Inline and block widgets</li>
+<li>Programmable gutters</li>
+<li>Making ranges of text styled, read-only, or atomic</li>
+<li>Bi-directional text support</li>
+<li>Many other methods and addons…</li>
+</ul>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505393757573.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h2 id="pdfjs"><a href="#pdfjs" class="headerlink" title="pdfjs"></a>pdfjs</h2><p><a href="https://github.com/mozilla/pdf.js/" target="_blank" rel="external">https://github.com/mozilla/pdf.js/</a></p>
+<blockquote>
+<p>PDF.js is a Portable Document Format (PDF) viewer that is built with HTML5.</p>
+<p>PDF.js is community-driven and supported by Mozilla Labs. Our goal is to create a general-purpose, web standards-based platform for parsing and rendering PDFs.</p>
+</blockquote>
+<h2 id="JSON-Server-amp-amp-faker-js"><a href="#JSON-Server-amp-amp-faker-js" class="headerlink" title="JSON Server &amp;&amp; faker.js"></a>JSON Server &amp;&amp; faker.js</h2><p><a href="https://github.com/typicode/json-server" target="_blank" rel="external">https://github.com/typicode/json-server</a></p>
+<blockquote>
+<p>Get a full fake REST API with zero coding in less than 30 seconds (seriously)</p>
+</blockquote>
+<p><a href="https://github.com/marak/Faker.js/" target="_blank" rel="external">https://github.com/marak/Faker.js/</a></p>
+<blockquote>
+<p>generate massive amounts of fake data in Node.js and the browser</p>
+</blockquote>
+<p>介绍两大神器！——使用json-server和faker.js模拟REST API<br><a href="https://segmentfault.com/a/1190000008574028" target="_blank" rel="external">https://segmentfault.com/a/1190000008574028</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/07/06/2013-09-26-python/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="../../2017/07/06/2013-09-26-python/" itemprop="url">python 学习笔记</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-06T16:02:32+08:00">
+                2017-07-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="../../2017/07/06/2013-09-26-python/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/07/06/2013-09-26-python/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          字符串、文件、目录、列表和网络的一些笔记
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="../../2017/07/06/2013-09-26-python/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/07/06/2013-05-11-git/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="../../2017/07/06/2013-05-11-git/" itemprop="url">git 基础用法和命令</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-06T16:02:32+08:00">
+                2017-07-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../categories/工具/" itemprop="url" rel="index">
+                    <span itemprop="name">工具</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="../../2017/07/06/2013-05-11-git/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/07/06/2013-05-11-git/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          git版本控制使用基础用法
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="../../2017/07/06/2013-05-11-git/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/06/14/论工具的重要性/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="../../2017/06/14/论工具的重要性/" itemprop="url">论工具的重要性</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-14T09:38:30+08:00">
+                2017-06-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../categories/随笔/" itemprop="url" rel="index">
+                    <span itemprop="name">随笔</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="../../2017/06/14/论工具的重要性/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/06/14/论工具的重要性/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近看了一篇文章:<a href="http://www.techug.com/post/the-effective-engineer.html" target="_blank" rel="external">《顶级程序员和普通程序员在思维模式上的5个区别！》</a></p>
+<p>《The Effective Engineer》的作者在写书的过程中，为了了解那些顶级程序员和普通程序员的区别，采访了很多硅谷顶级科技公司的顶尖软件工程师。他发现这些给世界带来巨大影响的的工程师们至少有以下5个共同的思维模式：</p>
+<ul>
+<li>1.勇于去研究你不懂的代码</li>
+<li>2.精通代码调试(debug)</li>
+<li>3.重视能够节约时间的工具</li>
+<li>4.优化你的迭代速度</li>
+<li>5.系统性的思考方式</li>
+</ul>
+<p>其中第三条 <strong>重视能够节约时间的工具</strong> 带给我很多启发</p>
+<blockquote>
+<p>曾经在Facebook担任技术总监的Bobby Johnson描述过，高效率的程序员都把时间花在制作工具上。<br>很多人也认为工具是很重要的，但是他们并没有花时间去制作、整合自己的工具。但是，Jonson团队最出色的员工耗费了他们1/3的时间在工具制作上，这些工具可以用来发布代码，监控系统，以及能让他们花更少的时间去做更多事情。<br>总之，不要花时间去做机器可以代替你去做的事情。</p>
+</blockquote>
+<p>对于大部分初级工程师来说，大部分的工作内容都是一些重复的业务代码，如果只是被动的编写业务，可能很难有长进，很多人会抱怨整天就是写增删改查的代码，没有技术含量，不能学到新东西，殊不知工作中大部分就是这样的工作。</p>
+<p>infoQ负责出品的王概凯写的&lt;&lt;聊聊架构&gt;&gt;第一篇关于生命周期最后有一段话：</p>
+<blockquote>
+<p>非核心生命周期拆分出来成为服务后，这个服务不再仅仅给一个人使用，而变成了所有人能能够共享。<br>非核心生命周期一旦拆分出来后，往往就变成了一个通用的服务，反而获得了更大的生命力，不再局限于原有的大生命周期。对非核心生命周期的掌握，慢慢也就成为了一个一个的职业。<br>而原有的大生命周期则变的更加精简，可以更加专注于自己的核心生命周期活动，以节省更多的时间。</p>
+</blockquote>
+<p>在日常的后台开发中，会有很多通用的需求，是每次遇到复制拷贝一份代码快速实现功能呢，还是可以抽取出一个公共服务或通用的组件提供给大家使用呢？</p>
+<p>假如仅仅为了实现需求，正好自己以前写过类似或则网上有别人的代码，然后自己复制拷贝一份，长远来看其实是一直在做重复的工作，也很难有成长，假如同样的事情做了5遍，10遍充其量你也只是比别人熟练一下而已。</p>
+<p>那工作中有哪些是通用的并且是可以抽取出来的功能呢？或者说是非核心生命周期。考虑如下的几个场景：</p>
+<h4 id="后台文件导出"><a href="#后台文件导出" class="headerlink" title="后台文件导出"></a>后台文件导出</h4><p>文件导出是一个通用的需求且很常见，在日常的开发中此类的需求和开发会非常频繁，常见的做法是引入POI的包，从数据库中获取到数据，然后调用POI的接口生成excel文件，输出给浏览器。</p>
+<p>需要手工做一次java对象到excel列的映射，如果需求字段有变更，一般情况下需要修改代码上线。</p>
+<p>假如导出的数据量特别大，后台也比较耗时，则同步的方式很容易造成超时，一般会做成异步导出，异步下载，则需要很多额外的开发，假如有多个系统都需要，那就需要在多个系统都实现一遍。</p>
+<p>假如导出的服务在线上的应用中，大量频繁的导出会请求到数据库主库上，会给数据库造成很大的压力，这个时候需要做读写分离。假如需要占用很多内存，有可能影响线上业务，则需要对导出做服务拆分。</p>
+<p>另外还有跨数据库访问的问题。是不是可以在接到这种需求的时候不需要写代码，基于配置式完成功能呢？</p>
+<h4 id="调度系统"><a href="#调度系统" class="headerlink" title="调度系统"></a>调度系统</h4><p>我们知道java中使用quartz可以很方便的配置定时调度，但是很多定时任务都要求在同一时间只能有一个任务执行。如何保证呢？方法有很多。但是是不是可以提供一个调度系统可以让各业务系统不需要都自己实现一套。</p>
+<h4 id="业务监控报警"><a href="#业务监控报警" class="headerlink" title="业务监控报警"></a>业务监控报警</h4><p>分布式系统中分布式事务问题是一个通用的问题，很难去保证在分布式系统下多个系统的一致性问题，一般业界的通用做法是保证数据的最终一致性。</p>
+<p>但是如何发现业务的异常呢？比如订单在支付系统支付成功，但是订单平台支付状态还是未支付。</p>
+<h4 id="代码生成"><a href="#代码生成" class="headerlink" title="代码生成"></a>代码生成</h4><p>在很多的创业公司，或中小型项目开发的公司，会面临大量新系统的开发，每次搭建项目的基础代码都会非常耗费时间，而且里面有大量的配置文件和配置项。<br>如何快速生成项目模板，省去基础的框架配置呢？</p>
+<p>以上的四个场景在我们当前的公司都有独立的系统和工具去支撑对应的需求，每一个系统在不断的迭代过程中都焕发了自己更强大的生命力。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/01/12/jsonp解决跨域请求/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -619,6 +1701,253 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2016/10/21/2016-10-21-java基础-深入研究java-lang-Object类/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="../../2016/10/21/2016-10-21-java基础-深入研究java-lang-Object类/" itemprop="url">深入研究java.lang.Object类</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-10-21T14:52:09+08:00">
+                2016-10-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../categories/java-基础/" itemprop="url" rel="index">
+                    <span itemprop="name">java 基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="../../2016/10/21/2016-10-21-java基础-深入研究java-lang-Object类/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2016/10/21/2016-10-21-java基础-深入研究java-lang-Object类/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Object类是所有类的基类"><a href="#Object类是所有类的基类" class="headerlink" title="Object类是所有类的基类"></a>Object类是所有类的基类</h2><p>尽管Object 类是一个具体类，但是设计他主要是为了扩展。他所有的非final方法（equals、hashcode、tostring、clone和finalize）都有明确的通用约定，因为他们被设计成是要被覆盖的。任何一个类，在覆盖这些方法的时候，都有责任遵守这些通用约定，如果不能做到这一点，其它依赖月这些约定的类（例如HashMap和HashSet）就无法结合该类一起正常工作。</p>
+<h2 id="Object包含如下API"><a href="#Object包含如下API" class="headerlink" title="Object包含如下API"></a>Object包含如下API</h2><ul>
+<li>Object()<ul>
+<li>默认构造方法</li>
+</ul>
+</li>
+<li>clone() <ul>
+<li>创建并返回此对象的一个副本。 </li>
+</ul>
+</li>
+<li>equals(Object obj) <ul>
+<li>指示某个其他对象是否与此对象“相等”。 </li>
+</ul>
+</li>
+<li>finalize() <ul>
+<li>当垃圾回收器确定不存在对该对象的更多引用时，由对象的垃圾回收器调用此方法。 </li>
+</ul>
+</li>
+<li>getClass() <ul>
+<li>返回一个对象的运行时类。 </li>
+</ul>
+</li>
+<li>hashCode() <ul>
+<li>返回该对象的哈希码值。 </li>
+</ul>
+</li>
+<li>notify() <ul>
+<li>唤醒在此对象监视器上等待的单个线程。 </li>
+</ul>
+</li>
+<li>notifyAll() <ul>
+<li>唤醒在此对象监视器上等待的所有线程。 </li>
+</ul>
+</li>
+<li>toString() <ul>
+<li>返回该对象的字符串表示。 </li>
+</ul>
+</li>
+<li>wait() <ul>
+<li>导致当前的线程等待，直到其他线程调用此对象的 notify() 方法或 notifyAll() 方法。 </li>
+</ul>
+</li>
+<li>wait(long timeout) <ul>
+<li>导致当前的线程等待，直到其他线程调用此对象的 notify() 方法或 notifyAll() 方法，或者超过指定的时间量。 </li>
+</ul>
+</li>
+<li>wait(long timeout, int nanos) <ul>
+<li>导致当前的线程等待，直到其他线程调用此对象的 notify() 方法或 notifyAll() 方法，或者其他某个线程中断当前线程，或者已超过某个实际时间量。</li>
+</ul>
+</li>
+</ul>
+<h2 id="方法详解"><a href="#方法详解" class="headerlink" title="方法详解"></a>方法详解</h2><h3 id="equals-用来判断两个对象是否相等"><a href="#equals-用来判断两个对象是否相等" class="headerlink" title="equals 用来判断两个对象是否相等"></a>equals 用来判断两个对象是否相等</h3><p>==与equals在Java中经常被使用，大家也都知道==与equals的区别：<br>==表示的是变量值完成相同（对于基础类型，地址中存储的是值，引用类型则存储指向实际对象的地址）；<br>equals表示的是对象的内容完全相同，此处的内容多指对象的特征/属性。</p>
+<p>实际上，上面说法是不严谨的，更多的只是常见于String类中。首先看一下Object类中关于equals()方法的定义：<br>jdk的默认实现是用 == 来实现的,直接比较的内存地址。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> (<span class="keyword">this</span> == obj);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>由此可见，Object原生的equals()方法内部调用的正是==，与==具有相同的含义。既然如此，为什么还要定义此equals()方法？</p>
+<p>equlas()方法的正确理解应该是：判断两个对象是否相等。那么判断对象相等的标尺又是什么？</p>
+<p>如上，在object类中，此标尺即为==。当然，这个标尺不是固定的，其他类中可以按照实际的需要对此标尺含义进行重定义。如String类中则是依据字符串内容是否相等来重定义了此标尺含义。如此可以增加类的功能型和实际编码的灵活性。当然了，如果自定义的类没有重写equals()方法来重新定义此标尺，那么默认的将是其父类的equals()，直到object基类。</p>
+<p>Java语言规范要求equals方法具有下面的特点：</p>
+<p>jdk 中的注释如下：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1504769026265.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>翻译过来有下面的几个规则：</p>
+<ul>
+<li>自反性：对于任何非空引用值 x，x.equals(x) 都应返回 true。 </li>
+<li>对称性：对于任何非空引用值 x 和 y，当且仅当 y.equals(x) 返回 true 时，x.equals(y) 才应返回 true。 </li>
+<li>传递性：对于任何非空引用值 x、y 和 z，如果 x.equals(y) 返回 true，并且 y.equals(z) 返回 true，那么 x.equals(z) 应返回 true。 </li>
+<li>一致性：对于任何非空引用值 x 和 y，多次调用 x.equals(y) 始终返回 true 或始终返回 false，前提是对象上 equals 比较中所用的信息没有被修改。 </li>
+<li>对于任何非空引用值 x，x.equals(null) 都应返回 false</li>
+</ul>
+<p>String 类重写了equals方法，如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * Compares this string to the specified object.  The result is &#123;<span class="doctag">@code</span></span></div><div class="line"><span class="comment"> * true&#125; if and only if the argument is not &#123;<span class="doctag">@code</span> null&#125; and is a &#123;<span class="doctag">@code</span></span></div><div class="line"><span class="comment"> * String&#125; object that represents the same sequence of characters as this</span></div><div class="line"><span class="comment"> * object.</span></div><div class="line"><span class="comment"> *</span></div><div class="line"><span class="comment"> * <span class="doctag">@param</span>  anObject</span></div><div class="line"><span class="comment"> *         The object to compare this &#123;<span class="doctag">@code</span> String&#125; against</span></div><div class="line"><span class="comment"> *</span></div><div class="line"><span class="comment"> * <span class="doctag">@return</span>  &#123;<span class="doctag">@code</span> true&#125; if the given object represents a &#123;<span class="doctag">@code</span> String&#125;</span></div><div class="line"><span class="comment"> *          equivalent to this string, &#123;<span class="doctag">@code</span> false&#125; otherwise</span></div><div class="line"><span class="comment"> *</span></div><div class="line"><span class="comment"> * <span class="doctag">@see</span>  #compareTo(String)</span></div><div class="line"><span class="comment"> * <span class="doctag">@see</span>  #equalsIgnoreCase(String)</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object anObject)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">this</span> == anObject) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (anObject <span class="keyword">instanceof</span> String) &#123;</div><div class="line">        String anotherString = (String)anObject;</div><div class="line">        <span class="keyword">int</span> n = value.length;</div><div class="line">        <span class="keyword">if</span> (n == anotherString.value.length) &#123;</div><div class="line">            <span class="keyword">char</span> v1[] = value;</div><div class="line">            <span class="keyword">char</span> v2[] = anotherString.value;</div><div class="line">            <span class="keyword">int</span> i = <span class="number">0</span>;</div><div class="line">            <span class="keyword">while</span> (n-- != <span class="number">0</span>) &#123;</div><div class="line">                <span class="keyword">if</span> (v1[i] != v2[i])</div><div class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                i++;</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="toString-方法"><a href="#toString-方法" class="headerlink" title="toString 方法"></a>toString 方法</h3><p>toString()方法返回该对象的字符串表示。先看一下Object中的具体方法体：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> getClass().getName() + <span class="string">"@"</span> + Integer.toHexString(hashCode());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>toString()方法相信大家都经常用到，即使没有显式调用，但当我们使用System.out.println(obj)时，其内部也是通过toString()来实现的。</p>
+<p>getClass()返回对象的类对象，getClassName()以String形式返回类对象的名称（含包名）。Integer.toHexString(hashCode())则是以对象的哈希码为实参，以16进制无符号整数形式返回此哈希码的字符串表示形式。</p>
+<p>如上例中的u1的哈希码是638，则对应的16进制为27e，调用toString()方法返回的结果为：com.corn.objectsummary.User@27e。</p>
+<p>因此：toString()是由对象的类型和其哈希码唯一确定，同一类型但不相等的两个对象分别调用toString()方法返回的结果可能相同。</p>
+<p>我们做实验打印某个类如下所示<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">User u1 = <span class="keyword">new</span> User();</div><div class="line">u1.setName(<span class="string">"u1"</span>);</div><div class="line"></div><div class="line">User u2 = <span class="keyword">new</span> User();</div><div class="line">u2.setName(<span class="string">"u2"</span>);</div><div class="line"></div><div class="line">System.out.println(<span class="string">"u1--&gt; "</span> + u1);</div><div class="line">System.out.println(<span class="string">"u2--&gt; "</span> + u2);</div><div class="line"></div><div class="line">输出</div><div class="line">u1--&gt; com.xiyang.study.reflect.User@<span class="number">99f</span>ad95c</div><div class="line">u2--&gt; com.xiyang.study.reflect.User<span class="meta">@cee</span>1149d</div><div class="line">u1--&gt; com.xiyang.study.reflect.User@<span class="number">99f</span>ad95c</div><div class="line">u2--&gt; com.xiyang.study.reflect.User<span class="meta">@cee</span>1149d</div></pre></td></tr></table></figure></p>
+<h3 id="hashcode"><a href="#hashcode" class="headerlink" title="hashcode"></a>hashcode</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span></span>;</div></pre></td></tr></table></figure>
+<p>以下是关于HashCode的官方文档定义：</p>
+<p>hashcode方法返回该对象的哈希码值。支持该方法是为哈希表提供一些优点，例如，java.util.Hashtable 提供的哈希表。 </p>
+<p>hashCode 的常规协定是： </p>
+<blockquote>
+<p>在 Java 应用程序执行期间，在同一对象上多次调用 hashCode 方法时，必须一致地返回相同的整数，前提是对象上 equals 比较中所用的信息没有被修改。从某一应用程序的一次执行到同一应用程序的另一次执行，该整数无需保持一致。<br>如果根据 equals(Object) 方法，两个对象是相等的，那么在两个对象中的每个对象上调用 hashCode 方法都必须生成相同的整数结果。<br>以下情况不是必需的：如果根据 equals(java.lang.Object) 方法，两个对象不相等，那么在两个对象中的任一对象上调用 hashCode 方法必定会生成不同的整数结果。但是，程序员应该知道，为不相等的对象生成不同整数结果可以提高哈希表的性能。<br>实际上，由 Object 类定义的 hashCode 方法确实会针对不同的对象返回不同的整数。（这一般是通过将该对象的内部地址转换成一个整数来实现的，但是 JavaTM 编程语言不需要这种实现技巧。） </p>
+</blockquote>
+<p>以上这段官方文档的定义，我们可以抽取出以下几个关键点：<br>1、hashCode的存在主要是用于查找的快捷性，如Hashtable，HashMap等，hashCode是用来在散列存储结构中确定对象的存储地址的；<br>2、如果两个对象相同（x.equals(y)），那么这两个对象的hashCode一定要相同；<br>3、如果对象的equals方法被重写，那么对象的hashCode也尽量重写，并且产生hashCode使用的对象，一定要和equals方法中使用的一致，否则就会违反上面提到的第2点；<br>4、两个对象的hashCode相同，并不一定表示两个对象就相同，只能够说明这两个对象在散列存储结构中，他们“存放在同一个篮子里”。</p>
+<p>再归纳一下就是hashCode是用于查找使用的，而equals是用于比较两个对象的是否相等的。</p>
+<p>结合HashMap的实现可以很好的理解这个概念。如下是HashMap的数据结构:</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505973792303.png?imageMogr2/thumbnail/!50p/quality/100!" alt=""></p>
+<p>table 数组代表了桶，每一个桶里可能会存放不止一个元素，如果两个对象的hash值相等，就会放到一个桶里，用链表存放。但是这两个对象并不一定相当，所以这也解释了为什么hashcode相等的两个对象并不一定相等。</p>
+<h4 id="既然比较两个对象是否相等的唯一条件（也是冲要条件）是equals，那么为什么还要弄出一个hashCode-，并且进行如此约定，弄得这么麻烦？"><a href="#既然比较两个对象是否相等的唯一条件（也是冲要条件）是equals，那么为什么还要弄出一个hashCode-，并且进行如此约定，弄得这么麻烦？" class="headerlink" title="既然比较两个对象是否相等的唯一条件（也是冲要条件）是equals，那么为什么还要弄出一个hashCode()，并且进行如此约定，弄得这么麻烦？"></a>既然比较两个对象是否相等的唯一条件（也是冲要条件）是equals，那么为什么还要弄出一个hashCode()，并且进行如此约定，弄得这么麻烦？</h4><p>其实，这主要体现在hashCode()方法的作用上，其主要用于增强哈希表的性能。</p>
+<p>以集合类中，以Set为例，当新加一个对象时，需要判断现有集合中是否已经存在与此对象相等的对象，如果没有hashCode()方法，需要将Set进行一次遍历，并逐一用equals()方法判断两个对象是否相等，此种算法时间复杂度为o(n)。通过借助于hasCode方法，先计算出即将新加入对象的哈希码，然后根据哈希算法计算出此对象的位置，直接判断此位置上是否已有对象即可。（注：Set的底层用的是Map的原理实现）</p>
+<p>在此需要纠正一个理解上的误区：对象的hashCode()返回的不是对象所在的物理内存地址。甚至也不一定是对象的逻辑地址，hashCode()相同的两个对象，不一定相等，换言之，不相等的两个对象，hashCode()返回的哈希码可能相同。</p>
+<h4 id="为什么重写了equals-还要重写-hashCode方法？"><a href="#为什么重写了equals-还要重写-hashCode方法？" class="headerlink" title="为什么重写了equals 还要重写 hashCode方法？"></a>为什么重写了equals 还要重写 hashCode方法？</h4><p>在 hashcode 方法中有一个原则：如果两个对象相同，即x.equals(y)为true, 那么这两个对象的hashCode一定要相同。</p>
+<p>假如你自己的类不重写hashCode，那就会使用 Object 类的 hashCode 返回这个类的hashcode值，Object默认返回这个对象存储的内存地址的编号，那么有可能会导致两个对象equals返回为true，但是却有不同的hashcode码。</p>
+<h4 id="如何重写equals-和-hashCode-方法"><a href="#如何重写equals-和-hashCode-方法" class="headerlink" title="如何重写equals 和 hashCode 方法"></a>如何重写equals 和 hashCode 方法</h4><p>不建议自己实现，借助IDE可以很容易的实现一个类的equals 和 hashCode方法，比如我们定义一个类如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * Created by xiexiyang on 16/5/3.</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Member</span></span>&#123;</div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> Integer age;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> status;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>IDE 辅助生成的 equals 和 hashCode 如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object o)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">this</span> == o) <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    <span class="keyword">if</span> (o == <span class="keyword">null</span> || getClass() != o.getClass()) <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line"></div><div class="line">    Member member = (Member) o;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (status != member.status) <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    <span class="keyword">if</span> (name != <span class="keyword">null</span> ? !name.equals(member.name) : member.name != <span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    <span class="keyword">if</span> (age != <span class="keyword">null</span> ? !age.equals(member.age) : member.age != <span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> result = name != <span class="keyword">null</span> ? name.hashCode() : <span class="number">0</span>;</div><div class="line">    result = <span class="number">31</span> * result + (age != <span class="keyword">null</span> ? age.hashCode() : <span class="number">0</span>);</div><div class="line">    result = <span class="number">31</span> * result + status;</div><div class="line">    <span class="keyword">return</span> result;</div><div class="line">&#125;</div><div class="line"></div><div class="line">注：上述hashCode()的重写中出现了result*<span class="number">31</span>，是因为result*<span class="number">31</span> = (result&lt;&lt;<span class="number">5</span>) - result。之所以选择<span class="number">31</span>，是因为左移运算和减运算计算效率远大于乘法运算。当然，也可以选择其他数字。</div></pre></td></tr></table></figure></p>
+<h3 id="notify-notifyAll-wait-clone-都是native的方法，依赖于底层的实现"><a href="#notify-notifyAll-wait-clone-都是native的方法，依赖于底层的实现" class="headerlink" title="notify notifyAll  wait clone 都是native的方法，依赖于底层的实现"></a>notify notifyAll  wait clone 都是native的方法，依赖于底层的实现</h3>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2016/08/05/01-java集合类概述/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -774,717 +2103,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2016/03/14/我的读书史/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="XiYang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="../../images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XiYang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="../../2016/03/14/我的读书史/" itemprop="url">我的读书史</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-03-14T16:48:02+08:00">
-                2016-03-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="../../categories/随笔/" itemprop="url" rel="index">
-                    <span itemprop="name">随笔</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="../../2016/03/14/我的读书史/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2016/03/14/我的读书史/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>一本好书，往往一开始会读的特别快，临到最后反而舍不得读完。读罢，故事里面的人和事，萦萦于脑畔，飘着飘着，慢慢的尘封于一处。</p>
-</blockquote>
-<h3 id="启蒙"><a href="#启蒙" class="headerlink" title="启蒙"></a>启蒙</h3><p>小的时候可供娱乐的东西很少，不像现在的小孩子在2、3岁的时候，父母就会给孩子买一些绘本启蒙，我是到了小学认字之后才开始看一些”课外书“，而且当时可供阅读的书也很少，好的书就更少了。</p>
-<p>小学四五年级的时候，同学中开始流传一些课外书，比较正统的《格林童话》《安徒生童话》《一千零一夜》《十万个为什么》《伊索寓言》，大都是需要借同学的看，我看书比较快，这些书很快就看完了，看的多了发现很多神话故事框架大都很相似，那个时候自己无聊也会给妹妹编一些神话故事听。</p>
-<p>那个时候学校里还流传着一些《故事会》《鬼故事》《十八层地狱》之类的一些书，书不大也很薄，一本书大约5毛钱的样子，大都是一些员外，书生小姐，妖狐之类的故事。当时也是饥不择食，几乎什么都看，当然这些书看的时候不能被大人看见，所以只能偷偷的看，有时候看的入迷到了晚上就拿手电筒躲在被窝中看书，所以导致现在眼睛近视加散光，离开眼镜整个世界都是模糊的。</p>
-<p>即使这样仍然还是会有没书看的时候，记得以前的日历上每页都会有一些小故事，所以也会找些日历来看，报纸的中缝也会有很多小故事，自己也会拿来看，伯父家里有订阅的报纸，有时候去伯父家的时候，也会拿报纸过来找里面的故事看。</p>
-<p>后来大伯父发现了我喜欢看书，当时他在我们小学当校长，暑假的时候就帮我从学校图书馆借了一些书回来。然后我就看到了一些传纪类的书《小兵张嘎》《铁道游击队》还有一些国外的故事书，名字不太记得了，但是故事都很好，印象比较深的是有一个是把玻璃的知识写到了一个童话故事中。如今伯父因为一次意外已经不在了，想来不胜伤感。</p>
-<h3 id="成长"><a href="#成长" class="headerlink" title="成长"></a>成长</h3><p>上了初中可以看得书籍开始变多了，语文老师也会鼓励大家看一些优秀的名著。这个阶段陆续看了《朝花夕拾》《骆驼祥子》《鲁滨逊漂流记》《格列佛游记》《家春秋》《四世同堂》《老人与海》等一些书，很多书看得并不太懂，当时看这些书大多只是因为他们是名著吧，不知道现在再读会有什么新的感想。</p>
-<p>所幸爸爸妈妈并不怎么限制我读课外书，有时还会主动给我买一些，陆续让爸妈给买了四大名著来读《西游记》《水浒传》《三国演义》《红楼梦》，当时最喜欢的是《三国演义》，读罢写了一篇作文《蜀相》参加作文比赛获得了二等奖。</p>
-<p>初中因为离家比较远，开始住校了，也开始有了自己的零花钱，然后每隔一两个星期我就会去学校的书店买课外书看，有时候和同学约着分别买不同的书，换着看。</p>
-<p>这个时候开始迷上了金庸古龙，飞雪连天射白鹿，笑书神侠倚碧鸳，整个初高中，把金庸的小说看了不止一遍。古龙的小说风格和金庸完全不一样，然后数量也更多，印象比较深的有《楚留香传奇》《小李飞刀》《大地飞鹰》《流星蝴蝶剑》《七种武器》《陆小凤传奇》等，看的很多，忘得也多。千古书生侠客梦，金庸古龙伴随着他们给我们创造的武侠世界，应该也是70、80年代的一个整体时代记忆吧。</p>
-<p>记得班上有一本韩寒的《三重门》，读完之后特别想读韩寒其它的书，由于没有买到，只得作罢。</p>
-<p>初中的宿舍一晚上都不熄灯，我正好在上铺，灯下面，很多书都是趴在床上看完的，还得时刻提防查宿的老师。</p>
-<p>高中以前的暑假是读书最好的时光，我家自小便没有地，下午的时候，搬一把椅子，坐在阴凉地，一读便是一整天。</p>
-<p>这个时候也开始看一些历史传记，从哥哥家找来的《隋唐演义》《杨家将》《齐白石传》《周恩来传》《洪武皇帝朱元璋》等，上下五千年，瀚如烟海。</p>
-<h3 id="高中"><a href="#高中" class="headerlink" title="高中"></a>高中</h3><p>高中到了泰安去上学，自己能掌握的生活费更多了，然后也就有了更多的钱去买书看，从我们学校往西走有一个夜市，有一些卖书的书摊，大部分都是一些盗版的书，合集比较多，一本书很厚，字也特别小，但是对于学生来说价格相对合适，我在那边买过很多，由于大部分是盗版，大部分书到现在也都遗失了。</p>
-<p>初中想读而没有读到的韩寒和郭敬明也是在这里买的，读了《三重门》《零下一度》《通稿2003》《梦里花落知多少》《幻城》《夏至未至》，不一样的作者，不一样的文字，不一样的人生，也讲述不一样的故事。而今郭敬明做了导演，吸金无数，韩寒做了赛车手。匆匆十几年，弹指一挥间。</p>
-<p>这个时候也开始接触了一些外国文学，《巴黎圣母院》《茶花女》《双城记》《堂吉诃德》，最喜欢的当属《基督山伯爵》，快意恩仇，执剑江湖。</p>
-<p>我读书读完一本，如果喜欢就会找这本书作者的其它书来读，一本好书，往往一开始会读的特别快，临到最后反而舍不得读完。读罢，故事里面的人和事，萦萦于脑畔，飘着飘着，慢慢的尘封于一处。</p>
-<p>语文老师上课的时候给我们推荐了余华的《活着》，读完思绪良久，又买了一本余华文集，然后读了《许三观卖血记》《在细雨中呼喊》。然后从这开始喜欢看一些近现代文学。</p>
-<p>张爱玲的《半生缘》《金锁记》《倾城之恋》，看张爱玲的文字很容易被吸引，穿越时空回到那个时候的旧上海去旁观一个又一个的故事，在书中演绎着一个又一个各自不同的人生。</p>
-<p>余秋雨的《千年一叹》，看余秋雨的书感觉就很博学，总是能看到很多自己不知道的东西。</p>
-<p>巴金的《家春秋》，这三本书读起来和《红楼梦》是有一点像的，都是大家族的盛衰，看到最后沧海桑田，世事变迁。其实每个人又何尝不是如此，如今每次回老家，路过破败的老屋，看到已经不属于自己的新屋，再也找不回的儿时伙伴，心里也不胜感叹。</p>
-<p>《红楼梦》应该是我最喜欢的文学类书籍，最早接触是在初中，当时并没有看完，高中的时候看完了一遍，深陷其中，又读了刘心武的《刘心武揭秘红楼梦》周汝昌关于红学的系列书籍，记得还有一本《红楼真梦》，高中语文课老师让同学上去分享四大名著，我便上去分享了《红楼梦》不同于其它同学，讲了一些红学和曹雪芹特殊的写作手法，备受老师和同学的赞赏。毕业后来了北京，找了个周末去了趟北京的大观园，可惜很难和书中的大观园产生共鸣。直到现在，每隔几年都会重读一次红楼梦，每次又都有新的收获，看到不同的版本，总会有收藏的欲望。最近在看白先勇老师的《细说红楼梦》，收货颇多。</p>
-<p>贾平凹的《废都》《高老庄》，贾平凹的文字当时读不太懂，也不是特别吸引，我所以就只看过这两本，硬着头皮看，讲的什么现在也都记不得了。</p>
-<p>《穆斯林的葬礼》是我非常喜欢的另外一本书，不同于其他书籍的叙事风格，带你走进一个穆斯林的世界。</p>
-<p>三毛的作品也是在这个时候接触，《哭泣的骆驼》《沙哈拉的故事》《梦里花落知多少》，到后来大学毕业买了三毛全集，三毛的文字总能带给我很多感动，娓娓道来，没有太多华丽的语言却都很真实。现在仿佛感觉她还是一个人在流浪着。</p>
-<p>高中的作文如果写的不错会被老师印做范文，在级部中讲评，我的几篇作文也被老师选中，可惜原文都没有留下来了。当时的周记也都遗失了。</p>
-<h3 id="大学"><a href="#大学" class="headerlink" title="大学"></a>大学</h3><p>我们大学的图书馆建的非常漂亮，曾获得过鲁班奖，整体圆弧形的设计，从前面看像一本展开的书页，图书馆的前面是人工湖，后面是大片的草坪。我当时很喜欢去图书馆借书看，说实话，文学区好书并不是很多，大部分很旧，而且热门的书籍通常借不到。偶尔遇到一本，我也很少借出去，大都是一读起来便停不下了，从上午看到晚上，一本书也差不多就看完了。</p>
-<p>初读《平凡的世界》对我的人生观和价值观都产生了很大的影响，相逢恨晚。少平的经历或多或少给我了我很多勇气，促使我在那些独自学习的夜晚，虽然看不到未来的方向，依然默默的坚持。</p>
-<p>莫言的书也是在这个时候看的，当时莫言还没有得诺贝尔奖，记得有次去我们学校开讲座。《红高粱》《檀香刑》因为讲的是山东的故事，所以有些时候也倍感亲切。</p>
-<p>高中以前买的书大部分都是盗版的，而且很多都是合集，字特别小，看的时间长很毁眼睛。大学的时候开始用手机看电子书，看的书类型也更广了。</p>
-<p>大学看技术书和专业书相对多一点，其它就是为了消磨时间看了一些《鬼吹灯》等热门的网络文学。</p>
-<h3 id="毕业之后"><a href="#毕业之后" class="headerlink" title="毕业之后"></a>毕业之后</h3><p>初读东野圭吾又是另外一片天地，最早读的《嫌疑犯X的献身》而后看了《白夜行》《解忧杂货铺》都能带来不一样的体验。</p>
-<p>最早知道刘心武是高中读《红楼梦》的时候，当时买了很多研究红楼梦的书，而后看了《钟鼓楼》，由于是在北京，听着书中娓娓道来的后海，随着时间的流逝，感受北京和历史的厚重。</p>
-<p>《读库》最早是在大学实验室接触的，最早的一本读库是刘老师拿到实验室的，而后一发不可收拾，如今大半个书架都摆满了读库出品的各种书。编剧张立宪江湖人称六哥，十年间不忘初心。</p>
-<p>沈复的《浮生六记》一本小书，读过之后感触颇深，现存的总共只有四篇，读的文言文原版，最近出了一本白话版的，读起来却很难有古文的感觉，所以还是推荐读原文。</p>
-<p>齐邦媛的《巨流河》一部家国苦难史，战争，苦难，时代变迁，沧海桑田，斗转星移。</p>
-<p>野夫的书风格又是不一样，有着江湖人的豪迈，还有那个时代无需过多渲染就能打动人的人和事。《乡关何处》《身边的江湖》《1980年代的爱情》每一本书都值得一看。</p>
-<p>柴静的《看见》，媒体人的语言，不带个人情感的给我们讲述她所看见的。很喜欢柴静的人和文字，后来发现读库每年的见面会六哥都会请柴静去做主持，一直想去趟现场，结果到现在也没有去成，而今柴姑娘已经不主持了。</p>
-<p>最近一两年看了一些最近出的书《人类简史》《未来简史》是少有的值得推荐给其它所有人的书。读过《人类简史》感觉不过瘾又找来了《枪炮、疾病与革命》。</p>
-<p>吴晓波的新书《腾讯传》读来会感觉到我们正在经历着最近的历史，或则你也能在创造者历史，十几年的时间，腾讯的发展历程，其中的波折和故事，又有几个人能讲的清全貌。</p>
-<p>而后看了吴军老师三册的《文明之光》，感叹人类生命在整个浩瀚宇宙之渺小，整个人类历史又是如此短暂。近现代文明对文艺复兴有了更深刻的认识，也想更多的去了解关于那段历史。</p>
-<p>最近买了威尔杜兰特的《世界的文明》，一个人50年，不知道何时自己可以读完。</p>
-<h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>大部分是文学书的一些记忆，很多书在历次搬家中都遗失掉了，有时候记起来读书的过程也是一段美好的记忆。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2015/11/13/简化markdown写作中的贴图流程/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="XiYang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="../../images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XiYang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="../../2015/11/13/简化markdown写作中的贴图流程/" itemprop="url">简化markdown写作中的贴图流程</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-11-13T16:02:00+08:00">
-                2015-11-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="../../categories/工具/" itemprop="url" rel="index">
-                    <span itemprop="name">工具</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="../../2015/11/13/简化markdown写作中的贴图流程/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2015/11/13/简化markdown写作中的贴图流程/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>一直很喜欢用markdown写文章，但是在markdown中贴图很麻烦，记得最早的时候我会将图片保存到本地，然后在markdown中使用相对路径显示。后来可以将图片放到图床上，然后在文档中使用链接。</p>
-<p>最早一直使用ST写markdown的文档<br>然后用了一段时间为知笔记<br>再后来发现了这篇文章 <a href="http://tianweishu.com/2015/10/16/simplify-the-img-upload-in-markdown/" target="_blank" rel="external">http://tianweishu.com/2015/10/16/simplify-the-img-upload-in-markdown/</a></p>
-<p>结合自己的实践，记录一下实现方案<br>1、申请七牛的账号，这个就不多说了，这里给七牛做一个广告，标准版10G空间，API也简单好用,<a href="https://www.qiniu.com/" target="_blank" rel="external">传送门</a><br>2、创建 Alfred 工作流，实现流程的自动化</p>
-<p>先放一个完成后的效果图：<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1447403343420.png?imageMogr2/thumbnail/!50p/quality/100!" alt=""></p>
-<p>简单的步骤就是：</p>
-<ol>
-<li>创建一个 trigger，快捷键自己设置</li>
-<li>创建一个 run script，选择语言为 python</li>
-<li>创建一个 output 可以设置一个系统提醒，在完成之后右上角提示。</li>
-</ol>
-<p>run script 的脚本如下</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div></pre></td><td class="code"><pre><div class="line">query = <span class="string">"&#123;query&#125;"</span></div><div class="line"><span class="comment"># -*- coding: utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> os</div><div class="line"><span class="keyword">import</span> time</div><div class="line"><span class="keyword">from</span> qiniu <span class="keyword">import</span> Auth, put_file</div><div class="line"><span class="keyword">from</span> AppKit <span class="keyword">import</span> NSPasteboard, NSPasteboardTypePNG, NSPasteboardTypeTIFF</div><div class="line"></div><div class="line"></div><div class="line">access_key = <span class="string">'你自己的 AK'</span> <span class="comment"># AK</span></div><div class="line">secret_key = <span class="string">'你自己的 SK-3'</span> <span class="comment"># SK</span></div><div class="line"></div><div class="line">bucket_name = <span class="string">'lepfinder-wiki'</span> <span class="comment"># 七牛空间名</span></div><div class="line"></div><div class="line">q = Auth(access_key, secret_key)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">upload_qiniu</span><span class="params">(path)</span>:</span></div><div class="line">    <span class="string">''' upload file to qiniu'''</span></div><div class="line">    dirname, filename = os.path.split(path)</div><div class="line">    key = <span class="string">'markdown/%s'</span> % filename <span class="comment"># upload to qiniu's markdown dir</span></div><div class="line"></div><div class="line">    token = q.upload_token(bucket_name, key)</div><div class="line">    ret, info = put_file(token, key, path, check_crc=<span class="keyword">True</span>)</div><div class="line">    <span class="keyword">return</span> ret != <span class="keyword">None</span> <span class="keyword">and</span> ret[<span class="string">'key'</span>] == key</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_paste_img_file</span><span class="params">()</span>:</span></div><div class="line">    pb = NSPasteboard.generalPasteboard()</div><div class="line">    data_type = pb.types()</div><div class="line">    <span class="comment"># if img file</span></div><div class="line">    <span class="keyword">print</span> data_type</div><div class="line">    now = int(time.time() * <span class="number">1000</span>) <span class="comment"># used for filename</span></div><div class="line">    <span class="keyword">if</span> NSPasteboardTypePNG <span class="keyword">in</span> data_type:</div><div class="line">        <span class="comment"># png</span></div><div class="line">        data = pb.dataForType_(NSPasteboardTypePNG)</div><div class="line">        filename = <span class="string">'%s.png'</span> % now</div><div class="line">        filepath = <span class="string">'/tmp/%s'</span> % filename</div><div class="line">        ret = data.writeToFile_atomically_(filepath, <span class="keyword">False</span>)</div><div class="line">        <span class="keyword">if</span> ret:</div><div class="line">            <span class="keyword">return</span> filepath</div><div class="line">    <span class="keyword">elif</span> NSPasteboardTypeTIFF <span class="keyword">in</span> data_type:</div><div class="line">        <span class="comment"># tiff</span></div><div class="line">        data = pb.dataForType_(NSPasteboardTypeTIFF)</div><div class="line">        filename = <span class="string">'%s.tiff'</span> % now</div><div class="line">        filepath = <span class="string">'/tmp/%s'</span> % filename</div><div class="line">        ret = data.writeToFile_atomically_(filepath, <span class="keyword">False</span>)</div><div class="line">        <span class="keyword">if</span> ret:</div><div class="line">            <span class="keyword">return</span> filepath</div><div class="line">    <span class="keyword">elif</span> NSPasteboardTypeString <span class="keyword">in</span> data_type:</div><div class="line">        <span class="comment"># string todo, recognise url of png &amp; jpg</span></div><div class="line">        <span class="keyword">pass</span></div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">	url = <span class="string">"http://7xo9p3.com1.z0.glb.clouddn.com/markdown"</span></div><div class="line"></div><div class="line">	img_file = get_paste_img_file()</div><div class="line">	<span class="keyword">if</span> img_file:</div><div class="line">	    <span class="comment"># has file</span></div><div class="line">	    ret = upload_qiniu(img_file)</div><div class="line">	    <span class="keyword">if</span> ret:</div><div class="line">	        <span class="comment"># upload success</span></div><div class="line">	        name = os.path.split(img_file)[<span class="number">1</span>]</div><div class="line">	        markdown_url = <span class="string">"![](%s/%s?imageMogr2/thumbnail/!50p/quality/100!)"</span> % (url, name)</div><div class="line">	        <span class="comment"># make it to clipboard</span></div><div class="line">	        os.system(<span class="string">"echo '%s' | pbcopy"</span> % markdown_url)</div><div class="line">	        os.system(<span class="string">'osascript -e \'tell application "System Events" to keystroke "v" using command down\''</span>)</div><div class="line">	    <span class="keyword">else</span>: </div><div class="line">	    	<span class="keyword">print</span> <span class="string">"upload_failed"</span></div><div class="line">	<span class="keyword">else</span>:</div><div class="line">	    <span class="keyword">print</span> <span class="string">"get img file failed"</span></div></pre></td></tr></table></figure>
-<h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><ol>
-<li>command + control + shift + 4 完成截图</li>
-<li>command + control + shift + V 完成图片上传到七牛</li>
-<li>command + V 粘贴外链地址到指定位置（如果光标此时在编辑器中，这一步其实是自动的）</li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2013/03/20/snow/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="XiYang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="../../images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XiYang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="../../2013/03/20/snow/" itemprop="url">意料之外的大雪</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2013-03-20T00:00:00+08:00">
-                2013-03-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="../../categories/随笔/" itemprop="url" rel="index">
-                    <span itemprop="name">随笔</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="../../2013/03/20/snow/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2013/03/20/snow/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>进入三月，北京的天气本来已经开始转暖，屋里的冷气也在这几天停止了供暖，有几天气温已经接近二十度，没想到从昨天中午开始，天却起了大雪，说是鹅毛大雪倒也不为过，下午下班的时候还在下雨加雪，我因为没有带伞，所以想等着小一点再走，一直到晚上8点反而越下越大。找了把同事的旧伞，凑合还可以用，就出门准备回去了，路上行人仍然不少，都是行色匆匆，估计都是下班往家里赶的人。我平时都是走路回家，大约30多分钟，今天由于天气不怎么好所以就坐公交回去，等车的时候一个女孩也没有带伞，一直在打电话。</p>
-<p>今天早上起来推开门，才发现路上竟然积起了20厘米左右的雪，雪很白很软，树上挂满了晶光闪闪的雪花，一片银装素裹的世界。很多人在路边拍照，倒有了一种寒冬初雪的气氛。</p>
-<p>已经有好多年不曾看到很厚又很白的雪，特别是最近很多年在外求学，大都是在城市里面，下雪的时候要么雪量很少，要么下了也就化掉了，要么就是根本没有时间和心情去外面赏雪玩雪。</p>
-<p>上大一的时候，南方来的同学大都很期待冬天快点到来，因为可以看到雪，有些人可能从小到大都没有见过雪的世界是什么样子。不过那一年虽然雪也下了，但是赶上了多年不遇的大雪灾，南方受灾更为严重，过年回家家里下的雪一点也不比北边要少。记得我坐长途客车回去路上遇上好几个事故。</p>
-<p>走在去公司的路上，还不是上班高峰，洁白的雪，踩上去沙沙作响，突然间就希望把自己想象成10几年前小学的时候下雪天去学校的场景，那时候天一下雪学校就会广播，让离家近的同学回家拿扫雪的工具，整个学校也开始集体大扫除，本是少年爱玩的年纪，扫雪的时候大家便免不了打打闹闹，然后校园里就会多上几个大雪堆和奇形怪状的雪人。记忆中那个时候天总是很蓝，雪也是洁白洁白。</p>
-<p>不像城市，农村里面大片的农田，冬天下雪后很难化掉，一般会保留很长一段时间，极目望去，远山和一望无际的原野，到处都是洁白的雪，置身与其中，别有一番意境。</p>
-<p>最近北京雾霾的天气越来越多，走在街上呼吸的空气都有一种沉重感，每次雨雪或大风过后空气会恢复过来一点，再隔一两日则又会变成昏昏暗暗的天气，真的希望有时候人可以慢一点下来，看看路边的风景，品味下静静的生活。</p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385318781.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385415133.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385448829.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385474936.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385492871.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505385506795.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2013/03/12/childhood/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="XiYang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="../../images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XiYang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="../../2013/03/12/childhood/" itemprop="url">追忆似水流年</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2013-03-12T00:00:00+08:00">
-                2013-03-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="../../categories/随笔/" itemprop="url" rel="index">
-                    <span itemprop="name">随笔</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="../../2013/03/12/childhood/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2013/03/12/childhood/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>现在回想起来，儿时的记忆真的是最值得珍藏的一段时光，很多东西也都已经模糊不全，留下的只有一些片段，几点画面，但即使如此，淡忘的或许永远想不起，而留下的也将一直记着无法抹去。</p>
-</blockquote>
-<h2 id="西池塘"><a href="#西池塘" class="headerlink" title="西池塘"></a>西池塘</h2><p>小时候居住的村子叫“李所村”，地处丘陵，两面环山，村子的西边有一个很大的池塘，有一口很大的泉眼，据说是从北面山上过来的水源，夏天汛期水量尤足。向南则一条小河首先向东，途径学校，直贯南北，流经村中间的时候又有几眼泉，清而洌，水质自然也是极好，河边一口老井，方一平有余，石砌而成，深不足十米，经年不曾干涸，村中人多半饮此水为生，或挑或担，或用水车，每逢朝晚，络绎不绝。 河边多树，夏日凉风习习，绿影斑驳，多有姑婆河边洗衣，家常里短，喧闹声不绝于耳。几多顽童，嬉与水间，捕鱼戏水，无不尽兴而归，全身尽湿。</p>
-<p>村里人管东西朝向的这一段小河叫做“下沟”，沟的北面则称为“沟北沿（崖）”，我的家便在村子的最北边，本是多年老屋，大部分的石头都不是整块的，听奶奶说是当时爷爷一点一点捡碎石垒起来的。后来大约上三年级的时候就在村子的东边盖了后来的新房子，之前的老屋也拆掉了。</p>
-<h2 id="苹果园"><a href="#苹果园" class="headerlink" title="苹果园"></a>苹果园</h2><p>村子的北边是一条水渠，顺着水渠的方向则是大片的苹果园，姑姑家跟我们在一个村里，那个时候姑姑家里承包了其中的一片苹果园，有的时候我就会和儿时伙伴一起去那个地方玩耍，现在想来，倒留下很多记忆。每年的四五月份是苹果开花的季节，很淡雅的白色，微带一些红色，置身与其中，微风阵阵，一股清香，自有一番乐趣。</p>
-<p>苹果大约在10月份左右成熟，苹果快成熟的时候就需要有人看着，防止有人偷，在苹果园里有一间屋子，平时的时候表哥会在那边看苹果园，有些时候我也会过去，游荡与满是果子的果园，又红又大的苹果触手可及。很难想象一棵苹果树怎么会结那么多果子，很多枝条被压的弯弯的。快成熟的时候，一个个红红的苹果，甚是惹人喜欢。</p>
-<p>收苹果的时候，尤其热闹，很多人会来帮忙。诺大的苹果园仿佛进了王母娘娘的蟠桃园，红红的果子挂满枝头，在太阳下面闪着金灿灿的光。苹果按照个头大小被分别装箱，装车，运向不知道哪里的远方。</p>
-<h2 id="清明春游"><a href="#清明春游" class="headerlink" title="清明春游"></a>清明春游</h2><p>春天，万物复苏，新芽初生。小学的时候，每逢清明节，学校每年都会组织去烈士扫墓，大约提前一个多月就要准备，学校的仪仗队也会开始训练，敲鼓的、打镲的、吹号的还有举旗的，好生威武。如果能被选入仪仗队，都会被同学们羡慕。除了仪仗队的同学，其他人就要忙着训练赞歌。</p>
-<p>等到出发的那天，大家排好队，两人一排，便浩浩荡荡的出发了，我们那个时候上学的人多，队伍都能排出两三里路。会时不时的看到有些“传令兵”小跑着传递消息，颇有些战时行军的味道。</p>
-<p>因为是春游，午饭是要在外边解决的，吃饭的时候大家拿出各自准备的食品，分而食之，多有一番乐趣在其中。</p>
-<h2 id="野味"><a href="#野味" class="headerlink" title="野味"></a>野味</h2><p>在农村，地里的很多东西都是可以吃的，比如野菜、蚕蛹、蚂蚱。春天，万物复苏，路边的榆树长出榆钱，路边开出野花，长出嫩绿的野菜苗，荠菜、蓬蓬菜采一些，即使用最原始的做法，也相当的可口，最近再会老家问起家里的老人还吃么，都说大部分都有农药不敢吃了，而且村里也少了小时候的那份闲适。父辈们都在外打工，祖辈们大多年龄都大了。</p>
-<h2 id="收麦子"><a href="#收麦子" class="headerlink" title="收麦子"></a>收麦子</h2><p>在我上小学的时候我们还有“麦假”，大约一个多星期左右，因为到了麦子成熟的季节，学校的老师家里也大都有地，需要回家收麦子，然后便会给我们放假。</p>
-<p>这个时候山上的桑葚正好成熟，和同学结伴去山上采一些，算是很好的果子了。</p>
-<h2 id="夏日乘凉"><a href="#夏日乘凉" class="headerlink" title="夏日乘凉"></a>夏日乘凉</h2><p>小的时候，村子里的电视还不是特别多，每到夏天傍晚的时候，日头渐落，大家就会走出家门来到外边乘凉。有的搬一个凳子，有的拿一床凉席，手里拎一个大蒲扇，夏天由于是刚收完麦子，村里的场还没有撤掉，所以会有很多开阔的地方，地也很平整，特别适合乘凉。</p>
-<p>邻里拉拉家常，儿童追赶嬉闹，天上的星星很多，记忆中的月亮也是又大又圆。</p>
-<h2 id="打牌"><a href="#打牌" class="headerlink" title="打牌"></a>打牌</h2><p>山东人是比较喜欢打牌的，小到五六岁小孩，老到五旬老人都能够在夏日午后围坐一起，打牌聊天，可能农村的娱乐活动本来就少。我说的牌就是指纸牌，玩的花样也很多，比如入门级的“拖拉机”（“也叫排火车”），再有最常玩的”升级“，以及”保皇“”够级“，每一种玩法除了需要的人数不同，规则也是不同，所需要的牌数也不同。</p>
-<p>小学的时候一到放寒暑假我三姑家的表哥就会来我家这边住，那时候似乎大家都很有时间，哥哥们也都在家，很容易就凑够五六个人，一起围坐一起打牌也成为那时候的一件乐事。现在除了过年大家还都会回家，再围坐一起的机会越来越少，每个人也都有了自己的家庭，也都有了孩子。</p>
-<h2 id="游戏机"><a href="#游戏机" class="headerlink" title="游戏机"></a>游戏机</h2><p>最早见过的游戏机还是表哥用弹珠“换”来的，只能玩俄罗斯方块，躲障碍之类的游戏，但是当时也玩的不亦乐乎，再后来有一天大伯父家的堂哥拿来了一个能插卡玩游戏的学习机，才第一次玩到了双截龙之类的游戏，之后便久久不能忘，过了段时间便让爸妈给买了一个那时叫“小霸王”的学习机，也算是我们80年代孩子的一个时代记忆吧。那时候在学校除了交流游戏心得，便是打听谁有新的游戏卡然后互相交换玩，“魂斗罗”“超级玛丽”“雪人兄弟”“冒险岛”“影子传说”“坦克大战”，每一个名字现在听起来还是那么有亲切。</p>
-<p>那时候玩游戏经常是一玩一天，只能两个人一起玩，有时候人多的时候就会交替着玩，谁输了谁就下。差不多过关的游戏都会想办法通关，还记得和表哥一起把魂斗罗通关，五爷爷喜欢玩坦克，那时候我们爷俩可以玩一整天，不知爷爷是否还记得。</p>
-<h2 id="小学"><a href="#小学" class="headerlink" title="小学"></a>小学</h2><p>在我四年级之前还仍然在村里的小学上学，叫“李所小学”，原本是德国人在1910年左右建的教堂，在村子的最中心的位置，大小有几十间房子，有很大的院子，课件的时候异常热闹。</p>
-<p>后来我上四年级的时候再村子的东边建了“东平成才希望小学”，有两座2层和一座3层的教学楼。这个学校是一个华侨赞助创建的，记得刚成立的时候还给我们学校的每个同学发了棉衣，文具。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="../../index.html"><i class="fa fa-angle-left"></i></a><a class="page-number" href="../../index.html">1</a><span class="page-number current">2</span>
+    <a class="extend prev" rel="prev" href="../../index.html"><i class="fa fa-angle-left"></i></a><a class="page-number" href="../../index.html">1</a><span class="page-number current">2</span><a class="page-number" href="../3/">3</a><a class="extend next" rel="next" href="../3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1529,7 +2152,7 @@
             
               <a href="../../archives/">
             
-                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1540,7 +2163,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="../../categories/index.html">
-                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1551,7 +2174,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="../../tags/index.html">
-                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-count">19</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

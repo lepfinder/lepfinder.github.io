@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="../../../../lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="../../../../lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="../../../../css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="spring,spring 源码," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="spring 框架概述spring的 由来 和 使命 spring 是于2003年兴起的一个轻量级Java开发框架 由Rod Johnson在其著作 Expert One-On-One JeEE Development adn Design中阐述的部分理念和原型衍生而来 它最初的目的主要是为了简化Java EE的企业级应用开发  使命： 简化java开发 采取了以下4种关键策略  基于 POJO">
+<meta name="keywords" content="spring,spring 源码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入解析 spring">
+<meta property="og:url" content="http://yoursite.com/2017/09/25/read-深入解析-spring/index.html">
+<meta property="og:site_name" content="XiYang&#39;s Blog">
+<meta property="og:description" content="spring 框架概述spring的 由来 和 使命 spring 是于2003年兴起的一个轻量级Java开发框架 由Rod Johnson在其著作 Expert One-On-One JeEE Development adn Design中阐述的部分理念和原型衍生而来 它最初的目的主要是为了简化Java EE的企业级应用开发  使命： 简化java开发 采取了以下4种关键策略  基于 POJO">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1450337691998.png?imageMogr2/thumbnail/!50p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506312564289.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506325137786.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506325639900.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506329773265.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506331153783.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506327604852.png?imageMogr2/thumbnail/!50p/quality/100!">
+<meta property="og:updated_time" content="2017-09-25T10:46:18.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入解析 spring">
+<meta name="twitter:description" content="spring 框架概述spring的 由来 和 使命 spring 是于2003年兴起的一个轻量级Java开发框架 由Rod Johnson在其著作 Expert One-On-One JeEE Development adn Design中阐述的部分理念和原型衍生而来 它最初的目的主要是为了简化Java EE的企业级应用开发  使命： 简化java开发 采取了以下4种关键策略  基于 POJO">
+<meta name="twitter:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1450337691998.png?imageMogr2/thumbnail/!50p/quality/100!">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/09/25/read-深入解析-spring/"/>
+
+
+
+
+
+  <title>深入解析 spring | XiYang's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?bffcaa4817f1c175af0805eb96d7e7ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">XiYang's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">让一切慢下来，体验周边的美好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-project">
+          <a href="/project/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-life-ring"></i> <br />
+            
+            个人项目
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深入解析 spring</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-25T00:00:00+08:00">
+                2017-09-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../../../categories/读书笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">读书笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/09/25/read-深入解析-spring/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="spring-框架概述"><a href="#spring-框架概述" class="headerlink" title="spring 框架概述"></a>spring 框架概述</h1><h2 id="spring的-由来-和-使命"><a href="#spring的-由来-和-使命" class="headerlink" title="spring的 由来 和 使命"></a>spring的 由来 和 使命</h2><ul>
+<li>spring 是于2003年兴起的一个轻量级Java开发框架</li>
+<li>由Rod Johnson在其著作 Expert One-On-One JeEE Development adn Design中阐述的部分理念和原型衍生而来</li>
+<li>它最初的目的主要是为了简化Java EE的企业级应用开发</li>
+</ul>
+<p><strong>使命：</strong> 简化java开发</p>
+<p>采取了以下4种关键策略</p>
+<ul>
+<li>基于 POJO 的轻量级和最小侵入性编程</li>
+<li>通过依赖注入和面向接口实现松耦合</li>
+<li>基于切面和惯例进行声明式编程</li>
+<li>通过切面和模板减少样板式代码</li>
+</ul>
+<h2 id="spring-框架概述-1"><a href="#spring-框架概述-1" class="headerlink" title="spring 框架概述"></a>spring 框架概述</h2><p>Spring 包含了20多个模块，依照其所属功能可以划分为如下几个不同的功能模块。<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1450337691998.png?imageMogr2/thumbnail/!50p/quality/100!" alt=""></p>
+<p>另外一种展示方式</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506312564289.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>假如我们把 spring 的框架看成一颗树，最底层的 spring-core 和 容器工具类 构成了整个树的主干，所有上层的功能都依赖于这两个特性。</p>
+<blockquote>
+<p>The Core Container consists of the spring-core, spring-beans, spring-context, spring-context-support, and spring-expression (Spring Expression Language) modules.<br>The spring-core and spring-beans modules provide the fundamental parts of the framework, including the IoC and Dependency Injection features. </p>
+</blockquote>
+<p>容器是Spring框架最核心的部分，它负责Spring应用中的Bean的创建、配置和管理。spring-core 和 spring-beans 模块提供了框架最基础的部分，包括IOC和DI特性支持。</p>
+<h1 id="Spring的IoC-容器"><a href="#Spring的IoC-容器" class="headerlink" title="Spring的IoC 容器"></a>Spring的IoC 容器</h1><h2 id="什么是IoC"><a href="#什么是IoC" class="headerlink" title="什么是IoC"></a>什么是IoC</h2><p>IoC 的全称为：Inversion of Control，中文通常翻译为 ”控制反转“，还有一个别名叫做依赖注入（Dependency Injection）。</p>
+<p>我们考虑一个电商流程下单的过程，对于创建订单的服务来讲，下单的过程描述的是这么一件事情：</p>
+<blockquote>
+<p>记录谁在什么时候购买了哪些商品，使用了什么优惠，配送到何处。</p>
+</blockquote>
+<p>前端传递给后台的参数通常只有：</p>
+<ul>
+<li>会员ID</li>
+<li>商品ID和数量</li>
+<li>优惠券</li>
+<li>配送地址ID</li>
+</ul>
+<p>后端的服务接到请求后需要做如下的几件事情：</p>
+<ol>
+<li>根据会员ID获取到会员详细的信息，比如会员姓名，会员手机号等</li>
+<li>根据商品ID获取到商品的具体信息，价格、合同、供方</li>
+<li>调用计价服务计算价格</li>
+<li>记录用户的配送信息</li>
+<li>将订单对象保存到数据库</li>
+</ol>
+<p>我们可以看到一个下单服务依赖很多相关的服务，假如订单服务我们创建一个类叫 OrderService ，定义一个方法叫 makeOrder()。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderServiceImpl</span> <span class="keyword">implements</span> <span class="title">IOrderService</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> PassportService passportService;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> ProductService productService;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">makeOrder</span><span class="params">()</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="comment">//1. 获取会员信息</span></div><div class="line">        Member member = passportService.getMember();</div><div class="line"></div><div class="line">        <span class="comment">//2. 获取商品信息</span></div><div class="line">        Product product = productService.getProduct();</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上述的代码中 <code>OrderService</code> 依赖 <code>passportService</code> 和 <code>productService</code>，如何完成这两个服务的初始化呢？ 假如不使用spring，可能我们需要写类似下面的代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">OrderServiceImpl</span><span class="params">(PassportService passportService, ProductService productService)</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.passportService = passportService;</div><div class="line">    <span class="keyword">this</span>.productService = productService;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">    <span class="comment">// 创建 PassportService 和 ProductService，并设置到orderService对象</span></div><div class="line">    PassportService passportService = <span class="keyword">new</span> PassportService();</div><div class="line">    ProductService productService = <span class="keyword">new</span> ProductService();</div><div class="line"></div><div class="line">    OrderServiceImpl orderService = <span class="keyword">new</span> OrderServiceImpl(passportService,productService);</div><div class="line"></div><div class="line">    orderService.makeOrder();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>或使用 setter 的方法构建：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPassportService</span><span class="params">(PassportService passportService)</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.passportService = passportService;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setProductService</span><span class="params">(ProductService productService)</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.productService = productService;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">    OrderServiceImpl orderService = <span class="keyword">new</span> OrderServiceImpl();</div><div class="line">    </div><div class="line">    <span class="comment">// 创建 PassportService 和 ProductService，并设置到orderService对象</span></div><div class="line">    PassportService passportService = <span class="keyword">new</span> PassportService();</div><div class="line">    ProductService productService = <span class="keyword">new</span> ProductService();</div><div class="line">    </div><div class="line">    orderService.setPassportService(passportService);</div><div class="line">    orderService.setProductService(productService);</div><div class="line"></div><div class="line">    orderService.makeOrder();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>无论使用哪种方式，在实际的编码中都会非常的麻烦，一个类有的时候会依赖可能很多个其它类，如果全部是由程序员去控制类的初始化和依赖关系，将会是一件异常痛苦的事情。spring 通过IOC和DI，通过java本身的一些特性，很好的解决了这个问题。程序员无需再关心类的依赖，只需要在用到某个服务的时候声明一下即可，spring框架会帮助你注入所需的依赖。</p>
+<p>spring 是如何知道依赖并完成依赖的注入呢，我们结合源码一点一点的看。</p>
+<h2 id="IoC-容器之BeanFactory"><a href="#IoC-容器之BeanFactory" class="headerlink" title="IoC 容器之BeanFactory"></a>IoC 容器之BeanFactory</h2><p>首先我们要来探究容器的概念，所谓的容器是可以盛放东西的一类，在程序的世界中，我们经常会看到关于容器的存在，比如java容器类，通常也称为集合类。spring 中的容器类和其它的容器类有什么不同呢？</p>
+<p>spring 提供了一个IoC容器，针对于其存储的对象可以管理其依赖关系，负责其所管理的bean的生命周期，从对象的创建到销毁。Spring 容器使用依赖注入（DI）来管理组成一个应用程序的组件，这些对象被称为 Spring Beans。</p>
+<p>bean 是Spring中最核心的东西，因为Spring就像一个大水桶，而bean就像是容器里面的水，水桶脱离了水便也没有什么用处了。</p>
+<p>在spring中，BeanFactory便是一个容器，里面的Bean便是其管理的对象。我们通过一个例子看看 spring BeanFactory 容器的用法。</p>
+<h2 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h2><p>首先定义一个bean如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.xiyang.study.spring4.bean;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBeanTest</span> </span>&#123;</div><div class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">(String name)</span></span>&#123;</div><div class="line">            <span class="keyword">return</span> <span class="string">"hello "</span>+name+<span class="string">"!"</span>;</div><div class="line">        &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>然后在配置文件中配置这个bean：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></div><div class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></div><div class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"</span></span></div><div class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans </span></span></div><div class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd</span></span></div><div class="line"><span class="tag"><span class="string">    "</span> &gt;</span></div><div class="line">    </div><div class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"myBeanTest"</span> <span class="attr">class</span>=<span class="string">"com.xiyang.study.spring4.bean.MyBeanTest"</span>&gt;</span><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>使用如下的测试代码测试它：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.xiyang.study.spring4;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.xiyang.study.spring4.bean.MyBeanTest;</div><div class="line"><span class="keyword">import</span> org.junit.Test;</div><div class="line"><span class="keyword">import</span> org.springframework.beans.factory.BeanFactory;</div><div class="line"><span class="keyword">import</span> org.springframework.beans.factory.xml.XmlBeanFactory;</div><div class="line"><span class="keyword">import</span> org.springframework.core.io.ClassPathResource;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * Created by xiexiyang on 2017/9/25.</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanFactoryTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>&#123;</div><div class="line">        BeanFactory beanFactory = <span class="keyword">new</span> XmlBeanFactory(<span class="keyword">new</span> ClassPathResource(<span class="string">"beanTest.xml"</span>));</div><div class="line">        MyBeanTest myBeanTest = (MyBeanTest) beanFactory.getBean(<span class="string">"myBeanTest"</span>);</div><div class="line">        String retVal  = myBeanTest.sayHello(<span class="string">"xiyang"</span>);</div><div class="line">        System.out.println(retVal);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>运行结果如下：<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506325137786.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""><br>可以看到，我们在测试用例中正确的拿到了 <code>MyBeanTest</code> 的实例，并执行了其中的 sayHello 方法。</p>
+<blockquote>
+<p>说明：直接使用 BeanFactory 作为容器在日常的开发中并不多见，这里只是为了演示spring容器的用法，通常我们使用的是 <code>ApplicationContext</code> ，我们之后对他再做更详细的介绍。我们先来详细探究上上面的例子中到底发生了什么，spring 在其中又为我们做了什么？</p>
+</blockquote>
+<p>我们先自己猜想一下，假如让我们自己设计应该如何做呢？</p>
+<p>作为一个容器，首先我需要知道你想让我管理的类，你可以在xml中定义它并告诉我。我解析xml拿到你定义的bean对象，并将它实例化。将它放到我的容器中，如果要使用这个实例，可以通过我提供的getBean获取对应的bean，并调用这个bean的具体的某个方法。</p>
+<h2 id="源码剖析"><a href="#源码剖析" class="headerlink" title="源码剖析"></a>源码剖析</h2><p>我们上面的猜想对不对呢？让我们从源码出发来一步一步的探究其本质，看如下测试用例的第一行代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">BeanFactory beanFactory = <span class="keyword">new</span> XmlBeanFactory(<span class="keyword">new</span> ClassPathResource(<span class="string">"beanTest.xml"</span>));</div></pre></td></tr></table></figure></p>
+<h3 id="XmlBeanFactory"><a href="#XmlBeanFactory" class="headerlink" title="XmlBeanFactory"></a>XmlBeanFactory</h3><p>首先我们初始化了一个 <code>XmlBeanFactory</code> ，这个对象是什么，能做什么呢？如下是 <code>XmlBeanFactory</code> 的类图：<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506325639900.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>XmlBeanFactory 源码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">XmlBeanFactory</span> <span class="keyword">extends</span> <span class="title">DefaultListableBeanFactory</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> <span class="keyword">final</span> XmlBeanDefinitionReader reader = <span class="keyword">new</span> XmlBeanDefinitionReader(<span class="keyword">this</span>);</div><div class="line"></div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line"><span class="comment">	 * Create a new XmlBeanFactory with the given resource,</span></div><div class="line"><span class="comment">	 * which must be parsable using DOM.</span></div><div class="line"><span class="comment">	 * <span class="doctag">@param</span> resource XML resource to load bean definitions from</span></div><div class="line"><span class="comment">	 * <span class="doctag">@throws</span> BeansException in case of loading or parsing errors</span></div><div class="line"><span class="comment">	 */</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">XmlBeanFactory</span><span class="params">(Resource resource)</span> <span class="keyword">throws</span> BeansException </span>&#123;</div><div class="line">		<span class="keyword">this</span>(resource, <span class="keyword">null</span>);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line"><span class="comment">	 * Create a new XmlBeanFactory with the given input stream,</span></div><div class="line"><span class="comment">	 * which must be parsable using DOM.</span></div><div class="line"><span class="comment">	 * <span class="doctag">@param</span> resource XML resource to load bean definitions from</span></div><div class="line"><span class="comment">	 * <span class="doctag">@param</span> parentBeanFactory parent bean factory</span></div><div class="line"><span class="comment">	 * <span class="doctag">@throws</span> BeansException in case of loading or parsing errors</span></div><div class="line"><span class="comment">	 */</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">XmlBeanFactory</span><span class="params">(Resource resource, BeanFactory parentBeanFactory)</span> <span class="keyword">throws</span> BeansException </span>&#123;</div><div class="line">		<span class="keyword">super</span>(parentBeanFactory);</div><div class="line">		<span class="keyword">this</span>.reader.loadBeanDefinitions(resource);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>XmlBeanFactory</code> 自身的源码非常简单，只有两个构造函数和一个 <code>XmlBeanDefinitionReader</code> 的变量，由于<code>XmlBeanFactory</code> 继承自 <code>DefaultListableBeanFactory</code>。所以欲探究其本质，首先需要搞明白 <code>DefaultListableBeanFactory</code> 和 <code>XmlBeanDefinitionReader</code>这两个类。</p>
+<h3 id="XmlBeanDefinitionReader"><a href="#XmlBeanDefinitionReader" class="headerlink" title="XmlBeanDefinitionReader"></a>XmlBeanDefinitionReader</h3><p>从名字上就可以看出 <code>XmlBeanDefinitionReader</code> 它是用来读取bean配置文件的一个类。我们从时序图上看一下spring解析配置文件的全过程：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506329773265.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>上面的几个步骤如下：<br>1、在XMLBeanFactory的构造函数中调用XmlBeanDefinitionReader的loadBeanDefinitions方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">XmlBeanFactory</span><span class="params">(Resource resource, BeanFactory parentBeanFactory)</span> <span class="keyword">throws</span> BeansException </span>&#123;</div><div class="line">	<span class="keyword">super</span>(parentBeanFactory);</div><div class="line">	<span class="keyword">this</span>.reader.loadBeanDefinitions(resource);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>2、loadBeanDefinitions 读取文件并调用 doLoadBeanDefinitions<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">loadBeanDefinitions</span><span class="params">(EncodedResource encodedResource)</span> <span class="keyword">throws</span> BeanDefinitionStoreException </span>&#123;</div><div class="line">	....</div><div class="line">	<span class="keyword">try</span> &#123;</div><div class="line">		InputStream inputStream = encodedResource.getResource().getInputStream();</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			InputSource inputSource = <span class="keyword">new</span> InputSource(inputStream);</div><div class="line">			</div><div class="line">			<span class="keyword">return</span> doLoadBeanDefinitions(inputSource, encodedResource.getResource());</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">	&#125;</div><div class="line">	....</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>3、在doLoadBeanDefinitions中解析为Document，并调用registerBeanDefinitions方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">int</span> <span class="title">doLoadBeanDefinitions</span><span class="params">(InputSource inputSource, Resource resource)</span></span></div><div class="line"><span class="function">			<span class="keyword">throws</span> BeanDefinitionStoreException </span>&#123;</div><div class="line">	<span class="keyword">try</span> &#123;</div><div class="line">		Document doc = doLoadDocument(inputSource, resource);</div><div class="line">		<span class="keyword">return</span> registerBeanDefinitions(doc, resource);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>4、registerBeanDefinitions 负责初始化 BeanDefinitionDocumentReader，调用其registerBeanDefinitions方法完成注册。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">registerBeanDefinitions</span><span class="params">(Document doc, Resource resource)</span> <span class="keyword">throws</span> BeanDefinitionStoreException </span>&#123;</div><div class="line">	BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();</div><div class="line">	documentReader.setEnvironment(<span class="keyword">this</span>.getEnvironment());</div><div class="line">	<span class="keyword">int</span> countBefore = getRegistry().getBeanDefinitionCount();</div><div class="line">	documentReader.registerBeanDefinitions(doc, createReaderContext(resource));</div><div class="line">	<span class="keyword">return</span> getRegistry().getBeanDefinitionCount() - countBefore;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>5、解析出root 节点调用doRegisterBeanDefinitions<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerBeanDefinitions</span><span class="params">(Document doc, XmlReaderContext readerContext)</span> </span>&#123;</div><div class="line">	<span class="keyword">this</span>.readerContext = readerContext;</div><div class="line">	logger.debug(<span class="string">"Loading bean definitions"</span>);</div><div class="line">	Element root = doc.getDocumentElement();</div><div class="line">	doRegisterBeanDefinitions(root);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>6、解析root节点，调用parseBeanDefinitions，解析bean<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doRegisterBeanDefinitions</span><span class="params">(Element root)</span> </span>&#123;</div><div class="line">	BeanDefinitionParserDelegate parent = <span class="keyword">this</span>.delegate;</div><div class="line">	<span class="keyword">this</span>.delegate = createDelegate(<span class="keyword">this</span>.readerContext, root, parent);</div><div class="line"></div><div class="line">	preProcessXml(root);</div><div class="line">	parseBeanDefinitions(root, <span class="keyword">this</span>.delegate);</div><div class="line">	postProcessXml(root);</div><div class="line"></div><div class="line">	<span class="keyword">this</span>.delegate = parent;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>7、在parseBeanDefinitions中完成具体bean的解析<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">parseBeanDefinitions</span><span class="params">(Element root, BeanDefinitionParserDelegate delegate)</span> </span>&#123;</div><div class="line">	<span class="keyword">if</span> (delegate.isDefaultNamespace(root)) &#123;</div><div class="line">		NodeList nl = root.getChildNodes();</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nl.getLength(); i++) &#123;</div><div class="line">			Node node = nl.item(i);</div><div class="line">			<span class="keyword">if</span> (node <span class="keyword">instanceof</span> Element) &#123;</div><div class="line">				Element ele = (Element) node;</div><div class="line">				<span class="keyword">if</span> (delegate.isDefaultNamespace(ele)) &#123;</div><div class="line">					<span class="comment">//解析默认的节点</span></div><div class="line">					parseDefaultElement(ele, delegate);</div><div class="line">				&#125;</div><div class="line">				<span class="keyword">else</span> &#123;</div><div class="line">					<span class="comment">//解析自定义的节点</span></div><div class="line">					delegate.parseCustomElement(ele);</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">else</span> &#123;</div><div class="line">		delegate.parseCustomElement(root);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上面的代码逻辑还是比较清晰的，spring的xml配置中有两大类Bean的生命，一个是默认的，比如<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"myBeanTest"</span> <span class="attr">class</span>=<span class="string">"com.xiyang.study.spring4.bean.MyBeanTest"</span>&gt;</span><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>另一类是自定义的，比如<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">aop:aspectj-autoproxy</span> <span class="attr">proxy-target-class</span>=<span class="string">"true"</span>/&gt;</span></div></pre></td></tr></table></figure></p>
+<p>判断是否是默认的节点也很简单，就是那节点的namespaceUri 和 BEANS_NAMESPACE_URI做比较。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String BEANS_NAMESPACE_URI = <span class="string">"http://www.springframework.org/schema/beans"</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isDefaultNamespace</span><span class="params">(String namespaceUri)</span> </span>&#123;</div><div class="line">	<span class="keyword">return</span> (!StringUtils.hasLength(namespaceUri) || BEANS_NAMESPACE_URI.equals(namespaceUri));</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="默认标签的解析"><a href="#默认标签的解析" class="headerlink" title="默认标签的解析"></a>默认标签的解析</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 根据不同的节点名称分别完成解析的过程</span></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">parseDefaultElement</span><span class="params">(Element ele, BeanDefinitionParserDelegate delegate)</span> </span>&#123;</div><div class="line">	<span class="comment">//对import标签的处理</span></div><div class="line">	<span class="keyword">if</span> (delegate.nodeNameEquals(ele, IMPORT_ELEMENT)) &#123;</div><div class="line">		importBeanDefinitionResource(ele);</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//对alias标签的处理</span></div><div class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (delegate.nodeNameEquals(ele, ALIAS_ELEMENT)) &#123;</div><div class="line">		processAliasRegistration(ele);</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//对bean标签的处理</span></div><div class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (delegate.nodeNameEquals(ele, BEAN_ELEMENT)) &#123;</div><div class="line">		processBeanDefinition(ele, delegate);</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//对beans标签的处理</span></div><div class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (delegate.nodeNameEquals(ele, NESTED_BEANS_ELEMENT)) &#123;</div><div class="line">		<span class="comment">// recurse</span></div><div class="line">		doRegisterBeanDefinitions(ele);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="自定义标签的解析"><a href="#自定义标签的解析" class="headerlink" title="自定义标签的解析"></a>自定义标签的解析</h3><h3 id="Spring-Bean"><a href="#Spring-Bean" class="headerlink" title="Spring Bean"></a>Spring Bean</h3><p>最终我们解析出来的bean在spring容器中是以一个什么形式存在呢，我们来看 processBeanDefinition 方法的实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">processBeanDefinition</span><span class="params">(Element ele, BeanDefinitionParserDelegate delegate)</span> </span>&#123;</div><div class="line">	BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);</div><div class="line">	<span class="keyword">if</span> (bdHolder != <span class="keyword">null</span>) &#123;</div><div class="line">		bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			<span class="comment">// Register the final decorated instance.</span></div><div class="line">			BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">catch</span> (BeanDefinitionStoreException ex) &#123;</div><div class="line">			getReaderContext().error(<span class="string">"Failed to register bean definition with name '"</span> +</div><div class="line">					bdHolder.getBeanName() + <span class="string">"'"</span>, ele, ex);</div><div class="line">		&#125;</div><div class="line">		<span class="comment">// Send registration event.</span></div><div class="line">		getReaderContext().fireComponentRegistered(<span class="keyword">new</span> BeanComponentDefinition(bdHolder));</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以看到我们最终拿到的是一个 <code>BeanDefinitionHolder</code> 类<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanDefinitionHolder</span> <span class="keyword">implements</span> <span class="title">BeanMetadataElement</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> <span class="keyword">final</span> BeanDefinition beanDefinition;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> <span class="keyword">final</span> String beanName;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> <span class="keyword">final</span> String[] aliases;</div><div class="line"></div><div class="line">	....</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>BeanDefinitionHolder 持有一个BeanDefinition 对象，其所拥有的属性和说明如下：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506331153783.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<ul>
+<li>class    这个属性是强制性的，并且指定用来创建 bean 的 bean 类。</li>
+<li>name    这个属性指定唯一的 bean 标识符。在基于 XML 的配置元数据中，你可以使用 ID 和/或 name 属性来指定 bean 标识符。</li>
+<li>scope    这个属性指定由特定的 bean 定义创建的对象的作用域，它将会在 bean 作用域的章节中进行讨论。</li>
+<li>constructor-arg    它是用来注入依赖关系的，并会在接下来的章节中进行讨论。</li>
+<li>properties    它是用来注入依赖关系的，并会在接下来的章节中进行讨论。</li>
+<li>autowiring mode    它是用来注入依赖关系的，并会在接下来的章节中进行讨论。</li>
+<li>lazy-initialization mode    延迟初始化的 bean 告诉 IoC 容器在它第一次被请求时，而不是在启动时去创建一个 bean 实例。</li>
+<li>initialization 方法    在 bean 的所有必需的属性被容器设置之后，调用回调方法。它将会在 bean 的生命周期章节中进行讨论。</li>
+<li>destruction 方法    当包含该 bean 的容器被销毁时，使用回调方法。它将会在 bean 的生命周期章节中进行讨论。</li>
+</ul>
+<h3 id="DefaultListableBeanFactory"><a href="#DefaultListableBeanFactory" class="headerlink" title="DefaultListableBeanFactory"></a>DefaultListableBeanFactory</h3><p>DefaultListableBeanFactory 是 <code>BeanFactory</code>的一个具体实现，所以我们先来看 <code>BeanFactory</code> 接口定义的方法有哪些：<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506327604852.png?imageMogr2/thumbnail/!50p/quality/100!" alt=""></p>
+<h2 id="IoC-容器之ApplicationContext"><a href="#IoC-容器之ApplicationContext" class="headerlink" title="IoC 容器之ApplicationContext"></a>IoC 容器之ApplicationContext</h2><h1 id="Bean-的加载"><a href="#Bean-的加载" class="headerlink" title="Bean 的加载"></a>Bean 的加载</h1><blockquote>
+<p>我们从上一节了解了 XmlBeanDefinitionReader 是如何读取配置文件并解析Bean的定义的，本节将关注一个 Bean 在 Spring 容器中是如何被加载和被初始化的。</p>
+</blockquote>
+<h1 id="Spring-AOP-框架原理和实现"><a href="#Spring-AOP-框架原理和实现" class="headerlink" title="Spring AOP 框架原理和实现"></a>Spring AOP 框架原理和实现</h1><h1 id="Spring-事务管理"><a href="#Spring-事务管理" class="headerlink" title="Spring 事务管理"></a>Spring 事务管理</h1>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="../../../../tags/spring/" rel="tag"># spring</a>
+          
+            <a href="../../../../tags/spring-源码/" rel="tag"># spring 源码</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="../每周札记/" rel="next" title="每周札记">
+                <i class="fa fa-chevron-left"></i> 每周札记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <p class="site-author-name" itemprop="name">XiYang</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="../../../../archives/">
+            
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="../../../../categories/index.html">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="../../../../tags/index.html">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#spring-框架概述"><span class="nav-number">1.</span> <span class="nav-text">spring 框架概述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#spring的-由来-和-使命"><span class="nav-number">1.1.</span> <span class="nav-text">spring的 由来 和 使命</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#spring-框架概述-1"><span class="nav-number">1.2.</span> <span class="nav-text">spring 框架概述</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring的IoC-容器"><span class="nav-number">2.</span> <span class="nav-text">Spring的IoC 容器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是IoC"><span class="nav-number">2.1.</span> <span class="nav-text">什么是IoC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IoC-容器之BeanFactory"><span class="nav-number">2.2.</span> <span class="nav-text">IoC 容器之BeanFactory</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一个例子"><span class="nav-number">2.3.</span> <span class="nav-text">一个例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源码剖析"><span class="nav-number">2.4.</span> <span class="nav-text">源码剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#XmlBeanFactory"><span class="nav-number">2.4.1.</span> <span class="nav-text">XmlBeanFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XmlBeanDefinitionReader"><span class="nav-number">2.4.2.</span> <span class="nav-text">XmlBeanDefinitionReader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#默认标签的解析"><span class="nav-number">2.4.3.</span> <span class="nav-text">默认标签的解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义标签的解析"><span class="nav-number">2.4.4.</span> <span class="nav-text">自定义标签的解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-Bean"><span class="nav-number">2.4.5.</span> <span class="nav-text">Spring Bean</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DefaultListableBeanFactory"><span class="nav-number">2.4.6.</span> <span class="nav-text">DefaultListableBeanFactory</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IoC-容器之ApplicationContext"><span class="nav-number">2.5.</span> <span class="nav-text">IoC 容器之ApplicationContext</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Bean-的加载"><span class="nav-number">3.</span> <span class="nav-text">Bean 的加载</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-AOP-框架原理和实现"><span class="nav-number">4.</span> <span class="nav-text">Spring AOP 框架原理和实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-事务管理"><span class="nav-number">5.</span> <span class="nav-text">Spring 事务管理</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XiYang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="../../../../lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com2017/09/25/read-深入解析-spring/';
+          this.page.identifier = '2017/09/25/read-深入解析-spring/';
+          this.page.title = '深入解析 spring';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
