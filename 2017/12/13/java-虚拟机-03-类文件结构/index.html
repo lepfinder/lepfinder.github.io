@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="../../../../lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="../../../../lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="../../../../css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="在java的设计之初，设计者就考虑过并实现让其他语言也可以运行在java虚拟机上的可能性，所以他们在发布规范文档时，可以把java规范拆分成了《java 语言规范》和《java虚拟机规范》。  概述虚拟机的语言无关java 虚拟机是语言无关的，也就是说能在java 虚拟机中运行的代码并不一定都是java源文件编译生成的，也可能是JRuby、Groovy等其它语言，他们通过各自的编译器统一变成 c">
+<meta name="keywords" content="java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="三、java 类文件结构">
+<meta property="og:url" content="http://yoursite.com/2017/12/13/java-虚拟机-03-类文件结构/index.html">
+<meta property="og:site_name" content="XiYang&#39;s Blog">
+<meta property="og:description" content="在java的设计之初，设计者就考虑过并实现让其他语言也可以运行在java虚拟机上的可能性，所以他们在发布规范文档时，可以把java规范拆分成了《java 语言规范》和《java虚拟机规范》。  概述虚拟机的语言无关java 虚拟机是语言无关的，也就是说能在java 虚拟机中运行的代码并不一定都是java源文件编译生成的，也可能是JRuby、Groovy等其它语言，他们通过各自的编译器统一变成 c">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513126771584.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513127196764.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513128718524.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513591052571.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513131671537.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513132050176.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513132069826.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513588650648.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513655235186.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513655346376.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513738254361.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513739069826.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513739123431.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513739251133.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:updated_time" content="2017-12-27T06:31:01.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="三、java 类文件结构">
+<meta name="twitter:description" content="在java的设计之初，设计者就考虑过并实现让其他语言也可以运行在java虚拟机上的可能性，所以他们在发布规范文档时，可以把java规范拆分成了《java 语言规范》和《java虚拟机规范》。  概述虚拟机的语言无关java 虚拟机是语言无关的，也就是说能在java 虚拟机中运行的代码并不一定都是java源文件编译生成的，也可能是JRuby、Groovy等其它语言，他们通过各自的编译器统一变成 c">
+<meta name="twitter:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513126771584.png?imageMogr2/thumbnail/!100p/quality/100!">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/12/13/java-虚拟机-03-类文件结构/"/>
+
+
+
+
+
+  <title>三、java 类文件结构 | XiYang's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?bffcaa4817f1c175af0805eb96d7e7ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">XiYang's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">让一切慢下来，体验周边的美好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-project">
+          <a href="/project/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-life-ring"></i> <br />
+            
+            个人项目
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">三、java 类文件结构</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-13T08:29:56+08:00">
+                2017-12-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../../../categories/java-虚拟机/" itemprop="url" rel="index">
+                    <span itemprop="name">java 虚拟机</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/12/13/java-虚拟机-03-类文件结构/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>在java的设计之初，设计者就考虑过并实现让其他语言也可以运行在java虚拟机上的可能性，所以他们在发布规范文档时，可以把java规范拆分成了《java 语言规范》和《java虚拟机规范》。</p>
+</blockquote>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><h3 id="虚拟机的语言无关"><a href="#虚拟机的语言无关" class="headerlink" title="虚拟机的语言无关"></a>虚拟机的语言无关</h3><p>java 虚拟机是语言无关的，也就是说能在java 虚拟机中运行的代码并不一定都是java源文件编译生成的，也可能是JRuby、Groovy等其它语言，他们通过各自的编译器统一变成 class 文件（字节码）运行在java 虚拟机中，如下图所示：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513126771584.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h3 id="java语言的平台无关性"><a href="#java语言的平台无关性" class="headerlink" title="java语言的平台无关性"></a>java语言的平台无关性</h3><p>我们知道java程序可以“一次编写，到处运行”，也就是java语言是平台无关的，提供了良好的快平台支持，那么 <strong>java是怎么做到平台无关的呢？</strong></p>
+<p>sun公司及其它虚拟机提供商发布了许多可以运行在各种不同平台上的虚拟机，这些虚拟机都可以载入和执行同一种平台无关的字节码，从而实现“一次编写，到处运行”。</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513127196764.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h2 id="Class-类文件的结构"><a href="#Class-类文件的结构" class="headerlink" title="Class 类文件的结构"></a>Class 类文件的结构</h2><p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513128718524.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>我们使用一个例子来具体分析Class类的文件结构<br>对于如下的java文件，我们使用javac编译完查看生成的class文件如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> org.xiyang;</div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * Created by xiexiyang on 2017/10/25.</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> <span class="keyword">implements</span> <span class="title">Cloneable</span></span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = <span class="string">"xiexiyang"</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> num;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">inc</span><span class="params">()</span></span>&#123;</div><div class="line">        num++;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">exception</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">int</span> x;</div><div class="line">        <span class="keyword">try</span>&#123;</div><div class="line">            x =<span class="number">1</span>;</div><div class="line">            <span class="keyword">return</span> x;</div><div class="line">        &#125;<span class="keyword">catch</span>(Exception e)&#123;</div><div class="line">            x = <span class="number">2</span>;</div><div class="line">            <span class="keyword">return</span> x;</div><div class="line">        &#125;<span class="keyword">finally</span>&#123;</div><div class="line">            x = <span class="number">3</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        System.out.println(TAG);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line">cafe babe 0000 0034 002f 0a00 0800 1d09</div><div class="line">0005 001e 0700 1f09 0020 0021 0700 2208</div><div class="line">0023 0a00 2400 2507 0026 0700 2701 0003</div><div class="line">5441 4701 0012 4c6a 6176 612f 6c61 6e67</div><div class="line">2f53 7472 696e 673b 0100 0d43 6f6e 7374</div><div class="line">616e 7456 616c 7565 0100 036e 756d 0100</div><div class="line">0149 0100 063c 696e 6974 3e01 0003 2829</div><div class="line">5601 0004 436f 6465 0100 0f4c 696e 654e</div><div class="line">756d 6265 7254 6162 6c65 0100 0369 6e63</div><div class="line">0100 0965 7863 6570 7469 6f6e 0100 0328</div><div class="line">2949 0100 0d53 7461 636b 4d61 7054 6162</div><div class="line">6c65 0700 1f07 0028 0100 046d 6169 6e01</div><div class="line">0016 285b 4c6a 6176 612f 6c61 6e67 2f53</div><div class="line">7472 696e 673b 2956 0100 0a53 6f75 7263</div><div class="line">6546 696c 6501 000f 4865 6c6c 6f57 6f72</div><div class="line">6c64 2e6a 6176 610c 000f 0010 0c00 0d00</div><div class="line">0e01 0013 6a61 7661 2f6c 616e 672f 4578</div><div class="line">6365 7074 696f 6e07 0029 0c00 2a00 2b01</div><div class="line">0015 6f72 672f 7869 7961 6e67 2f48 656c</div><div class="line">6c6f 576f 726c 6401 0009 7869 6578 6979</div><div class="line">616e 6707 002c 0c00 2d00 2e01 0010 6a61</div><div class="line">7661 2f6c 616e 672f 4f62 6a65 6374 0100</div><div class="line">136a 6176 612f 6c61 6e67 2f43 6c6f 6e65</div><div class="line">6162 6c65 0100 136a 6176 612f 6c61 6e67</div><div class="line">2f54 6872 6f77 6162 6c65 0100 106a 6176</div><div class="line">612f 6c61 6e67 2f53 7973 7465 6d01 0003</div><div class="line">6f75 7401 0015 4c6a 6176 612f 696f 2f50</div><div class="line">7269 6e74 5374 7265 616d 3b01 0013 6a61</div><div class="line">7661 2f69 6f2f 5072 696e 7453 7472 6561</div><div class="line">6d01 0007 7072 696e 746c 6e01 0015 284c</div><div class="line">6a61 7661 2f6c 616e 672f 5374 7269 6e67</div><div class="line">3b29 5600 2100 0500 0800 0100 0900 0200</div><div class="line">1900 0a00 0b00 0100 0c00 0000 0200 0600</div><div class="line">0200 0d00 0e00 0000 0400 0100 0f00 1000</div><div class="line">0100 1100 0000 1d00 0100 0100 0000 052a</div><div class="line">b700 01b1 0000 0001 0012 0000 0006 0001</div><div class="line">0000 0005 0001 0013 0010 0001 0011 0000</div><div class="line">0027 0003 0001 0000 000b 2a59 b400 0204</div><div class="line">60b5 0002 b100 0000 0100 1200 0000 0a00</div><div class="line">0200 0000 0a00 0a00 0b00 0100 1400 1500</div><div class="line">0100 1100 0000 7800 0100 0500 0000 1804</div><div class="line">3c1b 3d06 3c1c ac4d 053c 053e 063c 1dac</div><div class="line">3a04 063c 1904 bf00 0400 0000 0400 0800</div><div class="line">0300 0000 0400 1100 0000 0800 0d00 1100</div><div class="line">0000 1100 1300 1100 0000 0200 1200 0000</div><div class="line">1e00 0700 0000 1000 0200 1100 0400 1600</div><div class="line">0800 1200 0900 1300 0b00 1400 0d00 1600</div><div class="line">1600 0000 0a00 0248 0700 1748 0700 1800</div><div class="line">0900 1900 1a00 0100 1100 0000 2500 0200</div><div class="line">0100 0000 09b2 0004 1206 b600 07b1 0000</div><div class="line">0001 0012 0000 000a 0002 0000 001b 0008</div><div class="line">001c 0001 001b 0000 0002 001c</div></pre></td></tr></table></figure>
+<p>mac 下是用hexfiend软件打开class文件:</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513591052571.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h3 id="魔数和版本号"><a href="#魔数和版本号" class="headerlink" title="魔数和版本号"></a>魔数和版本号</h3><p>这三项的数据结构如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public U4 magic;                            // magic</div><div class="line">public U2 minorVersion;                     // minor_version</div><div class="line">public U2 majorVersion;                     // major_version</div></pre></td></tr></table></figure></p>
+<p>比如上面的代码编译后的class解析后如下：</p>
+<ul>
+<li>CAFEBABE 是魔数</li>
+<li>次版本：0x0000</li>
+<li>主版本：0x0034 换算成10进制52 代表java主版本号，1.1是45，52是jdk1.8</li>
+</ul>
+<h3 id="常量池"><a href="#常量池" class="headerlink" title="常量池"></a>常量池</h3><p>常量池的数据结构如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">public U2 constantPoolCount;                // constant_pool_count</div><div class="line">public ConstantPoolInfo[] cpInfo;           // cp_info</div></pre></td></tr></table></figure></p>
+<p>接着主次版本号之后的是常量池入口，常量池可以理解为Class文件之中的资源仓库，它是Class文件结构中于其他项目关联最多的数据类型，也是占用Class文件空间最大的数据项目之一。<br>由于常量池中常量的双不固定，所以在常量池入口需要放置一项u2类型的数据，代表常量池容量大小，0x002F 换算成10进制47 代表常量池大小，由于常量池是索引是从1开始的所以有46个常量。</p>
+<p>常量池中主要存放两大类常量：字面量和符号引用。</p>
+<p>常量池中每一项都是一个表，JDK1.7之前共有11中结构，1.7之后有14种。</p>
+<p>这14种表都有一个共同的特点，就是表开始的第一位是一个u1类型的标志位，代表当前这个常量属于哪种常量类型，具体的类型所代表的具体含义如下图：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513131671537.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>对应的14种常量项具体的结构定义如下：<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513132050176.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""><br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513132069826.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>javap是jdk提供的专门分析字节码的工具，可以使用它来帮我们列出常量池。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div></pre></td><td class="code"><pre><div class="line">xiexiyang@XieXiyangdeMacBook-Pro ~/Desktop&gt; javap -verbose HelloWorld</div><div class="line">Classfile /Users/xiexiyang/Desktop/HelloWorld.class</div><div class="line">  Last modified 2017-12-20; size 828 bytes</div><div class="line">  MD5 checksum 32099c71e0f8e2b55608e228aeae5d21</div><div class="line">  Compiled from &quot;HelloWorld.java&quot;</div><div class="line">public class org.xiyang.HelloWorld implements java.lang.Cloneable</div><div class="line">  minor version: 0</div><div class="line">  major version: 52</div><div class="line">  flags: ACC_PUBLIC, ACC_SUPER</div><div class="line">Constant pool:</div><div class="line">   #1 = Methodref          #8.#29         // java/lang/Object.&quot;&lt;init&gt;&quot;:()V</div><div class="line">   #2 = Fieldref           #5.#30         // org/xiyang/HelloWorld.num:I</div><div class="line">   #3 = Class              #31            // java/lang/Exception</div><div class="line">   #4 = Fieldref           #32.#33        // java/lang/System.out:Ljava/io/PrintStream;</div><div class="line">   #5 = Class              #34            // org/xiyang/HelloWorld</div><div class="line">   #6 = String             #35            // xiexiyang</div><div class="line">   #7 = Methodref          #36.#37        // java/io/PrintStream.println:(Ljava/lang/String;)V</div><div class="line">   #8 = Class              #38            // java/lang/Object</div><div class="line">   #9 = Class              #39            // java/lang/Cloneable</div><div class="line">  #10 = Utf8               TAG</div><div class="line">  #11 = Utf8               Ljava/lang/String;</div><div class="line">  #12 = Utf8               ConstantValue</div><div class="line">  #13 = Utf8               num</div><div class="line">  #14 = Utf8               I</div><div class="line">  #15 = Utf8               &lt;init&gt;</div><div class="line">  #16 = Utf8               ()V</div><div class="line">  #17 = Utf8               Code</div><div class="line">  #18 = Utf8               LineNumberTable</div><div class="line">  #19 = Utf8               inc</div><div class="line">  #20 = Utf8               exception</div><div class="line">  #21 = Utf8               ()I</div><div class="line">  #22 = Utf8               StackMapTable</div><div class="line">  #23 = Class              #31            // java/lang/Exception</div><div class="line">  #24 = Class              #40            // java/lang/Throwable</div><div class="line">  #25 = Utf8               main</div><div class="line">  #26 = Utf8               ([Ljava/lang/String;)V</div><div class="line">  #27 = Utf8               SourceFile</div><div class="line">  #28 = Utf8               HelloWorld.java</div><div class="line">  #29 = NameAndType        #15:#16        // &quot;&lt;init&gt;&quot;:()V</div><div class="line">  #30 = NameAndType        #13:#14        // num:I</div><div class="line">  #31 = Utf8               java/lang/Exception</div><div class="line">  #32 = Class              #41            // java/lang/System</div><div class="line">  #33 = NameAndType        #42:#43        // out:Ljava/io/PrintStream;</div><div class="line">  #34 = Utf8               org/xiyang/HelloWorld</div><div class="line">  #35 = Utf8               xiexiyang</div><div class="line">  #36 = Class              #44            // java/io/PrintStream</div><div class="line">  #37 = NameAndType        #45:#46        // println:(Ljava/lang/String;)V</div><div class="line">  #38 = Utf8               java/lang/Object</div><div class="line">  #39 = Utf8               java/lang/Cloneable</div><div class="line">  #40 = Utf8               java/lang/Throwable</div><div class="line">  #41 = Utf8               java/lang/System</div><div class="line">  #42 = Utf8               out</div><div class="line">  #43 = Utf8               Ljava/io/PrintStream;</div><div class="line">  #44 = Utf8               java/io/PrintStream</div><div class="line">  #45 = Utf8               println</div><div class="line">  #46 = Utf8               (Ljava/lang/String;)V</div><div class="line">&#123;</div><div class="line">  public static final java.lang.String TAG;</div><div class="line">    descriptor: Ljava/lang/String;</div><div class="line">    flags: ACC_PUBLIC, ACC_STATIC, ACC_FINAL</div><div class="line">    ConstantValue: String xiexiyang</div><div class="line"></div><div class="line">  public org.xiyang.HelloWorld();</div><div class="line">    descriptor: ()V</div><div class="line">    flags: ACC_PUBLIC</div><div class="line">    Code:</div><div class="line">      stack=1, locals=1, args_size=1</div><div class="line">         0: aload_0</div><div class="line">         1: invokespecial #1                  // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</div><div class="line">         4: return</div><div class="line">      LineNumberTable:</div><div class="line">        line 5: 0</div><div class="line"></div><div class="line">  public void inc();</div><div class="line">    descriptor: ()V</div><div class="line">    flags: ACC_PUBLIC</div><div class="line">    Code:</div><div class="line">      stack=3, locals=1, args_size=1</div><div class="line">         0: aload_0</div><div class="line">         1: dup</div><div class="line">         2: getfield      #2                  // Field num:I</div><div class="line">         5: iconst_1</div><div class="line">         6: iadd</div><div class="line">         7: putfield      #2                  // Field num:I</div><div class="line">        10: return</div><div class="line">      LineNumberTable:</div><div class="line">        line 10: 0</div><div class="line">        line 11: 10</div><div class="line"></div><div class="line">  public int exception();</div><div class="line">    descriptor: ()I</div><div class="line">    flags: ACC_PUBLIC</div><div class="line">    Code:</div><div class="line">      stack=1, locals=5, args_size=1</div><div class="line">         0: iconst_1</div><div class="line">         1: istore_1</div><div class="line">         2: iload_1</div><div class="line">         3: istore_2</div><div class="line">         4: iconst_3</div><div class="line">         5: istore_1</div><div class="line">         6: iload_2</div><div class="line">         7: ireturn</div><div class="line">         8: astore_2</div><div class="line">         9: iconst_2</div><div class="line">        10: istore_1</div><div class="line">        11: iload_1</div><div class="line">        12: istore_3</div><div class="line">        13: iconst_3</div><div class="line">        14: istore_1</div><div class="line">        15: iload_3</div><div class="line">        16: ireturn</div><div class="line">        17: astore        4</div><div class="line">        19: iconst_3</div><div class="line">        20: istore_1</div><div class="line">        21: aload         4</div><div class="line">        23: athrow</div><div class="line">      Exception table:</div><div class="line">         from    to  target type</div><div class="line">             0     4     8   Class java/lang/Exception</div><div class="line">             0     4    17   any</div><div class="line">             8    13    17   any</div><div class="line">            17    19    17   any</div><div class="line">      LineNumberTable:</div><div class="line">        line 16: 0</div><div class="line">        line 17: 2</div><div class="line">        line 22: 4</div><div class="line">        line 18: 8</div><div class="line">        line 19: 9</div><div class="line">        line 20: 11</div><div class="line">        line 22: 13</div><div class="line">      StackMapTable: number_of_entries = 2</div><div class="line">        frame_type = 72 /* same_locals_1_stack_item */</div><div class="line">          stack = [ class java/lang/Exception ]</div><div class="line">        frame_type = 72 /* same_locals_1_stack_item */</div><div class="line">          stack = [ class java/lang/Throwable ]</div><div class="line"></div><div class="line">  public static void main(java.lang.String[]);</div><div class="line">    descriptor: ([Ljava/lang/String;)V</div><div class="line">    flags: ACC_PUBLIC, ACC_STATIC</div><div class="line">    Code:</div><div class="line">      stack=2, locals=1, args_size=1</div><div class="line">         0: getstatic     #4                  // Field java/lang/System.out:Ljava/io/PrintStream;</div><div class="line">         3: ldc           #6                  // String xiexiyang</div><div class="line">         5: invokevirtual #7                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V</div><div class="line">         8: return</div><div class="line">      LineNumberTable:</div><div class="line">        line 27: 0</div><div class="line">        line 28: 8</div><div class="line">&#125;</div><div class="line">SourceFile: &quot;HelloWorld.java&quot;</div></pre></td></tr></table></figure></p>
+<h3 id="访问标志"><a href="#访问标志" class="headerlink" title="访问标志"></a>访问标志</h3><p>数据结构：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public U2 accessFlags;                      // access_flags</div></pre></td></tr></table></figure></p>
+<ul>
+<li>常量池结束之后，紧接着的两个字节代表访问标志（access_flags）</li>
+<li>这个标志可以用于识别一些类或者接口层次的访问信息</li>
+</ul>
+<p>具体的标志位以及白哦之的含义如下表：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513588650648.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h3 id="类索引、父类索引、接口索引"><a href="#类索引、父类索引、接口索引" class="headerlink" title="类索引、父类索引、接口索引"></a>类索引、父类索引、接口索引</h3><p>这三项的数据结构：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public U2 thisClass;                        // this_class</div><div class="line">public U2 superClass;                       // super_class</div><div class="line">public U2 interfacesCount;                  // interfaces_count</div><div class="line">public U2[] interfaces;                     // interfaces</div></pre></td></tr></table></figure></p>
+<p>一个示例如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">0021 : access flags</div><div class="line">0005 : this class</div><div class="line">0008 : super class</div><div class="line"></div><div class="line">0001 : interfaces count</div><div class="line">0009 : interfaces</div></pre></td></tr></table></figure></p>
+<ul>
+<li>类索引（this_class）和父类索引（super_class）都是一个u2类型的数据</li>
+<li>接口索引集合（interfaces）是一组u2类型的数据集合</li>
+<li>Class文件由这三项数据来确定这个类的集成关系</li>
+<li>类索引用于确定这个类的全限定名</li>
+<li>父类索引确定这个类的父类全限定名</li>
+</ul>
+<h3 id="字段表集合"><a href="#字段表集合" class="headerlink" title="字段表集合"></a>字段表集合</h3><ul>
+<li>字段表（field_info）用于描述接口或者类中声明的变量。</li>
+<li>包括类级变量和实例级变量，不包括方法内部的局部变量。</li>
+</ul>
+<p>一个字段可以包括的信息有：</p>
+<ul>
+<li>字段的作用域（public、private、protected修饰符）</li>
+<li>是实例变量还是类变量（static 修饰符）</li>
+<li>可变性（final）</li>
+<li>并发可见性（volatile修饰符，是否强制从主内存读写）</li>
+<li>可否被序列化（transient 修饰符）</li>
+<li>字段数据类型（基本类型、对象、数组）</li>
+<li>字段名称</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">public U2 fieldsCount;                      // fields_count</div><div class="line">public FieldInfo[] fields;                  // fields</div></pre></td></tr></table></figure>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513655235186.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>比如针对于本文的示例代码，定义了如下两个字段<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">public static final String TAG = &quot;xiexiyang&quot;;</div><div class="line">private int num;</div></pre></td></tr></table></figure></p>
+<p>class 文件片段如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">0002 : fields count             //有两个字段</div><div class="line">0019 : access flags             //第一个字段的访问标记，查表可以知道 代表 public static final</div><div class="line">000a : name index               //字段的简单名称在常量池中的索引</div><div class="line">000b : descriptor index         //字段的描述符</div><div class="line">0001 : attributes count         //属性的数量</div><div class="line">000c : attribute name index     //属性的名字索引 对应（ #12 = Utf8  ConstantValue）</div><div class="line">0000 0002 : attribute length    //</div><div class="line">0006 : constant value index     //    （#6 = String             #35            // xiexiyang）</div><div class="line">0002 : access flags</div><div class="line">000d : name index</div><div class="line">000e : descriptor index</div><div class="line">0000 : attribute count</div></pre></td></tr></table></figure></p>
+<p>访问标志定义如下：<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513655346376.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p><strong>字段和方法的描述符</strong></p>
+<p>描述符的作用是用来描述字段的数据类型、方法的参数列表（包括数量、类型以及顺序）和返回值。具体的类型定义的描述符如下：<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513738254361.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>对于数组类型，每一维度将使用一个前置的“[”来描述，比如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">java.lang.String[][]  记录为：[[Ljava/lang/String;</div><div class="line">int[] 记录为 [I</div></pre></td></tr></table></figure></p>
+<p>描述方法的时候，按照先参数列表，后返回值的顺序描述，参数列表按照参数的严格顺序放在一组小括号之内，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">void int() 记录为  ()V</div><div class="line">java.lang.String toString()  记录为 ()Ljava/lang/String;</div><div class="line">int indexOf(char[]source,int sourceOffset,int sourceCount,char[] target,int targetOffset,int targetCount,int fromIndex) 记录为 ([CII[CIII)I</div></pre></td></tr></table></figure></p>
+<h3 id="方法表集合"><a href="#方法表集合" class="headerlink" title="方法表集合"></a>方法表集合</h3><p>Class文件对方法的描述与对字段的描述几乎采用了完全一致的方式。</p>
+<h3 id="属性表集合"><a href="#属性表集合" class="headerlink" title="属性表集合"></a>属性表集合</h3><p>属性表在前面的讲解中出现过多次，在CLass文件、字段表、方法表中都可以携带自己的属性表集合，用于描述某些场景转悠的信息。</p>
+<p>虚拟机规范预定义的一些属性如下：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513739069826.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""><br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513739123431.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""><br>对于每个属性，它的名称需要从常量池中引用一个CONSTANT_Utf8_info类型的常量来表示，而属性值的接口则是完全自定义的，只需要通过一个u4的长度属性去说明属性值锁占用的位数即可。<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513739251133.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h4 id="Code属性"><a href="#Code属性" class="headerlink" title="Code属性"></a>Code属性</h4><p>java 程序方法体中的代码经过javac编译器处理后，最终的字节码执行存储在Code属性中。比如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line">0004 : methods count</div><div class="line"></div><div class="line">0001 : access flags</div><div class="line">000f : name index</div><div class="line">0010 : descriptor index</div><div class="line">0001 : attributes count</div><div class="line">0011 : attribute name index</div><div class="line">0000 002f : attribute length</div><div class="line">0001 : max stack</div><div class="line">0001 : max locals</div><div class="line">0000 0005 : code length</div><div class="line">2ab7 0001 b1 : code</div><div class="line">00 00 : exception table length</div><div class="line">00 02 : attributes count</div><div class="line">00 12 : attribute name index</div><div class="line">00 0000 06 : attribute length</div><div class="line">00 01 : line number table length</div><div class="line">00 00 : start pc</div><div class="line">00 06 : line number</div><div class="line">00 13 : attribute name index</div><div class="line">00 0000 0c : attribute length</div><div class="line">00 01 : local variable table length</div><div class="line">00 00 : start pc</div><div class="line">00 05 : length</div><div class="line">00 14 : name index</div><div class="line">00 15 : descriptor index</div><div class="line">00 00 : index</div><div class="line"></div><div class="line"></div><div class="line">00 01 : access flags</div><div class="line">00 16 : name index</div><div class="line">00 10 : descriptor index</div><div class="line">00 01 : attributes count</div><div class="line">00 11 : attribute name index</div><div class="line">00 0000 39 : attribute length</div><div class="line">00 03 : max stack</div><div class="line">00 01 : max locals</div><div class="line">00 0000 0b : code length</div><div class="line">2a 59b4 0002 0460 b500 02b1 : code</div><div class="line">0000 : exception table length</div><div class="line">0002 : attributes count</div><div class="line">0012 : attribute name index</div><div class="line">0000 000a : attribute length</div><div class="line">0002 : line number table length</div><div class="line">0000 : start pc</div><div class="line">000c : line number</div><div class="line">000a : start pc</div><div class="line">000d : line number</div><div class="line">0013 : attribute name index</div><div class="line">0000 000c : attribute length</div><div class="line">0001 : local variable table length</div><div class="line">0000 : start pc</div><div class="line">000b : length</div><div class="line">0014 : name index</div><div class="line">0015 : descriptor index</div><div class="line">0000 : index</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">public org.xiyang.HelloWorld();</div><div class="line">  descriptor: ()V</div><div class="line">  flags: ACC_PUBLIC</div><div class="line">  Code:</div><div class="line">    stack=1, locals=1, args_size=1</div><div class="line">       0: aload_0</div><div class="line">       1: invokespecial #1                  // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</div><div class="line">       4: return</div><div class="line">    LineNumberTable:</div><div class="line">      line 5: 0</div><div class="line">public void inc();</div><div class="line">  descriptor: ()V</div><div class="line">  flags: ACC_PUBLIC</div><div class="line">  Code:</div><div class="line">    stack=3, locals=1, args_size=1</div><div class="line">       0: aload_0</div><div class="line">       1: dup</div><div class="line">       2: getfield      #2                  // Field num:I</div><div class="line">       5: iconst_1</div><div class="line">       6: iadd</div><div class="line">       7: putfield      #2                  // Field num:I</div><div class="line">      10: return</div><div class="line">    LineNumberTable:</div><div class="line">      line 10: 0</div><div class="line">      line 11: 10</div></pre></td></tr></table></figure>
+<blockquote>
+<p>思考<br><a href="http://tinylcy.me/2017/%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAJava-Class%E8%A7%A3%E6%9E%90%E5%99%A8/" target="_blank" rel="external">如何实现一个Java Class解析器</a><br><a href="https://github.com/tinylcy/ClassAnalyzer" target="_blank" rel="external">ClassAnalyzer</a></p>
+</blockquote>
+<h2 id="字节码指令"><a href="#字节码指令" class="headerlink" title="字节码指令"></a>字节码指令</h2><ul>
+<li>java 虚拟机的指令由一个字节长度的 </li>
+<li>一个指令包含操作码（Opcode）和操作所需的参数（零或多个，操作数，Operands）构成</li>
+<li>java虚拟机采用面向操作数栈而不是寄存器的架构，所以大多数指令都不包含操作数，只有一个操作码</li>
+<li>最多有256个指令</li>
+</ul>
+<p>不考虑异常处理，可以用如下的伪代码当做虚拟机最简单的执行模型：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">while（字节码流长度&gt;0）&#123;</div><div class="line">    自动结算PC寄存器的值加一；</div><div class="line">    根据PC寄存器的指示位置，从字节码流中取出操作码；</div><div class="line">    if(字节码存在操作数) 从字节码流中取出操作数；</div><div class="line">    执行操作码所定义的操作；</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="字节码和数据类型"><a href="#字节码和数据类型" class="headerlink" title="字节码和数据类型"></a>字节码和数据类型</h3><p>在java 虚拟机中，大多数的指令都包含了其操作所对应的数据类型信息。比如 iload 用于从局部变量表中加载int型的数据到操作数栈中，而fload指令加载的则是float类型的数据。</p>
+<ul>
+<li>i 代表 对int类型的数据操作</li>
+<li>l 代表 long</li>
+<li>s 代表 short</li>
+<li>b 代表 byte</li>
+<li>c 代表 char</li>
+<li>f 代表 float</li>
+<li>d 代表 double</li>
+<li>a 代表 reference</li>
+</ul>
+<h3 id="加载和存储指令"><a href="#加载和存储指令" class="headerlink" title="加载和存储指令"></a>加载和存储指令</h3><p>加载和存储指令用于将数据在栈帧中的局部变量表和操作数栈之间来回传输。</p>
+<blockquote>
+<p>虚拟机栈描述的是 java 方法执行的内存模型，每个方法在执行的同时都会创建一个栈帧（Stack Frame），用于存储局部变量表、操作数栈、动态链接、方法出口等信息。每一个方法从调用直至执行完成的过程，就对应着一个栈帧在虚拟机栈中入栈到出栈的过程。</p>
+</blockquote>
+<p>这类指令包括如下内容：</p>
+<ul>
+<li>将一个局部变量加载到操作栈： iload、iload_<n> 、fload</n></li>
+<li>将一个数值从操作数栈存储到局部变量表： istore、istore_<n></n></li>
+<li>将一个常量加载到操作数栈： bipush、sipush、ldc、ldc_w、ldc2w、aconst_null、iconst<em>ml、iconst</em><i></i></li>
+<li>扩充局部变量表的访问索引的指令： wide</li>
+</ul>
+<h3 id="运算指令"><a href="#运算指令" class="headerlink" title="运算指令"></a>运算指令</h3><p>加减乘除、取反、求余、位移、按位或、按位与、按位异或、局部变量自增、比较指令</p>
+<h3 id="类型转换指令"><a href="#类型转换指令" class="headerlink" title="类型转换指令"></a>类型转换指令</h3><h3 id="对象创建与访问指令"><a href="#对象创建与访问指令" class="headerlink" title="对象创建与访问指令"></a>对象创建与访问指令</h3><ul>
+<li>创建类实例： new</li>
+<li>创建数组： newarray、anewarray、multianewarray</li>
+<li>访问类字段（static字段）和实例字段（非static字段）：getfield、putfield/getstatic/putstatic</li>
+<li>把一个数组元素加载到操作数栈的指令：baload、caload</li>
+<li>讲一个操作数栈的值存储到数组元素中的指令：bastore</li>
+<li>取数组长度</li>
+<li>检查类实例类型的指令</li>
+</ul>
+<h3 id="操作数栈管理指令"><a href="#操作数栈管理指令" class="headerlink" title="操作数栈管理指令"></a>操作数栈管理指令</h3><ul>
+<li>将操作数栈的张鼎一个或两个元素出栈： pop、pop2</li>
+<li>复制栈顶一个或两个数值并将复制值重新压入栈顶： dup、dup2、dup_x1</li>
+<li>将栈最顶端的两个数值互换：swap</li>
+</ul>
+<h3 id="控制转移指令"><a href="#控制转移指令" class="headerlink" title="控制转移指令"></a>控制转移指令</h3><ul>
+<li>条件分支 ifeq、iflt</li>
+<li>复合条件分支 tableswitch</li>
+<li>无条件分支  goto</li>
+</ul>
+<h3 id="方法调用和返回指令"><a href="#方法调用和返回指令" class="headerlink" title="方法调用和返回指令"></a>方法调用和返回指令</h3><ul>
+<li>invokevirtual 调用对象的实例方法</li>
+<li>invokeinterface   调用接口方法</li>
+<li>invokespecial 调用需要特殊处理的实例方法，包括实例初始化方法、私有方法和父类方法</li>
+<li>invokestatic  调用类方法（static）</li>
+<li>invokedynamic 动态解析出调用点限定符锁引用的方法</li>
+</ul>
+<h3 id="异常处理指令"><a href="#异常处理指令" class="headerlink" title="异常处理指令"></a>异常处理指令</h3><h3 id="同步指令"><a href="#同步指令" class="headerlink" title="同步指令"></a>同步指令</h3><p>java虚拟机可以支持方法级的同步和方法内部一段指令序列的同步，这两种同步结构都是使用Monitor来支持的。</p>
+<h4 id="方法级的同步"><a href="#方法级的同步" class="headerlink" title="方法级的同步"></a>方法级的同步</h4><p>隐式的，无需通过字节码指令控制，它实现在方法调用和返回操作之中。<br>虚拟机可以从方法常量池的方法表结构中的ACC_SYNCHRONIZED访问标志得知一个方法是否声明为同步。<br>当方法调用是，如果是同步方法，执行线程就要求先成功持有管程，然后才能执行方法。<br>方法执行完释放管程。</p>
+<h4 id="一段代码片段的同步"><a href="#一段代码片段的同步" class="headerlink" title="一段代码片段的同步"></a>一段代码片段的同步</h4><p>如果是一个方法中的synchronized同步代码块，虚拟机用如下两条指令来支持。</p>
+<p>monitorenter<br>monitorexit</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="../../../../tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="../../12/java-虚拟机-02-垃圾收集器与内存分配策略/" rel="next" title="二、垃圾收集器与内存分配策略">
+                <i class="fa fa-chevron-left"></i> 二、垃圾收集器与内存分配策略
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="../java-虚拟机-04-虚拟机类加载机制/" rel="prev" title="四、虚拟机类加载机制">
+                四、虚拟机类加载机制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <p class="site-author-name" itemprop="name">XiYang</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="../../../../archives/">
+            
+                <span class="site-state-item-count">46</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="../../../../categories/index.html">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="../../../../tags/index.html">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟机的语言无关"><span class="nav-number">1.1.</span> <span class="nav-text">虚拟机的语言无关</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#java语言的平台无关性"><span class="nav-number">1.2.</span> <span class="nav-text">java语言的平台无关性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Class-类文件的结构"><span class="nav-number">2.</span> <span class="nav-text">Class 类文件的结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#魔数和版本号"><span class="nav-number">2.1.</span> <span class="nav-text">魔数和版本号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常量池"><span class="nav-number">2.2.</span> <span class="nav-text">常量池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#访问标志"><span class="nav-number">2.3.</span> <span class="nav-text">访问标志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类索引、父类索引、接口索引"><span class="nav-number">2.4.</span> <span class="nav-text">类索引、父类索引、接口索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字段表集合"><span class="nav-number">2.5.</span> <span class="nav-text">字段表集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法表集合"><span class="nav-number">2.6.</span> <span class="nav-text">方法表集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#属性表集合"><span class="nav-number">2.7.</span> <span class="nav-text">属性表集合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Code属性"><span class="nav-number">2.7.1.</span> <span class="nav-text">Code属性</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字节码指令"><span class="nav-number">3.</span> <span class="nav-text">字节码指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字节码和数据类型"><span class="nav-number">3.1.</span> <span class="nav-text">字节码和数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加载和存储指令"><span class="nav-number">3.2.</span> <span class="nav-text">加载和存储指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运算指令"><span class="nav-number">3.3.</span> <span class="nav-text">运算指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类型转换指令"><span class="nav-number">3.4.</span> <span class="nav-text">类型转换指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对象创建与访问指令"><span class="nav-number">3.5.</span> <span class="nav-text">对象创建与访问指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操作数栈管理指令"><span class="nav-number">3.6.</span> <span class="nav-text">操作数栈管理指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#控制转移指令"><span class="nav-number">3.7.</span> <span class="nav-text">控制转移指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法调用和返回指令"><span class="nav-number">3.8.</span> <span class="nav-text">方法调用和返回指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异常处理指令"><span class="nav-number">3.9.</span> <span class="nav-text">异常处理指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同步指令"><span class="nav-number">3.10.</span> <span class="nav-text">同步指令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方法级的同步"><span class="nav-number">3.10.1.</span> <span class="nav-text">方法级的同步</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一段代码片段的同步"><span class="nav-number">3.10.2.</span> <span class="nav-text">一段代码片段的同步</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XiYang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="../../../../lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com2017/12/13/java-虚拟机-03-类文件结构/';
+          this.page.identifier = '2017/12/13/java-虚拟机-03-类文件结构/';
+          this.page.title = '三、java 类文件结构';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

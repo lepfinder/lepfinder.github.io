@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="../../../../lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="../../../../lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="../../../../css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="jsonp 跨域," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="什么是跨域请求浏览器的同源策略限制从一个源加载的文档或脚本与来自另一个源的资源进行交互。如果协议，端口和主机对于两个页面是相同的，则两个页面具有相同的源，否则就是不同源的。如果要在js里发起跨域请求，则要进行一些特殊处理了。 解决方案最简单的有两种解决方式：  可以把请求发到自己的服务端，再通过后台代码发起请求，再将数据返回前端。 使用jsonp  第一种需要在服务器端做额外开发，而且频繁修改也需">
+<meta name="keywords" content="jsonp 跨域">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jsonp 解决跨域请求">
+<meta property="og:url" content="http://yoursite.com/2017/01/12/前端-jsonp解决跨域请求/index.html">
+<meta property="og:site_name" content="XiYang&#39;s Blog">
+<meta property="og:description" content="什么是跨域请求浏览器的同源策略限制从一个源加载的文档或脚本与来自另一个源的资源进行交互。如果协议，端口和主机对于两个页面是相同的，则两个页面具有相同的源，否则就是不同源的。如果要在js里发起跨域请求，则要进行一些特殊处理了。 解决方案最简单的有两种解决方式：  可以把请求发到自己的服务端，再通过后台代码发起请求，再将数据返回前端。 使用jsonp  第一种需要在服务器端做额外开发，而且频繁修改也需">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1484107901127.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1484107880451.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:updated_time" content="2017-09-15T03:19:12.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="jsonp 解决跨域请求">
+<meta name="twitter:description" content="什么是跨域请求浏览器的同源策略限制从一个源加载的文档或脚本与来自另一个源的资源进行交互。如果协议，端口和主机对于两个页面是相同的，则两个页面具有相同的源，否则就是不同源的。如果要在js里发起跨域请求，则要进行一些特殊处理了。 解决方案最简单的有两种解决方式：  可以把请求发到自己的服务端，再通过后台代码发起请求，再将数据返回前端。 使用jsonp  第一种需要在服务器端做额外开发，而且频繁修改也需">
+<meta name="twitter:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1484107901127.png?imageMogr2/thumbnail/!100p/quality/100!">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/01/12/前端-jsonp解决跨域请求/"/>
+
+
+
+
+
+  <title>jsonp 解决跨域请求 | XiYang's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?bffcaa4817f1c175af0805eb96d7e7ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">XiYang's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">让一切慢下来，体验周边的美好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-project">
+          <a href="/project/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-life-ring"></i> <br />
+            
+            个人项目
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">jsonp 解决跨域请求</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-12T09:08:28+08:00">
+                2017-01-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../../../categories/前端/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/01/12/前端-jsonp解决跨域请求/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="什么是跨域请求"><a href="#什么是跨域请求" class="headerlink" title="什么是跨域请求"></a>什么是跨域请求</h2><p>浏览器的同源策略限制从一个源加载的文档或脚本与来自另一个源的资源进行交互。<br>如果协议，端口和主机对于两个页面是相同的，则两个页面具有相同的源，否则就是不同源的。<br>如果要在js里发起跨域请求，则要进行一些特殊处理了。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>最简单的有两种解决方式：</p>
+<ol>
+<li>可以把请求发到自己的服务端，再通过后台代码发起请求，再将数据返回前端。</li>
+<li>使用jsonp</li>
+</ol>
+<p>第一种需要在服务器端做额外开发，而且频繁修改也需要频繁的改服务器端，一般不建议使用。下面看一下使用jsonp解决跨域问题的解决方案：</p>
+<h3 id="什么是jsonp"><a href="#什么是jsonp" class="headerlink" title="什么是jsonp"></a>什么是jsonp</h3><p>JSONP 和 JSON 看着很像，他们分别是什么呢？</p>
+<p>JSON(JavaScript Object Notation) 是一种轻量级的数据交换格式。对于JSON大家应该是很了解了吧，不是很清楚的朋友可以去json.org上了解下，简单易懂。</p>
+<p>JSONP是JSON with Padding的略称。它是一个非官方的协议，它允许在服务器端集成Script tags返回至客户端，通过javascript callback的形式实现跨域访问（这仅仅是JSONP简单的实现形式）。</p>
+<h2 id="实现演示"><a href="#实现演示" class="headerlink" title="实现演示"></a>实现演示</h2><h3 id="前端代码"><a href="#前端代码" class="headerlink" title="前端代码"></a>前端代码</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">$.ajax(&#123;</div><div class="line">     type: <span class="string">"get"</span>,</div><div class="line">     <span class="keyword">async</span>: <span class="literal">false</span>,</div><div class="line">     url: <span class="string">"http://wukong.iqdnet.cn/wukongbg/admin/monitorList/test"</span>,</div><div class="line">     dataType: <span class="string">"jsonp"</span>,</div><div class="line">     jsonp: <span class="string">"callbackparam"</span>,<span class="comment">//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)</span></div><div class="line">     success: <span class="function"><span class="keyword">function</span>(<span class="params">json</span>)</span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(json);</div><div class="line">        alert(json);</div><div class="line">     &#125;,</div><div class="line">     error: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">        alert(<span class="string">'fail'</span>);</div><div class="line">     &#125;</div><div class="line"> &#125;);</div></pre></td></tr></table></figure>
+<h3 id="服务器端"><a href="#服务器端" class="headerlink" title="服务器端"></a>服务器端</h3><p>在controller中定义一个方法 <code>test</code> 返回JSON的数据</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * test</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"test"</span>,method= RequestMethod.GET)</div><div class="line"><span class="meta">@ResponseBody</span></div><div class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">test</span><span class="params">(String callbackparam,HttpServletRequest request,MonitorListParams monitorListParams)</span> </span>&#123;</div><div class="line">    logger.info(<span class="string">"find monitorList list."</span>);</div><div class="line"></div><div class="line">    System.out.println(System.getProperty(<span class="string">"env"</span>));</div><div class="line"></div><div class="line">    ModelResult modelResult = <span class="keyword">new</span> ModelResult(ModelResult.CODE_200);</div><div class="line">    ResultPage&lt;MonitorList&gt; resultPage = <span class="keyword">null</span>;</div><div class="line">    resultPage = monitorListService.getResultPage(monitorListParams);</div><div class="line">    modelResult.setMessage(<span class="string">"查询成功"</span>);</div><div class="line">    modelResult.setResultPage(resultPage);</div><div class="line"></div><div class="line">    String content = JSON.toJSONString(modelResult);</div><div class="line"></div><div class="line">    content = callbackparam +<span class="string">"("</span>+content+<span class="string">")"</span>;</div><div class="line">    <span class="keyword">return</span> content;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1484107901127.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1484107880451.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="http://api.jquery.com/jQuery.ajax/" target="_blank" rel="external">Jquery 文档</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="../../../../tags/jsonp-跨域/" rel="tag"># jsonp 跨域</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="../../../../2016/10/21/java基础和高级特性-06-深入研究java基础-HashMap/" rel="next" title="HashMap 详解和源码解析">
+                <i class="fa fa-chevron-left"></i> HashMap 详解和源码解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="../../../06/14/方法论-论工具的重要性/" rel="prev" title="论工具的重要性">
+                论工具的重要性 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <p class="site-author-name" itemprop="name">XiYang</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="../../../../archives/">
+            
+                <span class="site-state-item-count">46</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="../../../../categories/index.html">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="../../../../tags/index.html">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是跨域请求"><span class="nav-number">1.</span> <span class="nav-text">什么是跨域请求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案"><span class="nav-number">2.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是jsonp"><span class="nav-number">2.1.</span> <span class="nav-text">什么是jsonp</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现演示"><span class="nav-number">3.</span> <span class="nav-text">实现演示</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#前端代码"><span class="nav-number">3.1.</span> <span class="nav-text">前端代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务器端"><span class="nav-number">3.2.</span> <span class="nav-text">服务器端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#效果"><span class="nav-number">3.3.</span> <span class="nav-text">效果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XiYang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="../../../../lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com2017/01/12/前端-jsonp解决跨域请求/';
+          this.page.identifier = '2017/01/12/前端-jsonp解决跨域请求/';
+          this.page.title = 'jsonp 解决跨域请求';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

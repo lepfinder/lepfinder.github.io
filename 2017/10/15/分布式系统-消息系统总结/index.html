@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="../../../../lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="../../../../lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="../../../../css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="分布式," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="何时需要消息队列我们会经常听到消息队列的话题，消息系统可以解决那些问题呢？一个相对完整的消息队列是如何实现的？我们来探讨下这个主题。通常情况，可以使用mq的场景很多，比如如下几种：  业务系统解耦 最终一致性 广播 异步 有些请求并不需要及时处理，只需要最终处理掉就可以了，可以简化核心业务模型的复杂度，比如一个下单或支付的业务流程。   错峰流控 削峰填谷，避免瞬时的大流量打垮下游的业务系统">
+<meta name="keywords" content="分布式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="消息系统总结">
+<meta property="og:url" content="http://yoursite.com/2017/10/15/分布式系统-消息系统总结/index.html">
+<meta property="og:site_name" content="XiYang&#39;s Blog">
+<meta property="og:description" content="何时需要消息队列我们会经常听到消息队列的话题，消息系统可以解决那些问题呢？一个相对完整的消息队列是如何实现的？我们来探讨下这个主题。通常情况，可以使用mq的场景很多，比如如下几种：  业务系统解耦 最终一致性 广播 异步 有些请求并不需要及时处理，只需要最终处理掉就可以了，可以简化核心业务模型的复杂度，比如一个下单或支付的业务流程。   错峰流控 削峰填谷，避免瞬时的大流量打垮下游的业务系统">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1514445716436.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:updated_time" content="2017-12-28T08:38:52.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="消息系统总结">
+<meta name="twitter:description" content="何时需要消息队列我们会经常听到消息队列的话题，消息系统可以解决那些问题呢？一个相对完整的消息队列是如何实现的？我们来探讨下这个主题。通常情况，可以使用mq的场景很多，比如如下几种：  业务系统解耦 最终一致性 广播 异步 有些请求并不需要及时处理，只需要最终处理掉就可以了，可以简化核心业务模型的复杂度，比如一个下单或支付的业务流程。   错峰流控 削峰填谷，避免瞬时的大流量打垮下游的业务系统">
+<meta name="twitter:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1514445716436.png?imageMogr2/thumbnail/!100p/quality/100!">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/10/15/分布式系统-消息系统总结/"/>
+
+
+
+
+
+  <title>消息系统总结 | XiYang's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?bffcaa4817f1c175af0805eb96d7e7ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">XiYang's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">让一切慢下来，体验周边的美好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-project">
+          <a href="/project/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-life-ring"></i> <br />
+            
+            个人项目
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">消息系统总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-15T00:00:00+08:00">
+                2017-10-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../../../categories/消息系统/" itemprop="url" rel="index">
+                    <span itemprop="name">消息系统</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/10/15/分布式系统-消息系统总结/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="何时需要消息队列"><a href="#何时需要消息队列" class="headerlink" title="何时需要消息队列"></a>何时需要消息队列</h2><p>我们会经常听到消息队列的话题，消息系统可以解决那些问题呢？一个相对完整的消息队列是如何实现的？我们来探讨下这个主题。通常情况，可以使用mq的场景很多，比如如下几种：</p>
+<ul>
+<li>业务系统解耦</li>
+<li>最终一致性</li>
+<li>广播</li>
+<li>异步<ul>
+<li>有些请求并不需要及时处理，只需要最终处理掉就可以了，可以简化核心业务模型的复杂度，比如一个下单或支付的业务流程。</li>
+</ul>
+</li>
+<li>错峰流控<ul>
+<li>削峰填谷，避免瞬时的大流量打垮下游的业务系统</li>
+</ul>
+</li>
+<li>可靠通信<ul>
+<li>如果是用RPC如果失败无法保持状态，以便于补偿发送</li>
+</ul>
+</li>
+</ul>
+<p>一个消息系统最基础的功能是负责接收消息，并转发给目标系统，为了保证可靠消息，需要将消息持久化，并对投递做一些策略。根据消息队列解决的问题，消息队列的本质我们定义为如下几点：</p>
+<ul>
+<li>一次RPC变两次RPC</li>
+<li>内容传输</li>
+<li>选择合适的时机投递</li>
+</ul>
+<h2 id="如何设计一个消息队列"><a href="#如何设计一个消息队列" class="headerlink" title="如何设计一个消息队列"></a>如何设计一个消息队列</h2><p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1514445716436.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h2 id="队列的基本功能"><a href="#队列的基本功能" class="headerlink" title="队列的基本功能"></a>队列的基本功能</h2><h3 id="RPC通信协议"><a href="#RPC通信协议" class="headerlink" title="RPC通信协议"></a>RPC通信协议</h3><p>队列的核心是消息的投递，这就涉及到进程间通讯，刚才也讲到，所谓的消息队列，就是两次RPC加一次转储。所以进程间的通讯选择RPC的实现。一般我们可以利用公司现有的RPC框架，比如hessian、dubbo或thrift。</p>
+<h3 id="数据存储"><a href="#数据存储" class="headerlink" title="数据存储"></a>数据存储</h3><p>broker接收到消息之后一般会选择对消息持久化，理论上，从速度来看，文件系统&gt;分布式KV(持久化)&gt;分布式文件系统&gt;数据库，而可靠性却截然相反。</p>
+<p>如果消息队列是用来支持支付、交易等对可靠性要求非常高，但对性能和量的要求没有那么高，而且没有时间精力专门做文件存储系统的研究，可以选择DB作为存储系统。</p>
+<h3 id="异步-同步"><a href="#异步-同步" class="headerlink" title="异步/同步"></a>异步/同步</h3><ul>
+<li>异步，归根结底你还是需要关心结果的，但可能不是当时的时间点关心，可以用轮询或毁掉方式处理结果。</li>
+<li>同步，是需要当时关心结果的。</li>
+<li>oneway，是发出去就不管死活的方式。</li>
+</ul>
+<h3 id="pull-push"><a href="#pull-push" class="headerlink" title="pull/push"></a>pull/push</h3><h4 id="慢消费"><a href="#慢消费" class="headerlink" title="慢消费"></a>慢消费</h4><p>在push模型中，慢消费会导致消息在broker的堆积，如果消费者的速度比发送者慢很多，则会导致大量的消息无法投递。<br>pull模型中，consumer可以按需消费，不用但系自己处理不了的消息来骚扰自己，而broker堆积消息也相对简单，无需记录每一个要发送消息的状态，只需要维护所有消息的队列和偏移量就可以了。</p>
+<h4 id="消息延迟与忙等"><a href="#消息延迟与忙等" class="headerlink" title="消息延迟与忙等"></a>消息延迟与忙等</h4><p>这是pull模式的最大短板，由于是消费者主动去拉取消息，但是消费者无法准确的决定何时去拉取最新的消息，需要间断的去pull消息，可能会导致消息的延迟。</p>
+<p>业界较成熟的做法是从短时间开始（不会对broker有太大负担），然后指数级增长等待。比如开始等5ms，然后10ms，然后20ms，然后40ms……直到有消息到来，然后再回到5ms。<br>即使这样，依然存在延迟问题：假设40ms到80ms之间的50ms消息到来，消息就延迟了30ms，而且对于半个小时来一次的消息，这些开销就是白白浪费的。<br>在阿里的RocketMq里，有一种优化的做法-长轮询，来平衡推拉模型各自的缺点。基本思路是:消费者如果尝试拉取失败，不是直接return,而是把连接挂在那里wait,服务端如果有新的消息到来，把连接notify起来，这也是不错的思路。但海量的长连接block对系统的开销还是不容小觑的，还是要合理的评估时间间隔，给wait加一个时间上限比较好~</p>
+<h2 id="千丁为何要设计自己的消息系统"><a href="#千丁为何要设计自己的消息系统" class="headerlink" title="千丁为何要设计自己的消息系统"></a>千丁为何要设计自己的消息系统</h2><blockquote>
+<p>背景：<br>千丁在系统创建初期，自己实现了一套内部的消息系统中间件，用于解决系统间可靠通讯的问题，为什么没有采用业内开源产品呢？几乎每一个有好奇心的入职的新人都会问这个问题。</p>
+</blockquote>
+<p>现在来看，市面上可供选择的开源MQ解决方案有很多，比如RocketMQ、RabbitMQ、ZeroMQ、Kafka，为什么我们会选择自研呢？</p>
+<p>首先我们在写imessage的时候是在2015年年初，当时千丁的系统正在进行2.5的开发，核心的几个系统有订单、促销、商品、商城、支付、财务、会员、预存款等。系统间的通信采用RPC（hessian协议），有些业务会涉及多个系统之间的调用和通知，需要保证多个系统都能正常处理，也就是分布式事务和最终一致性的问题。</p>
+<p>我们的需求是可靠性通信，消息要有序。</p>
+<p>快速开发、能够hold住。</p>
+<p>整个imessage开发大约用了一个多星期，由于是自己写的，原理都很清楚，出现问题也可以快速修改。</p>
+<h3 id="imessage的实现原理"><a href="#imessage的实现原理" class="headerlink" title="imessage的实现原理"></a>imessage的实现原理</h3><p>队列使用redis的阻塞队列，持久化存储使用redis+mysql的方式。</p>
+<p>每一个业务系统引入imessage-client并对外暴露message的RPC服务，imessage-server通过RPC协议调用对应的业务系统，业务系统使用SPI的机制找到对应的处理类，实现业务的调用。</p>
+<h4 id="消息保存到哪里？"><a href="#消息保存到哪里？" class="headerlink" title="消息保存到哪里？"></a>消息保存到哪里？</h4><p>imessage接到一个消息后会首先保存到数据库，如果保存成功，则push到block队列。</p>
+<h4 id="如何保证消息的顺序？"><a href="#如何保证消息的顺序？" class="headerlink" title="如何保证消息的顺序？"></a>如何保证消息的顺序？</h4><p>imessage并没有刻意的实现顺序消息，但是由于最初和之后的顺序topic都采用单线程消费，可以一定程度上保证消息消费的顺序性。另外通过状态机的方式保证业务方不会处理异常流程的消息，从另外一方面保证了业务状态的正确性。</p>
+<h4 id="如何保证消息的可靠性投递？"><a href="#如何保证消息的可靠性投递？" class="headerlink" title="如何保证消息的可靠性投递？"></a>如何保证消息的可靠性投递？</h4><p>内部有一个重试队列支持失败消息重试，达到可靠投递的目的（实现最终一致性）。当消息发送失败的时候，就将消息放入到重试队列，重试队列的消息会维护一个变量记录发送次数，和下次发送次数。重试队列的消费线程每隔一分钟获取重试队列的中消息，检测是否可以立即重试，如果可以将会发起一次投递，并记录发送结果，如果成功则写会数据库，如果还是失败，将重试次数加一，并重新计算下次发送时间。</p>
+<h3 id="imessage的进化过程"><a href="#imessage的进化过程" class="headerlink" title="imessage的进化过程"></a>imessage的进化过程</h3><ul>
+<li>第一版的imessage支持p2p的点对点消息。</li>
+<li>第二版支持了广播的特性，广播的实现原理是一次消息投递，分裂成多个消息发送出去。</li>
+<li>而后支持了topic，可以将消息分组，消费线程可以配置，支持无序和有序队列。</li>
+<li>再后来imessage集成了RocketMQ，使用RocketMQ来作为broker，负责消息的存储和转发，转发的协议依然采用hessian。</li>
+</ul>
+<h3 id="遇到的一些坑"><a href="#遇到的一些坑" class="headerlink" title="遇到的一些坑"></a>遇到的一些坑</h3><ol>
+<li>幂等性<br> 由于我们设计的消息系统失败会放入重试队列继续尝试下次通知，所以需要下游消息系统做好幂等性校验，通常需要采取分布式锁的机制，否则很容易造成消息多次投递后被重复消费，造成业务异常。</li>
+<li>消息队列阻塞<br> 最初的所有消息都放到一个队列中，假如有些类型的消息，下游系统处理很慢，会导致队列中的消息，大量堆积，引起后面的消息无法及时送达，对于及时性要求比较高的场景不能容忍，比如支付系统的支付消息通知到订单，如果不能及时送达，会导致订单系统状态长时间无法变为已支付，对用户造成困扰。这和本身imessage使用的push模型也有关系。</li>
+</ol>
+<h2 id="kafka-实现解析"><a href="#kafka-实现解析" class="headerlink" title="kafka 实现解析"></a>kafka 实现解析</h2><p><a href="http://www.jasongj.com/2015/01/02/Kafka%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90/" target="_blank" rel="external">Kafka深度解析</a><br>本文转发自技术世界，原文链接　<a href="http://www.jasongj.com/2015/01/02/Kafka深度解析" target="_blank" rel="external">http://www.jasongj.com/2015/01/02/Kafka深度解析</a></p>
+<h3 id="kafka-简介"><a href="#kafka-简介" class="headerlink" title="kafka 简介"></a>kafka 简介</h3><p>Kafka是一种分布式的，基于发布/订阅的消息系统。主要设计目标如下：</p>
+<ul>
+<li>以时间复杂度为O(1)的方式提供消息持久化能力，即使对TB级以上数据也能保证常数时间的访问性能</li>
+<li>高吞吐率。即使在非常廉价的商用机器上也能做到单机支持每秒100K条消息的传输</li>
+<li>支持Kafka Server间的消息分区，及分布式消费，同时保证每个partition内的消息顺序传输</li>
+<li>同时支持离线数据处理和实时数据处理</li>
+</ul>
+<h2 id="RocketMQ-实现解析"><a href="#RocketMQ-实现解析" class="headerlink" title="RocketMQ 实现解析"></a>RocketMQ 实现解析</h2><p><a href="https://rocketmq.apache.org/docs/motivation/" target="_blank" rel="external">https://rocketmq.apache.org/docs/motivation/</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="../../../../tags/分布式/" rel="tag"># 分布式</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="../分布式系统-调度系统总结/" rel="next" title="调度系统总结">
+                <i class="fa fa-chevron-left"></i> 调度系统总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="../../25/spring-6-spring-的事务管理/" rel="prev" title="spring 事务管理">
+                spring 事务管理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <p class="site-author-name" itemprop="name">XiYang</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="../../../../archives/">
+            
+                <span class="site-state-item-count">46</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="../../../../categories/index.html">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="../../../../tags/index.html">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#何时需要消息队列"><span class="nav-number">1.</span> <span class="nav-text">何时需要消息队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何设计一个消息队列"><span class="nav-number">2.</span> <span class="nav-text">如何设计一个消息队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#队列的基本功能"><span class="nav-number">3.</span> <span class="nav-text">队列的基本功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RPC通信协议"><span class="nav-number">3.1.</span> <span class="nav-text">RPC通信协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据存储"><span class="nav-number">3.2.</span> <span class="nav-text">数据存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异步-同步"><span class="nav-number">3.3.</span> <span class="nav-text">异步/同步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pull-push"><span class="nav-number">3.4.</span> <span class="nav-text">pull/push</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#慢消费"><span class="nav-number">3.4.1.</span> <span class="nav-text">慢消费</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#消息延迟与忙等"><span class="nav-number">3.4.2.</span> <span class="nav-text">消息延迟与忙等</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#千丁为何要设计自己的消息系统"><span class="nav-number">4.</span> <span class="nav-text">千丁为何要设计自己的消息系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#imessage的实现原理"><span class="nav-number">4.1.</span> <span class="nav-text">imessage的实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#消息保存到哪里？"><span class="nav-number">4.1.1.</span> <span class="nav-text">消息保存到哪里？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#如何保证消息的顺序？"><span class="nav-number">4.1.2.</span> <span class="nav-text">如何保证消息的顺序？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#如何保证消息的可靠性投递？"><span class="nav-number">4.1.3.</span> <span class="nav-text">如何保证消息的可靠性投递？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#imessage的进化过程"><span class="nav-number">4.2.</span> <span class="nav-text">imessage的进化过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#遇到的一些坑"><span class="nav-number">4.3.</span> <span class="nav-text">遇到的一些坑</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kafka-实现解析"><span class="nav-number">5.</span> <span class="nav-text">kafka 实现解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#kafka-简介"><span class="nav-number">5.1.</span> <span class="nav-text">kafka 简介</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RocketMQ-实现解析"><span class="nav-number">6.</span> <span class="nav-text">RocketMQ 实现解析</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XiYang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="../../../../lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com2017/10/15/分布式系统-消息系统总结/';
+          this.page.identifier = '2017/10/15/分布式系统-消息系统总结/';
+          this.page.title = '消息系统总结';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

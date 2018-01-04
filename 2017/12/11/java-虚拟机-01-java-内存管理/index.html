@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="../../../../lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="../../../../lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="../../../../css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="思考几个问题 jvm 内存分几个区域，分别是什么 java 对象在内存中的分布 如何定位无用的对象 垃圾收集的算法有哪些 为什么有这么多的算法 什么时候进行收集 什么是 Stop the world  java 虚拟机运行时数据区 程序计数器 可以看做线程所执行的字节码行号指示器。 各线程私有，数据隔离。 如果执行的是java方法，记录的是当前正在执行的虚拟机字节码指令，如果执行 Native 方">
+<meta name="keywords" content="java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一、java 内存管理">
+<meta property="og:url" content="http://yoursite.com/2017/12/11/java-虚拟机-01-java-内存管理/index.html">
+<meta property="og:site_name" content="XiYang&#39;s Blog">
+<meta property="og:description" content="思考几个问题 jvm 内存分几个区域，分别是什么 java 对象在内存中的分布 如何定位无用的对象 垃圾收集的算法有哪些 为什么有这么多的算法 什么时候进行收集 什么是 Stop the world  java 虚拟机运行时数据区 程序计数器 可以看做线程所执行的字节码行号指示器。 各线程私有，数据隔离。 如果执行的是java方法，记录的是当前正在执行的虚拟机字节码指令，如果执行 Native 方">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1512959089709.png?imageMogr2/thumbnail/!60p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1512976472435.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1512979634404.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1512981025850.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1512981045132.png?imageMogr2/thumbnail/!100p/quality/100!">
+<meta property="og:updated_time" content="2017-12-15T08:30:12.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一、java 内存管理">
+<meta name="twitter:description" content="思考几个问题 jvm 内存分几个区域，分别是什么 java 对象在内存中的分布 如何定位无用的对象 垃圾收集的算法有哪些 为什么有这么多的算法 什么时候进行收集 什么是 Stop the world  java 虚拟机运行时数据区 程序计数器 可以看做线程所执行的字节码行号指示器。 各线程私有，数据隔离。 如果执行的是java方法，记录的是当前正在执行的虚拟机字节码指令，如果执行 Native 方">
+<meta name="twitter:image" content="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1512959089709.png?imageMogr2/thumbnail/!60p/quality/100!">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/12/11/java-虚拟机-01-java-内存管理/"/>
+
+
+
+
+
+  <title>一、java 内存管理 | XiYang's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?bffcaa4817f1c175af0805eb96d7e7ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">XiYang's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">让一切慢下来，体验周边的美好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-project">
+          <a href="/project/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-life-ring"></i> <br />
+            
+            个人项目
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">一、java 内存管理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-11T10:05:20+08:00">
+                2017-12-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../../../categories/java-虚拟机/" itemprop="url" rel="index">
+                    <span itemprop="name">java 虚拟机</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/12/11/java-虚拟机-01-java-内存管理/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="思考几个问题"><a href="#思考几个问题" class="headerlink" title="思考几个问题"></a>思考几个问题</h2><ul>
+<li>jvm 内存分几个区域，分别是什么</li>
+<li>java 对象在内存中的分布</li>
+<li>如何定位无用的对象</li>
+<li>垃圾收集的算法有哪些</li>
+<li>为什么有这么多的算法</li>
+<li>什么时候进行收集</li>
+<li>什么是 Stop the world</li>
+</ul>
+<h2 id="java-虚拟机运行时数据区"><a href="#java-虚拟机运行时数据区" class="headerlink" title="java 虚拟机运行时数据区"></a>java 虚拟机运行时数据区</h2><p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1512959089709.png?imageMogr2/thumbnail/!60p/quality/100!" alt=""></p>
+<h3 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h3><ul>
+<li>可以看做线程所执行的字节码行号指示器。</li>
+<li>各线程私有，数据隔离。</li>
+<li>如果执行的是java方法，记录的是当前正在执行的虚拟机字节码指令，如果执行 Native 方法时，记录为空。</li>
+</ul>
+<blockquote>
+<p>为什么要有程序计数器呢？</p>
+</blockquote>
+<p>多线程的程序执行是轮流进行的，为了能在切换回来是能继续执行，所以每个线程需要一个自己的程序计数器。</p>
+<h3 id="java-虚拟机栈"><a href="#java-虚拟机栈" class="headerlink" title="java 虚拟机栈"></a>java 虚拟机栈</h3><ul>
+<li>线程私有，生命周期和线程相同</li>
+<li>方法执行的同时会创建一个栈帧，用来存储：局部变量表、操作数栈、动态链接、方法出口等信息</li>
+<li>局部变量表储存了在编译器已知的各种基本数据类型、对象引用和returnAddress类型</li>
+<li>局部变量表所需的空间在编译期间完成分配，方法运行期间不会改变大小</li>
+<li>此区域定义了两个异常：StackOverflow 和 OutOfMemoryError</li>
+</ul>
+<blockquote>
+<p>为什么要有虚拟机栈</p>
+</blockquote>
+<p>程序计数器是记录程序执行到那一步了，虚拟机栈则是在方法运行期间保存数据的数据接口，在方法执行之前分配局部变量需要的内存大小，方法执行之后返回方法的返回值。</p>
+<h3 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h3><p>本地方法栈和虚拟机栈类似，区别是本地方法栈储存的是本地方法运行期的数据。</p>
+<h3 id="java-堆"><a href="#java-堆" class="headerlink" title="java 堆"></a>java 堆</h3><ul>
+<li>线程共享</li>
+<li>一般来说java堆是java 内存管理中最大的一块区域</li>
+<li>几乎所有的对象实例和数组都是在堆上分配内存</li>
+<li>堆是垃圾收集器管理的主要区域</li>
+<li>堆一般分为新生代 老年代，新生代细分为：Edge，From Survivor，To Survivor</li>
+</ul>
+<blockquote>
+<p>堆的作用</p>
+</blockquote>
+<p>堆是用来存储对象的空间，物理上可以不连续，堆分为不同的类型主要是为了更好的内存管理，便于垃圾回收。一般堆的大小是可以扩展的通过-Xmx -Xms这两个参数来控制大小。如果堆上无法分配内存，并且也无法继续扩展时，就会抛出 OutOfMemoryError异常。</p>
+<h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><ul>
+<li>线程共享</li>
+<li>用来存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据</li>
+<li>使用HotSpot虚拟机，很多人把方法区称为永久代，这样的目的是可以省去单独编写内存管理的代码</li>
+</ul>
+<h3 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h3><ul>
+<li>方法区的一部分</li>
+<li>存放编译器生成的各种字面量和符号引用</li>
+</ul>
+<h3 id="直接内存"><a href="#直接内存" class="headerlink" title="直接内存"></a>直接内存</h3><ul>
+<li>直接内存不是java 虚拟机运行时数据的一部分，也不是java虚拟机规范中定义的内存区域。</li>
+<li>jdk 1.4 中新加入的NIO，可以使用Native函数库分配堆外内存</li>
+</ul>
+<blockquote>
+<p>直接内存会占用物理内存空间，假如总的内存不够用，会出现OutOfMemoryError异常</p>
+</blockquote>
+<h2 id="虚拟机对象探秘"><a href="#虚拟机对象探秘" class="headerlink" title="虚拟机对象探秘"></a>虚拟机对象探秘</h2><h3 id="内存分配的两种方式"><a href="#内存分配的两种方式" class="headerlink" title="内存分配的两种方式"></a>内存分配的两种方式</h3><p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1512976472435.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>假如内存是规整的，内存的分配相当于指针移动。</p>
+<p>假如内存是不规整的，使用过的和没有使用的内存相互交错，这个时候就需要一个表记录哪些内存是用过的，哪些是没用过的，然后分配的时候，找一个足够大的空间划分给对象实例。</p>
+<p>java堆是否规整是由其所使用的垃圾收集器是否带有压缩整理的功能决定的。</p>
+<h3 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h3><p>由于分配内存的操作可能是多线程并发的，如何保证线程安全呢？</p>
+<ul>
+<li>CAS + 失败重试</li>
+<li>本地线程分配缓存 TLAB （Thread Local Allocation Buffer）</li>
+</ul>
+<h3 id="创建对象的流程"><a href="#创建对象的流程" class="headerlink" title="创建对象的流程"></a>创建对象的流程</h3><ul>
+<li>分配内存</li>
+<li>将分配的内存空间初始化为零值</li>
+<li>对象头设置（对象是哪个类的实例、如何才能找到类的元数据信息、对象的hash码、GC的分代年龄）</li>
+</ul>
+<p>到这个时候，从虚拟机来看，一个对象已经创建完了，但是从java程序的角度看，对象创建才刚刚开始。</p>
+<p>执行完new指令后，紧接着执行init方法，会按照程序员的意愿进行初始化。</p>
+<h3 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h3><p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1512979634404.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<ul>
+<li>对象头包含两个部分</li>
+<li>实例数据是对象真正存储的有效信息，程序代码中所定义的各种类型的字段内容</li>
+<li>对齐填充并不是必然存在的，JVM 要求内存起始地址必须是8的整数倍</li>
+</ul>
+<h3 id="对象的访问定位"><a href="#对象的访问定位" class="headerlink" title="对象的访问定位"></a>对象的访问定位</h3><p>创建对象的目的是为了使用对象，那如何找到对应的对象呢？由如下两种方式：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1512981025850.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1512981045132.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>这两种对象访问方式各有优势，使用句柄访问好处是reference中存储的是稳定的句柄地址，在对象被移动时只会改变句柄中的实例数据指针，而reference本身不需要修改。</p>
+<p>使用直接指针访问方式最大的好处就是速度更快，它节省了一次指针定位的时间开销，由于对象的访问在java中非常频繁，所以这类开销积少成多也很可观。</p>
+<p>Sun HotSpot采用的第二种方式进行对象访问。</p>
+<h2 id="OutOfMemoryError异常实战"><a href="#OutOfMemoryError异常实战" class="headerlink" title="OutOfMemoryError异常实战"></a>OutOfMemoryError异常实战</h2><p>在 java 虚拟机规范中，除了程序计数器外，虚拟机内存的其它几个运行时区域都有发生 OOM 的可能。</p>
+<h3 id="堆溢出"><a href="#堆溢出" class="headerlink" title="堆溢出"></a>堆溢出</h3><p>如下的代码清单中所示，代码限制了java 堆的大小为 20M，不可扩展，通过频繁的创建对象添加到List中去，在对象数量达到最大堆的容量限制后就会产生内存溢出异常。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * VM Args: -Xms20m -Xmx20m -XX:+HeapDumpOnOutOfMemoryError</div><div class="line"> * Created by xiexiyang on 16/3/22.</div><div class="line"> */</div><div class="line">public class HeapOOM &#123;</div><div class="line"></div><div class="line">    static class OOMObject &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        List&lt;OOMObject&gt; list= new ArrayList&lt;OOMObject&gt;();</div><div class="line"></div><div class="line">        while (true)&#123;</div><div class="line">            list.add(new OOMObject());</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>运行结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">[GC 5963K-&gt;3513K(20480K), 0.0151440 secs]</div><div class="line">[GC 9076K-&gt;8080K(20480K), 0.0149410 secs]</div><div class="line">[Full GC 17389K-&gt;13163K(20480K), 0.2516960 secs]</div><div class="line">[Full GC 16255K-&gt;16164K(20480K), 0.1447540 secs]</div><div class="line">[Full GC 16164K-&gt;16147K(20480K), 0.1832760 secs]</div><div class="line">java.lang.OutOfMemoryError: Java heap space</div><div class="line">Dumping heap to java_pid18191.hprof ...</div><div class="line">Heap dump file created [27741631 bytes in 0.488 secs]</div><div class="line">Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: Java heap space</div><div class="line">    at java.util.Arrays.copyOf(Arrays.java:2245)</div><div class="line">    at java.util.Arrays.copyOf(Arrays.java:2219)</div><div class="line">    at java.util.ArrayList.grow(ArrayList.java:242)</div><div class="line">    at java.util.ArrayList.ensureExplicitCapacity(ArrayList.java:216)</div><div class="line">    at java.util.ArrayList.ensureCapacityInternal(ArrayList.java:208)</div><div class="line">    at java.util.ArrayList.add(ArrayList.java:440)</div><div class="line">    at com.xiyang.study.jvm.HeapOOM.main(HeapOOM.java:20)</div></pre></td></tr></table></figure></p>
+<h3 id="虚拟机栈和本地方法栈溢出"><a href="#虚拟机栈和本地方法栈溢出" class="headerlink" title="虚拟机栈和本地方法栈溢出"></a>虚拟机栈和本地方法栈溢出</h3><p>栈容量有-Xss参数设定。</p>
+<ul>
+<li>如果线程请求的栈深度大于虚拟机所允许的最大深度，将会抛出 StackOverflowError 异常。</li>
+<li>如果虚拟机在扩展栈时无法申请到足够的内存空间，则抛出 OutOfMemoryError 异常。</li>
+</ul>
+<p>单线程情况下，设置相对小的栈空间，比如-Xss128k，然后使用递归，比较容易模拟出StackOverflowError。</p>
+<p>如果是多线程情况下，可以设置较大的栈空间，然后不断的创建线程最后会抛出 OutOfMemoryError，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: unable to create new natice thread</div></pre></td></tr></table></figure></p>
+<p>出现上面的异常很容易理解，总的内存空间是一定的，虚拟机提供参数来控制java 堆和方法区的最大值，用总的内存减去最大堆容量(Xmx)，再减去最大方法区容量（PermSize）,程序计数器消耗内存很小可以忽略，剩下的就是虚拟机栈和本地方法栈的可用空间了。这种情况下可以通过减小栈空间大小来达到增大线程数量的目的。</p>
+<h3 id="方法区和运行时常量池溢出"><a href="#方法区和运行时常量池溢出" class="headerlink" title="方法区和运行时常量池溢出"></a>方法区和运行时常量池溢出</h3><p>在一些大型的web项目启动的时候我们经常会遇到如下的异常：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: PermGen space</div></pre></td></tr></table></figure>
+<p>出现这个异常代表方法区内存溢出了。我们可以通过调整参数的形式来解决这个问题。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="../../../../tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="../life-爷爷奶奶/" rel="next" title="爷爷奶奶">
+                <i class="fa fa-chevron-left"></i> 爷爷奶奶
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="../../12/java-虚拟机-02-垃圾收集器与内存分配策略/" rel="prev" title="二、垃圾收集器与内存分配策略">
+                二、垃圾收集器与内存分配策略 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <p class="site-author-name" itemprop="name">XiYang</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="../../../../archives/">
+            
+                <span class="site-state-item-count">46</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="../../../../categories/index.html">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="../../../../tags/index.html">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#思考几个问题"><span class="nav-number">1.</span> <span class="nav-text">思考几个问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#java-虚拟机运行时数据区"><span class="nav-number">2.</span> <span class="nav-text">java 虚拟机运行时数据区</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#程序计数器"><span class="nav-number">2.1.</span> <span class="nav-text">程序计数器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#java-虚拟机栈"><span class="nav-number">2.2.</span> <span class="nav-text">java 虚拟机栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#本地方法栈"><span class="nav-number">2.3.</span> <span class="nav-text">本地方法栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#java-堆"><span class="nav-number">2.4.</span> <span class="nav-text">java 堆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法区"><span class="nav-number">2.5.</span> <span class="nav-text">方法区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行时常量池"><span class="nav-number">2.6.</span> <span class="nav-text">运行时常量池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#直接内存"><span class="nav-number">2.7.</span> <span class="nav-text">直接内存</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟机对象探秘"><span class="nav-number">3.</span> <span class="nav-text">虚拟机对象探秘</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#内存分配的两种方式"><span class="nav-number">3.1.</span> <span class="nav-text">内存分配的两种方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程安全"><span class="nav-number">3.2.</span> <span class="nav-text">线程安全</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建对象的流程"><span class="nav-number">3.3.</span> <span class="nav-text">创建对象的流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对象的内存布局"><span class="nav-number">3.4.</span> <span class="nav-text">对象的内存布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对象的访问定位"><span class="nav-number">3.5.</span> <span class="nav-text">对象的访问定位</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OutOfMemoryError异常实战"><span class="nav-number">4.</span> <span class="nav-text">OutOfMemoryError异常实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#堆溢出"><span class="nav-number">4.1.</span> <span class="nav-text">堆溢出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟机栈和本地方法栈溢出"><span class="nav-number">4.2.</span> <span class="nav-text">虚拟机栈和本地方法栈溢出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法区和运行时常量池溢出"><span class="nav-number">4.3.</span> <span class="nav-text">方法区和运行时常量池溢出</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XiYang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="../../../../lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="../../../../lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com2017/12/11/java-虚拟机-01-java-内存管理/';
+          this.page.identifier = '2017/12/11/java-虚拟机-01-java-内存管理/';
+          this.page.title = '一、java 内存管理';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -295,7 +295,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/09/11/03-java集合类之ArrayList/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/12/12/java-虚拟机-02-垃圾收集器与内存分配策略/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="XiYang">
@@ -314,7 +314,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="../../2017/09/11/03-java集合类之ArrayList/" itemprop="url">ArrayList 详解和源码解析</a></h1>
+                <a class="post-title-link" href="../../2017/12/12/java-虚拟机-02-垃圾收集器与内存分配策略/" itemprop="url">二、垃圾收集器与内存分配策略</a></h1>
         
 
         <div class="post-meta">
@@ -326,8 +326,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-11T17:33:37+08:00">
-                2017-09-11
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-12T10:09:31+08:00">
+                2017-12-12
               </time>
             
 
@@ -349,8 +349,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="../../categories/java-集合/" itemprop="url" rel="index">
-                    <span itemprop="name">java 集合</span>
+                  <a href="../../categories/java-虚拟机/" itemprop="url" rel="index">
+                    <span itemprop="name">java 虚拟机</span>
                   </a>
                 </span>
 
@@ -367,9 +367,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="../../2017/09/11/03-java集合类之ArrayList/#comments" itemprop="discussionUrl">
+                <a href="../../2017/12/12/java-虚拟机-02-垃圾收集器与内存分配策略/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/09/11/03-java集合类之ArrayList/" itemprop="commentCount"></span>
+                        data-disqus-identifier="2017/12/12/java-虚拟机-02-垃圾收集器与内存分配策略/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -399,41 +399,112 @@
       
         
           
-            <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>ArrayList 是一个数组队列，相当于 动态数组。与Java中的数组相比，它的容量能动态增长。它继承于AbstractList，实现了List, RandomAccess, Cloneable, java.io.Serializable这些接口。</p>
-<p>ArrayList 继承了AbstractList，实现了List。它是一个数组队列，提供了相关的添加、删除、修改、遍历等功能。<br>ArrayList 实现了RandmoAccess接口，即提供了随机访问功能。RandmoAccess是java中用来被List实现，为List提供快速访问功能的。在ArrayList中，我们即可以通过元素的序号快速获取元素对象；这就是快速随机访问。稍后，我们会比较List的“快速随机访问”和“通过Iterator迭代器访问”的效率。</p>
-<p>ArrayList 实现了Cloneable接口，即覆盖了函数clone()，能被克隆。</p>
-<p>ArrayList 实现java.io.Serializable接口，这意味着ArrayList支持序列化，能通过序列化去传输。</p>
-<p>和Vector不同，ArrayList中的操作不是线程安全的！所以，建议在单线程中才使用ArrayList，而在多线程中可以选择Vector或者CopyOnWriteArrayList。</p>
-<h3 id="ArrayList-构造函数"><a href="#ArrayList-构造函数" class="headerlink" title="ArrayList 构造函数"></a>ArrayList 构造函数</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 默认构造函数</span></div><div class="line">ArrayList()</div><div class="line"></div><div class="line"><span class="comment">// capacity是ArrayList的默认容量大小。当由于增加数据导致容量不足时，容量会添加上一次容量大小的一半。</span></div><div class="line">ArrayList(<span class="keyword">int</span> capacity)</div><div class="line"></div><div class="line"><span class="comment">// 创建一个包含collection的ArrayList</span></div><div class="line">ArrayList(Collection&lt;? extends E&gt; collection)</div></pre></td></tr></table></figure>
-<h3 id="ArrayList-类图结构如下"><a href="#ArrayList-类图结构如下" class="headerlink" title="ArrayList 类图结构如下"></a>ArrayList 类图结构如下</h3><p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505122462998.png?imageMogr2/thumbnail/!80p/quality/100!" alt=""></p>
-<h2 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h2><p>ArrayList 中有两个重要的变量 </p>
+            <p>我们再来回顾一下java运行时的数据区，如下图所示：<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1512959089709.png?imageMogr2/thumbnail/!60p/quality/100!" alt=""></p>
+<p>其中程序计数器、虚拟机栈和本地方法栈随线程而生，随线程而死。栈中的栈帧随着方法的进入和退出而有条不紊的执行者出栈和入栈的操作。而java 堆和方法区则不一样，我们只有在运行期才能知道会创建哪些对象，创建多少对象，这部分内存的分配和回收都是动态的，垃圾收集器所关注的就是这部分内存。</p>
+<h2 id="如何判断对象已死"><a href="#如何判断对象已死" class="headerlink" title="如何判断对象已死"></a>如何判断对象已死</h2><p>首先我们需要判断哪些对象是可以被回收的，也就是无用的死的对象。</p>
+<h3 id="引用计数法"><a href="#引用计数法" class="headerlink" title="引用计数法"></a>引用计数法</h3><p>给对象添加一个引用计数器，每当一个地方引用它时，计数器就加1；当引用失效时，计数器就减1；计数器为0，则说明对象不再被使用。</p>
+<p>这种方法有效吗？</p>
+<p>首先这种方法实现方式比较简单，判定效率也比较高，也有一些比较著名的应用案例，比如微软公司的 COM 技术。但是主流的java虚拟机中没有选用引用计数来管理内存，其中最主要的原因是它很难解决循环引用的问题。假如两个对象A和B互相引用，那他们的计数器永远无法为0。</p>
+<h3 id="可达性分析算法"><a href="#可达性分析算法" class="headerlink" title="可达性分析算法"></a>可达性分析算法</h3><p>这个算法的思路是通过一系列称为“GC Roots”的对象作为起始点，从这些节点开始向下搜索，搜索所走过的路径称为引用链，当一个对象到GC Roots没有任何引用链想连接时，就证明这个对象是不可用的。</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513049352221.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>可作为 GC Roots的对象包括下面几种：</p>
 <ul>
-<li>private transient Object[] elementData;<ul>
-<li>elementData 是一个Object的数组，JDK 实现了一个动态数组，可以动态的增加数组的大小，初始的大小是10。</li>
+<li>虚拟机栈（栈帧中的本地变量表）中引用的对象</li>
+<li>方法区中类静态属性引用的对象</li>
+<li>方法区中常量引用的对象</li>
+<li>本地方法栈中JNI（即一般说的Native方法）引用的对象</li>
 </ul>
-</li>
-<li>private int size;<ul>
-<li>size 标示了动态数组的实际大小</li>
-</ul>
-</li>
-</ul>
-<p>构造函数：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * 创建一个指定容量大小的空数组</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">(<span class="keyword">int</span> initialCapacity)</span> </span>&#123;</div><div class="line">    <span class="keyword">super</span>();</div><div class="line">    <span class="keyword">if</span> (initialCapacity &lt; <span class="number">0</span>)</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Illegal Capacity: "</span>+</div><div class="line">                                           initialCapacity);</div><div class="line">    <span class="keyword">this</span>.elementData = <span class="keyword">new</span> Object[initialCapacity];</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * 创建一个空数组</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">super</span>();</div><div class="line">    <span class="keyword">this</span>.elementData = EMPTY_ELEMENTDATA;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * 创建一个包含传递进来的元素的数组</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">(Collection&lt;? extends E&gt; c)</span> </span>&#123;</div><div class="line">    elementData = c.toArray();</div><div class="line">    size = elementData.length;</div><div class="line">    <span class="comment">// c.toArray might (incorrectly) not return Object[] (see 6260652)</span></div><div class="line">    <span class="keyword">if</span> (elementData.getClass() != Object[].class)</div><div class="line">        elementData = Arrays.copyOf(elementData, size, Object[].class);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>add方法的实现</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 添加一个元素</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</div><div class="line">    ensureCapacityInternal(size + <span class="number">1</span>);  <span class="comment">// Increments modCount!!</span></div><div class="line">    elementData[size++] = e;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 确定容量</span></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureCapacityInternal</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (elementData == EMPTY_ELEMENTDATA) &#123; </div><div class="line">        minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ensureExplicitCapacity(minCapacity);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureExplicitCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    modCount++;</div><div class="line"></div><div class="line">    <span class="comment">// overflow-conscious code</span></div><div class="line">    <span class="keyword">if</span> (minCapacity - elementData.length &gt; <span class="number">0</span>)</div><div class="line">        grow(minCapacity);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">grow</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    <span class="comment">// overflow-conscious code</span></div><div class="line">    <span class="keyword">int</span> oldCapacity = elementData.length;</div><div class="line">    <span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</div><div class="line">    <span class="keyword">if</span> (newCapacity - minCapacity &lt; <span class="number">0</span>)</div><div class="line">        newCapacity = minCapacity;</div><div class="line">    <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</div><div class="line">        newCapacity = hugeCapacity(minCapacity);</div><div class="line">    <span class="comment">// minCapacity is usually close to size, so this is a win:</span></div><div class="line">    elementData = Arrays.copyOf(elementData, newCapacity);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">hugeCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (minCapacity &lt; <span class="number">0</span>) <span class="comment">// overflow</span></div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> OutOfMemoryError();</div><div class="line">    <span class="keyword">return</span> (minCapacity &gt; MAX_ARRAY_SIZE) ?</div><div class="line">        Integer.MAX_VALUE :</div><div class="line">        MAX_ARRAY_SIZE;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>关于GC Roots更详细的介绍可以参考 <a href="https://www.zhihu.com/question/50381439" target="_blank" rel="external">知乎</a></p>
+<h3 id="关于引用"><a href="#关于引用" class="headerlink" title="关于引用"></a>关于引用</h3><p>在JDK1.2之前，引用的定义是：如果reference类型的数据中存储的数值代表的是另外一块内存的起始地址，就称这块内存代表着一个引用。</p>
+<p>在 JDK1.2 之后，Java对引用的概念进行了扩充，将引用分为：强引用、软引用、弱引用、虚引用4种，这4种引用的强度依次减弱。</p>
 <ul>
-<li>ArrayList 默认的构造函数，创建的是一个空数组，是在第一次添加对象的时候做的初始化。</li>
-<li>添加元素的时候如果容量不足，会进行扩容，新的容量会之前的1.5倍</li>
-<li>最大的容量为 Integer.MAX_VALUE</li>
+<li>强引用比较好理解，只要引用还存在，就不会被垃圾回收。</li>
+<li>软引用是在将要内存溢出之前，会把这些对象列入回收范围之内进行第二次回收。</li>
+<li>弱引用的对象在只能生存到下一次垃圾回收之前</li>
+<li>虚引用是最弱的一个引用，为一个对象设置虚引用的唯一目的是能在这个对象被回收的时候接到一个系统通知。</li>
 </ul>
-<h2 id="遍历的三种方式"><a href="#遍历的三种方式" class="headerlink" title="遍历的三种方式"></a>遍历的三种方式</h2><p>ArrayList支持3种遍历方式</p>
-<p>(01) 第一种，通过迭代器遍历。即通过Iterator去遍历。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Integer value = <span class="keyword">null</span>;</div><div class="line">Iterator iter = list.iterator();</div><div class="line"><span class="keyword">while</span> (iter.hasNext()) &#123;</div><div class="line">    value = (Integer)iter.next();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>(02) 第二种，随机访问，通过索引值去遍历。<br>由于ArrayList实现了RandomAccess接口，它支持通过索引值去随机访问元素。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Integer value = <span class="keyword">null</span>;</div><div class="line"><span class="keyword">int</span> size = list.size();</div><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;size; i++) &#123;</div><div class="line">    value = (Integer)list.get(i);        </div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>(03) 第三种，for循环遍历。如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Integer value = <span class="keyword">null</span>;</div><div class="line"><span class="keyword">for</span> (Integer integ:list) &#123;</div><div class="line">    value = integ;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="ConcurrentModificationException"><a href="#ConcurrentModificationException" class="headerlink" title="ConcurrentModificationException"></a>ConcurrentModificationException</h2><p>AbstractList 中有一个成员变量 modCount, 记录了数据在结构上变化的次数，比如添加或删除一个元素的次数<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// The number of times this list has been structurally modified</span></div><div class="line"><span class="keyword">protected</span> <span class="keyword">transient</span> <span class="keyword">int</span> modCount = <span class="number">0</span>;</div></pre></td></tr></table></figure></p>
-<p>在Java中的fail-fast机制中有介绍过。在使用迭代器遍历元素的时候，在对集合进行删除的时候一定要注意，使用不当有可能发生ConcurrentModificationException。</p>
+<h3 id="清理的过程"><a href="#清理的过程" class="headerlink" title="清理的过程"></a>清理的过程</h3><p>当一个对象被识别为无用对象时，也不是立马进入被清理的过程，真正宣告一个对象死亡，至少要经历两次标记过程。</p>
+<h2 id="垃圾收集算法"><a href="#垃圾收集算法" class="headerlink" title="垃圾收集算法"></a>垃圾收集算法</h2><p>标记-清除算法</p>
+<p>复制算法</p>
+<p>标记整理算法</p>
+<p>分代收集算法</p>
+<h2 id="HotSpot-虚拟机的算法实现"><a href="#HotSpot-虚拟机的算法实现" class="headerlink" title="HotSpot 虚拟机的算法实现"></a>HotSpot 虚拟机的算法实现</h2><p>垃圾回收很重要的两点是判断哪些对象可以被回收以及什么时候可以进行回收。HotSpot 虚拟机通过 GC Roots 枚举判定待回收的对象，通过安全点和安全区域确定 GC 的触发点，最后通过各种不同的回收算法完成垃圾回收。</p>
+<h3 id="GC-Roots-枚举过程"><a href="#GC-Roots-枚举过程" class="headerlink" title="GC Roots 枚举过程"></a>GC Roots 枚举过程</h3><p><strong>GC Roots 枚举最大的困难点在于：检查范围比较大，并且必须在内存快照中进行，保证一致性，而且时间要求比较敏感。</strong></p>
+<p>在生产环境中，即使不考虑其它部分内存，仅仅 Java 堆内存就可达几百兆甚至上G，在此范围内完成 GC Roots 确定是一件很困难的事情；同时，在进行 GC Roots 枚举时，必须保证一致性，即所有正在运行的程序必须停顿，不能出现正在枚举 GC Roots，而程序还在跑的情况，这会导致 GC Roots 不断变化，产生数据不一致导致统计不准确的情况；最后，由于所有工作线程必须停顿以完成 GC 过程，在大并发高访问量情况下，这个时间必须非常短。</p>
+<h3 id="准确式-GC"><a href="#准确式-GC" class="headerlink" title="准确式 GC"></a>准确式 GC</h3><p>为解决上述问题，HotSpot 采用了一种 “准确式 GC” 的技术；该技术主要功能就是让虚拟机可以准确的知道内存中某个位置的数据类型是什么；比如某个内存位置到底是一个整型的变量，还是对某个对象的 reference；这样在进行 GC Roots 枚举时，只需要枚举 reference 类型的即可。</p>
+<p>在能够准确地确定 Java 堆和方法区等 reference 准确位置之后，HotSpot 就能极大地缩短 GC Roots 枚举时间。</p>
+<h3 id="OopMap"><a href="#OopMap" class="headerlink" title="OopMap"></a>OopMap</h3><p>当类加载完成后，HotSpot 就将对象内存布局之中什么偏移量上数值是一个什么样的类型的数据这些信息存放到 OopMap 中；在 HotSpot 的 JIT 编译过程中，同样会插入相关指令来标明哪些位置存放的是对象引用等，这样在 GC 发生时，HotSpot 就可以直接扫描 OopMap 来获取这些信息，从而进行 GC Roots 枚举，下图展示了 JTI 编译的 OopMap 指令：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513060998580.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h3 id="安全点-Safepoint"><a href="#安全点-Safepoint" class="headerlink" title="安全点(Safepoint)"></a>安全点(Safepoint)</h3><p><strong>Safepoint</strong>：会导致 OopMap 内容变化的指令非常多，如果为每一条指令都生成对应的 OopMap，那么将需要大量的额外空间，这样对导致 GC 成本很高，所以 HotSpot 只在 “特定位置” 记录这些信息，这些位置被称为 <strong>安全点(Safepoint)</strong>。</p>
+<p><strong>并非程序在任意时刻都可以停顿下来进行 GC，而只有程序到达 安全点(Safepoint) 以后才可以停顿下来进行 GC；所以安全点既不能太少，以至于 GC 过程等待程序到达安全点的时间过长，也不能太多，以至于 GC 过程带来的成本过高。</strong></p>
+<h3 id="安全点上停止线程方式"><a href="#安全点上停止线程方式" class="headerlink" title="安全点上停止线程方式"></a>安全点上停止线程方式</h3><p>由于在 GC 过程中必须保证程序已停止执行，那么也就是说 <strong>必须等待所有线程都到达安全点上方可进行 GC</strong>。</p>
+<p>一般会有两种解决方案：</p>
+<p><strong>抢先式中断：</strong>不需要线程的执行代码去主动配合，当发生 GC 时，先强制中断所有线程，然后如果发现某些线程未处于安全点，那么将其唤醒，直至其到达安全点再次将其中断；这样一直等待所有线程都在安全点后开始 GC。</p>
+<p><strong>主动式中断：</strong>不强制中断线程，只是简单地设置一个中断标记，各个线程在执行时轮询这个标记，一旦发现标记被改变(出现中断标记)时，那么将运行到安全点后自己中断挂起；目前所有商用虚拟机全部采用主动式中断。</p>
+<p>HotSpot 选定的标记位置与安全点位置是重合的，如下如图所示：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513061075356.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h3 id="安全区-Saferegion"><a href="#安全区-Saferegion" class="headerlink" title="安全区(Saferegion)"></a>安全区(Saferegion)</h3><p>安全点的机制似乎已经完美的解决了 “什么时候以及何时开始 GC” 的问题，但是实际情况并非如此；<strong>安全点机制仅仅是保证了程序执行时不需要太长时间就可以进入一个安全点进行 GC 动作</strong>，但是当特殊情况时，比如线程休眠、线程阻塞等状态的情况下，显然 JVM 不可能一直等待被阻塞或休眠的线程正常唤醒执行；此时就引入了安全区的概念。</p>
+<p>安全区(Saferegion)：安全区域是指在一段区域内，对象引用关系等不会发生变化，在此区域内任意位置开始 GC 都是安全的；线程运行时，首先标记自己进入了安全区，然后在这段区域内，如果线程发生了阻塞、休眠等操作，<strong>JVM 发起 GC 时将忽略这些处于安全区的线程。当线程再次被唤醒时，首先他会检查是否完成了 GC Roots枚举(或这个GC过程)，然后选择是否继续执行，否则将继续等待 GC 的完成。</strong></p>
+<h2 id="垃圾收集器"><a href="#垃圾收集器" class="headerlink" title="垃圾收集器"></a>垃圾收集器</h2><p>垃圾收集算法是内存回收的方法论，而垃圾收集器则是具体的实现，在HotSpot中提供的垃圾收集器如下：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513061735935.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>HotSpot 提供了 7 种作用于不同分代的收集器，如果两个收集器之间存在连线，就说明他们可以搭配使用。</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513064372152.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h3 id="CMS-（Concurrent-Mark-Sweep）"><a href="#CMS-（Concurrent-Mark-Sweep）" class="headerlink" title="CMS （Concurrent Mark Sweep）"></a>CMS （Concurrent Mark Sweep）</h3><p>重点看一下CMS垃圾收集器的实现。它的运作更为复杂，整个过程分为4个步骤：</p>
+<ul>
+<li>初始标记（CMS initial mark）</li>
+<li>并发标记（CMS concurrent mark）</li>
+<li>重新标记（CMS remark）</li>
+<li>并发清除（CMS concurrent sweep）</li>
+</ul>
+<p>初始标记和重新标记这两个步骤仍需要“Stop The World”。</p>
+<ul>
+<li><strong>初始标记</strong>：仅仅是标记一下GC Roots能直接关联到的对象，速度很快。</li>
+<li><strong>并发标记</strong>：GC Roots Tracing</li>
+<li><strong>重新标记</strong>：修正并发标记期间因用程序继续运作而导致标记产生变动的那一部分对象，比初始标记时间长，但是比并发标记端。</li>
+</ul>
+<p>整个过程耗时最长的<strong>并发标记</strong>和<strong>并发清除</strong>可以和用户线程一起工作，所以总体上来说，CMS收集器的内存回收过程是于用户线程一起并发执行的。</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1513064844809.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>CMS是一款优秀的收集器，可以实现并发收集，低停顿，但是CMS依然存在存在如下几个问题：</p>
+<h4 id="1-CMS-收集器对CPU资源非常敏感"><a href="#1-CMS-收集器对CPU资源非常敏感" class="headerlink" title="1. CMS 收集器对CPU资源非常敏感"></a>1. CMS 收集器对CPU资源非常敏感</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">CMS默认启动的回收线程数是（CPU数量+3）/4，如下是分别有2、4、5、13个CPU的情况下，回收线程的数量和占比。</div><div class="line"></div><div class="line">(2+3)/4 = 1  50%</div><div class="line">(4+3)/4 = 1  25%</div><div class="line">(5+3)/4 = 2  40%</div><div class="line">(13+3)/4 = 4 30%</div></pre></td></tr></table></figure>
+<p>可以看到，当CPU的数量比较少时，会导致用户程序的执行速度忽然变慢。</p>
+<h4 id="2-无法避免浮动垃圾"><a href="#2-无法避免浮动垃圾" class="headerlink" title="2. 无法避免浮动垃圾"></a>2. 无法避免浮动垃圾</h4><ul>
+<li>由于进行并发清除的时候用户线程还在运行，所以执行完垃圾收集，仍然会有部分垃圾没有被清理，这部分垃圾就称为“浮动垃圾”。</li>
+<li>另外由于在CMS收集器执行垃圾回收的时候还有用户线程在执行，所以不能像其他垃圾收集器一样等着老年代机会完全被填满了再进行收集，需要预留一部分空间供用户程序使用。JDK 1.5 默认设置下，当老年代使用了68%的空间后就会被激活。</li>
+</ul>
+<h4 id="3-“标记-清除”算法所引起的空间碎片问题"><a href="#3-“标记-清除”算法所引起的空间碎片问题" class="headerlink" title="3. “标记-清除”算法所引起的空间碎片问题"></a>3. “标记-清除”算法所引起的空间碎片问题</h4><p>使用“标记-清除”的算法会导致内存回收完，有大量的空间碎片产生，当空间碎片过多时，将会给大对象分配带来很大的麻烦，往往会出现老年代还有很大空间剩余，但是无法找到连续的足够大的空间来分配给当前的对象。</p>
+<p>为了解决这个问题，CMS收集器提供了一个开关：-XX:+UseCMSCompactAtFullCollection，用于在CMS收集器顶不住要进行FullGC时开启内存碎片的合并整理过程。</p>
+<h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><p>什么时候触发CMS GC，为什么？</p>
+<p>Minor GC、Major GC和Full GC之间的区别？<br><a href="http://www.importnew.com/15820.html" target="_blank" rel="external">http://www.importnew.com/15820.html</a></p>
+<h3 id="垃圾收集器参数总结"><a href="#垃圾收集器参数总结" class="headerlink" title="垃圾收集器参数总结"></a>垃圾收集器参数总结</h3><ul>
+<li>-XX:+UseSerialGC : Jvm运行在Client模式下的默认值，打开此开关后，使用Serial + Serial Old的收集器组合进行内存回收</li>
+<li>-XX:+UseParNewGC : 打开此开关后，使用ParNew + Serial Old的收集器进行垃圾回收</li>
+<li>-XX:+UseConcMarkSweepGC : 使用ParNew + CMS +  Serial Old的收集器组合进行内存回收，Serial Old作为CMS出现“Concurrent Mode Failure”失败后的后备收集器使用</li>
+<li>-XX:+UseParallelGC : Jvm运行在Server模式下的默认值，打开此开关后，使用Parallel Scavenge +  Serial Old的收集器组合进行回收</li>
+<li>-XX:+UseParallelOldGC : 使用Parallel Scavenge +  Parallel Old的收集器组合进行回收</li>
+<li>-XX:SurvivorRatio : 新生代中Eden区域与Survivor区域的容量比值，默认为8，代表Eden:Subrvivor = 8:1</li>
+<li>-XX:PretenureSizeThreshold : 直接晋升到老年代对象的大小，设置这个参数后，大于这个参数的对象将直接在老年代分配</li>
+<li>-XX:MaxTenuringThreshold : 晋升到老年代的对象年龄，每次Minor GC之后，年龄就加1，当超过这个参数的值时进入老年代</li>
+<li>-XX:UseAdaptiveSizePolicy : 动态调整java堆中各个区域的大小以及进入老年代的年龄</li>
+<li>-XX:+HandlePromotionFailure : 是否允许新生代收集担保，进行一次minor gc后, 另一块Survivor空间不足时，将直接会在老年代中保留</li>
+<li>-XX:ParallelGCThreads : 设置并行GC进行内存回收的线程数</li>
+<li>-XX:GCTimeRatio : GC时间占总时间的比列，默认值为99，即允许1%的GC时间，仅在使用Parallel Scavenge 收集器时有效</li>
+<li>-XX:MaxGCPauseMillis : 设置GC的最大停顿时间，在Parallel Scavenge 收集器下有效</li>
+<li>-XX:CMSInitiatingOccupancyFraction : 设置CMS收集器在老年代空间被使用多少后出发垃圾收集，默认值为68%，仅在CMS收集器时有效，-XX:CMSInitiatingOccupancyFraction=70</li>
+<li>-XX:+UseCMSCompactAtFullCollection : 由于CMS收集器会产生碎片，此参数设置在垃圾收集器后是否需要一次内存碎片整理过程，仅在CMS收集器时有效</li>
+<li>-XX:+CMSFullGCBeforeCompaction : 设置CMS收集器在进行若干次垃圾收集后再进行一次内存碎片整理过程，通常与UseCMSCompactAtFullCollection参数一起使用</li>
+<li>-XX:+UseFastAccessorMethods : 原始类型优化</li>
+<li>-XX:+DisableExplicitGC : 是否关闭手动System.gc()</li>
+<li>-XX:+CMSParallelRemarkEnabled : 降低标记停顿</li>
+<li>-XX:LargePageSizeInBytes : 内存页的大小不可设置过大，会影响Perm的大小，-XX:LargePageSizeInBytes=128m</li>
+<li>–XX:+UseG1GC : 打开此开关后，使用G1垃圾收集器</li>
+</ul>
+<h2 id="内存分配策略"><a href="#内存分配策略" class="headerlink" title="内存分配策略"></a>内存分配策略</h2><h3 id="对象优先在eden分配"><a href="#对象优先在eden分配" class="headerlink" title="对象优先在eden分配"></a>对象优先在eden分配</h3><p>如果没有足够的空间，会执行一次Minor GC</p>
+<h3 id="大对象直接进入老年代"><a href="#大对象直接进入老年代" class="headerlink" title="大对象直接进入老年代"></a>大对象直接进入老年代</h3><p>如果大对象在新生代分配会导致新生代执行频繁的复制</p>
+<h3 id="长期存活的对象将进入老年代"><a href="#长期存活的对象将进入老年代" class="headerlink" title="长期存活的对象将进入老年代"></a>长期存活的对象将进入老年代</h3><p>对象在Survivor区没经过一次 Minor GC，年龄就增加1岁，当他的年龄增加到一定程度（默认为15岁），就将会被晋升到老年代中。</p>
+<h3 id="动态对象年龄判断"><a href="#动态对象年龄判断" class="headerlink" title="动态对象年龄判断"></a>动态对象年龄判断</h3><p>一般来讲，对象年龄必须达到 MaxTenuringThreshold 才能晋升到老年代，但是如果Survivor空间中相同年龄所有对象大小的综合大于Survivor空间的一般，年龄大于等于该年龄的对象就可以直接进入老年代。</p>
+<h3 id="空间分配担保"><a href="#空间分配担保" class="headerlink" title="空间分配担保"></a>空间分配担保</h3><p>发生Minor GC之前，虚拟机会先检查老年代最大可用的连续空间是否大于新生代所有对象总空间，如果这个条件成立，那么Minor GC可以确保是安全的。如果不成立，则虚拟机会查看 HandlePromotionFailure 设置的值是否允许担保失败。</p>
+<p>如果允许，则继续检查老年代最大可用的连续空间是否大于历次晋升到老年代对象的平均大小，如果大于，将尝试一次 Minor GC，尽管这次 Minor GC 有风险。</p>
+<p>如果小于，或者 HandlePromotionFailure 设置为不允许冒险，则这时要进行一次Full GC。</p>
 
           
         
@@ -482,7 +553,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/09/07/02-java集合类之Collection-架构/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/12/11/java-虚拟机-01-java-内存管理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="XiYang">
@@ -501,7 +572,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="../../2017/09/07/02-java集合类之Collection-架构/" itemprop="url">Java Collection 架构</a></h1>
+                <a class="post-title-link" href="../../2017/12/11/java-虚拟机-01-java-内存管理/" itemprop="url">一、java 内存管理</a></h1>
         
 
         <div class="post-meta">
@@ -513,8 +584,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-07T17:52:03+08:00">
-                2017-09-07
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-11T10:05:20+08:00">
+                2017-12-11
               </time>
             
 
@@ -536,8 +607,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="../../categories/java-集合/" itemprop="url" rel="index">
-                    <span itemprop="name">java 集合</span>
+                  <a href="../../categories/java-虚拟机/" itemprop="url" rel="index">
+                    <span itemprop="name">java 虚拟机</span>
                   </a>
                 </span>
 
@@ -554,9 +625,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="../../2017/09/07/02-java集合类之Collection-架构/#comments" itemprop="discussionUrl">
+                <a href="../../2017/12/11/java-虚拟机-01-java-内存管理/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/09/07/02-java集合类之Collection-架构/" itemprop="commentCount"></span>
+                        data-disqus-identifier="2017/12/11/java-虚拟机-01-java-内存管理/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -586,252 +657,106 @@
       
         
           
-            <h2 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h2><p>首先看一下 Collection 的类图结构如下：</p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505116825766.png?imageMogr2/thumbnail/!70p/quality/100!" alt=""></p>
-<p>Collection 是一个接口，它主要有两个分支 List 和 Set。</p>
-<p>List 和 Set 是两个接口，他们继承自 Collection ，List 是有序的队列，元素可以重复， Set 是不重复的的集合。</p>
-<p>为了减少重复代码，jdk 抽象出了一个 AbstractCollection 抽象类，这个类实现了 Collection 中绝大部分函数，这样在其它的实现类中就可以省去重复的编码。</p>
-<p>AbstractList 和 AbstractSet都继承于AbstractCollection，具体的List实现类继承于AbstractList，而Set的实现类则继承于AbstractSet。</p>
-<h2 id="Collection-类详解"><a href="#Collection-类详解" class="headerlink" title="Collection 类详解"></a>Collection 类详解</h2><p>Collection 的定义如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public interface Collection&lt;E&gt; extends Iterable&lt;E&gt; &#123;</div></pre></td></tr></table></figure></p>
-<p>包含的方法如下：<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505117974012.png?imageMogr2/thumbnail/!70p/quality/100!" alt=""></p>
-<h2 id="List-详解"><a href="#List-详解" class="headerlink" title="List 详解"></a>List 详解</h2><p>接口声明：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public interface List&lt;E&gt; extends Collection&lt;E&gt; &#123;</div></pre></td></tr></table></figure>
-<p>包含的方法：</p>
-<p>![](image:: <a href="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505118343539.png?imageMogr2/thumbnail/!100p/quality/100!）" target="_blank" rel="external">http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505118343539.png?imageMogr2/thumbnail/!100p/quality/100!）</a></p>
-<p>其中带 上箭头 是从 Collection 继承来的，相比于 Collection ，主要增加了一些在指定位置添加、删除、修改、获取对应元素的接口。还有获取List中的子队列。</p>
-<h2 id="Set-详解"><a href="#Set-详解" class="headerlink" title="Set 详解"></a>Set 详解</h2><p>接口声明</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public interface Set&lt;E&gt; extends Collection&lt;E&gt; &#123;</div></pre></td></tr></table></figure>
-<p>包含的方法：</p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505119617661.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<p>关于API方面。Set的API和Collection完全一样。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/07/13/一些好玩的前端项目/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="XiYang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="../../images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XiYang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="../../2017/07/13/一些好玩的前端项目/" itemprop="url">一些好玩的前端项目</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-13T00:00:00+08:00">
-                2017-07-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="../../categories/前端/" itemprop="url" rel="index">
-                    <span itemprop="name">前端</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="../../2017/07/13/一些好玩的前端项目/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/07/13/一些好玩的前端项目/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="web-代码编辑器"><a href="#web-代码编辑器" class="headerlink" title="web 代码编辑器"></a>web 代码编辑器</h2><p><a href="https://ace.c9.io/#nav=howto&amp;api=editor" target="_blank" rel="external">https://ace.c9.io/#nav=howto&amp;api=editor</a></p>
-<p>Features</p>
-<ul>
-<li>Syntax highlighting for over 110 languages (TextMate/Sublime Text.tmlanguage files can be imported)</li>
-<li>Over 20 themes (TextMate/Sublime Text .tmtheme files can be imported)</li>
-<li>Automatic indent and outdent</li>
-<li>An optional command line</li>
-<li>Handles huge documents (four million lines seems to be the limit!)</li>
-<li>Fully customizable key bindings including vim and Emacs modes</li>
-<li>Search and replace with regular expressions</li>
-<li>Highlight matching parentheses</li>
-<li>Toggle between soft tabs and real tabs</li>
-<li>Displays hidden characters</li>
-<li>Drag and drop text using the mouse</li>
-<li>Line wrapping</li>
-<li>Code folding</li>
-<li>Multiple cursors and selections</li>
-<li>Live syntax checker (currently JavaScript/CoffeeScript/CSS/XQuery)</li>
-<li>Cut, copy, and paste functionality</li>
+            <h2 id="思考几个问题"><a href="#思考几个问题" class="headerlink" title="思考几个问题"></a>思考几个问题</h2><ul>
+<li>jvm 内存分几个区域，分别是什么</li>
+<li>java 对象在内存中的分布</li>
+<li>如何定位无用的对象</li>
+<li>垃圾收集的算法有哪些</li>
+<li>为什么有这么多的算法</li>
+<li>什么时候进行收集</li>
+<li>什么是 Stop the world</li>
 </ul>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505393675359.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<h2 id="web-diff工具"><a href="#web-diff工具" class="headerlink" title="web diff工具"></a>web diff工具</h2><p><a href="http://www.mergely.com/doc" target="_blank" rel="external">http://www.mergely.com/doc</a></p>
-<blockquote>
-<p>Mergely is a powerful online diff and merge editor and javascript library that highlights changes in text. It can be embedded within your own Web application to compare files, text, C, C++, Java, HTML, XML, CSS, and javascript. Download Mergely, and refer to the reference manual. Please refer to the the license agreement.</p>
-</blockquote>
-<ul>
-<li>Browser-based differencing tool</li>
-<li>Diff or Merge changes in your own web applications</li>
-<li>Always available</li>
-<li>Free and GPLv3</li>
-<li>Commercial license available</li>
-<li>Share diffs online for demonstration or discussion</li>
-<li>Simple to use</li>
-<li>Mergely is written with the aid of Code Mirror and jQuery javascript libraries, and uses HTML5 canvas to markup the differences between documents. It will work in most modern browsers.</li>
+<h2 id="java-虚拟机运行时数据区"><a href="#java-虚拟机运行时数据区" class="headerlink" title="java 虚拟机运行时数据区"></a>java 虚拟机运行时数据区</h2><p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1512959089709.png?imageMogr2/thumbnail/!60p/quality/100!" alt=""></p>
+<h3 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h3><ul>
+<li>可以看做线程所执行的字节码行号指示器。</li>
+<li>各线程私有，数据隔离。</li>
+<li>如果执行的是java方法，记录的是当前正在执行的虚拟机字节码指令，如果执行 Native 方法时，记录为空。</li>
 </ul>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505393734063.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<h2 id="代码高亮"><a href="#代码高亮" class="headerlink" title="代码高亮"></a>代码高亮</h2><p><a href="http://codemirror.net/" target="_blank" rel="external">http://codemirror.net/</a></p>
 <blockquote>
-<p>CodeMirror is a versatile text editor implemented in JavaScript for the browser. It is specialized for editing code, and comes with a number of language modes and addons that implement more advanced editing functionality.</p>
+<p>为什么要有程序计数器呢？</p>
 </blockquote>
-<p>Features</p>
-<ul>
-<li>Support for over 100 languages out of the box</li>
-<li>A powerful, composable language mode system</li>
-<li>Autocompletion (XML)</li>
-<li>Code folding</li>
-<li>Configurable keybindings</li>
-<li>Vim, Emacs, and Sublime Text bindings</li>
-<li>Search and replace interface</li>
-<li>Bracket and tag matching</li>
-<li>Support for split views</li>
-<li>Linter integration</li>
-<li>Mixing font sizes and styles</li>
-<li>Various themes</li>
-<li>Able to resize to fit content</li>
-<li>Inline and block widgets</li>
-<li>Programmable gutters</li>
-<li>Making ranges of text styled, read-only, or atomic</li>
-<li>Bi-directional text support</li>
-<li>Many other methods and addons…</li>
+<p>多线程的程序执行是轮流进行的，为了能在切换回来是能继续执行，所以每个线程需要一个自己的程序计数器。</p>
+<h3 id="java-虚拟机栈"><a href="#java-虚拟机栈" class="headerlink" title="java 虚拟机栈"></a>java 虚拟机栈</h3><ul>
+<li>线程私有，生命周期和线程相同</li>
+<li>方法执行的同时会创建一个栈帧，用来存储：局部变量表、操作数栈、动态链接、方法出口等信息</li>
+<li>局部变量表储存了在编译器已知的各种基本数据类型、对象引用和returnAddress类型</li>
+<li>局部变量表所需的空间在编译期间完成分配，方法运行期间不会改变大小</li>
+<li>此区域定义了两个异常：StackOverflow 和 OutOfMemoryError</li>
 </ul>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505393757573.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<h2 id="pdfjs"><a href="#pdfjs" class="headerlink" title="pdfjs"></a>pdfjs</h2><p><a href="https://github.com/mozilla/pdf.js/" target="_blank" rel="external">https://github.com/mozilla/pdf.js/</a></p>
 <blockquote>
-<p>PDF.js is a Portable Document Format (PDF) viewer that is built with HTML5.</p>
-<p>PDF.js is community-driven and supported by Mozilla Labs. Our goal is to create a general-purpose, web standards-based platform for parsing and rendering PDFs.</p>
+<p>为什么要有虚拟机栈</p>
 </blockquote>
-<h2 id="JSON-Server-amp-amp-faker-js"><a href="#JSON-Server-amp-amp-faker-js" class="headerlink" title="JSON Server &amp;&amp; faker.js"></a>JSON Server &amp;&amp; faker.js</h2><p><a href="https://github.com/typicode/json-server" target="_blank" rel="external">https://github.com/typicode/json-server</a></p>
+<p>程序计数器是记录程序执行到那一步了，虚拟机栈则是在方法运行期间保存数据的数据接口，在方法执行之前分配局部变量需要的内存大小，方法执行之后返回方法的返回值。</p>
+<h3 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h3><p>本地方法栈和虚拟机栈类似，区别是本地方法栈储存的是本地方法运行期的数据。</p>
+<h3 id="java-堆"><a href="#java-堆" class="headerlink" title="java 堆"></a>java 堆</h3><ul>
+<li>线程共享</li>
+<li>一般来说java堆是java 内存管理中最大的一块区域</li>
+<li>几乎所有的对象实例和数组都是在堆上分配内存</li>
+<li>堆是垃圾收集器管理的主要区域</li>
+<li>堆一般分为新生代 老年代，新生代细分为：Edge，From Survivor，To Survivor</li>
+</ul>
 <blockquote>
-<p>Get a full fake REST API with zero coding in less than 30 seconds (seriously)</p>
+<p>堆的作用</p>
 </blockquote>
-<p><a href="https://github.com/marak/Faker.js/" target="_blank" rel="external">https://github.com/marak/Faker.js/</a></p>
+<p>堆是用来存储对象的空间，物理上可以不连续，堆分为不同的类型主要是为了更好的内存管理，便于垃圾回收。一般堆的大小是可以扩展的通过-Xmx -Xms这两个参数来控制大小。如果堆上无法分配内存，并且也无法继续扩展时，就会抛出 OutOfMemoryError异常。</p>
+<h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><ul>
+<li>线程共享</li>
+<li>用来存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据</li>
+<li>使用HotSpot虚拟机，很多人把方法区称为永久代，这样的目的是可以省去单独编写内存管理的代码</li>
+</ul>
+<h3 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h3><ul>
+<li>方法区的一部分</li>
+<li>存放编译器生成的各种字面量和符号引用</li>
+</ul>
+<h3 id="直接内存"><a href="#直接内存" class="headerlink" title="直接内存"></a>直接内存</h3><ul>
+<li>直接内存不是java 虚拟机运行时数据的一部分，也不是java虚拟机规范中定义的内存区域。</li>
+<li>jdk 1.4 中新加入的NIO，可以使用Native函数库分配堆外内存</li>
+</ul>
 <blockquote>
-<p>generate massive amounts of fake data in Node.js and the browser</p>
+<p>直接内存会占用物理内存空间，假如总的内存不够用，会出现OutOfMemoryError异常</p>
 </blockquote>
-<p>介绍两大神器！——使用json-server和faker.js模拟REST API<br><a href="https://segmentfault.com/a/1190000008574028" target="_blank" rel="external">https://segmentfault.com/a/1190000008574028</a></p>
+<h2 id="虚拟机对象探秘"><a href="#虚拟机对象探秘" class="headerlink" title="虚拟机对象探秘"></a>虚拟机对象探秘</h2><h3 id="内存分配的两种方式"><a href="#内存分配的两种方式" class="headerlink" title="内存分配的两种方式"></a>内存分配的两种方式</h3><p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1512976472435.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>假如内存是规整的，内存的分配相当于指针移动。</p>
+<p>假如内存是不规整的，使用过的和没有使用的内存相互交错，这个时候就需要一个表记录哪些内存是用过的，哪些是没用过的，然后分配的时候，找一个足够大的空间划分给对象实例。</p>
+<p>java堆是否规整是由其所使用的垃圾收集器是否带有压缩整理的功能决定的。</p>
+<h3 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h3><p>由于分配内存的操作可能是多线程并发的，如何保证线程安全呢？</p>
+<ul>
+<li>CAS + 失败重试</li>
+<li>本地线程分配缓存 TLAB （Thread Local Allocation Buffer）</li>
+</ul>
+<h3 id="创建对象的流程"><a href="#创建对象的流程" class="headerlink" title="创建对象的流程"></a>创建对象的流程</h3><ul>
+<li>分配内存</li>
+<li>将分配的内存空间初始化为零值</li>
+<li>对象头设置（对象是哪个类的实例、如何才能找到类的元数据信息、对象的hash码、GC的分代年龄）</li>
+</ul>
+<p>到这个时候，从虚拟机来看，一个对象已经创建完了，但是从java程序的角度看，对象创建才刚刚开始。</p>
+<p>执行完new指令后，紧接着执行init方法，会按照程序员的意愿进行初始化。</p>
+<h3 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h3><p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1512979634404.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<ul>
+<li>对象头包含两个部分</li>
+<li>实例数据是对象真正存储的有效信息，程序代码中所定义的各种类型的字段内容</li>
+<li>对齐填充并不是必然存在的，JVM 要求内存起始地址必须是8的整数倍</li>
+</ul>
+<h3 id="对象的访问定位"><a href="#对象的访问定位" class="headerlink" title="对象的访问定位"></a>对象的访问定位</h3><p>创建对象的目的是为了使用对象，那如何找到对应的对象呢？由如下两种方式：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1512981025850.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1512981045132.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>这两种对象访问方式各有优势，使用句柄访问好处是reference中存储的是稳定的句柄地址，在对象被移动时只会改变句柄中的实例数据指针，而reference本身不需要修改。</p>
+<p>使用直接指针访问方式最大的好处就是速度更快，它节省了一次指针定位的时间开销，由于对象的访问在java中非常频繁，所以这类开销积少成多也很可观。</p>
+<p>Sun HotSpot采用的第二种方式进行对象访问。</p>
+<h2 id="OutOfMemoryError异常实战"><a href="#OutOfMemoryError异常实战" class="headerlink" title="OutOfMemoryError异常实战"></a>OutOfMemoryError异常实战</h2><p>在 java 虚拟机规范中，除了程序计数器外，虚拟机内存的其它几个运行时区域都有发生 OOM 的可能。</p>
+<h3 id="堆溢出"><a href="#堆溢出" class="headerlink" title="堆溢出"></a>堆溢出</h3><p>如下的代码清单中所示，代码限制了java 堆的大小为 20M，不可扩展，通过频繁的创建对象添加到List中去，在对象数量达到最大堆的容量限制后就会产生内存溢出异常。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * VM Args: -Xms20m -Xmx20m -XX:+HeapDumpOnOutOfMemoryError</div><div class="line"> * Created by xiexiyang on 16/3/22.</div><div class="line"> */</div><div class="line">public class HeapOOM &#123;</div><div class="line"></div><div class="line">    static class OOMObject &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        List&lt;OOMObject&gt; list= new ArrayList&lt;OOMObject&gt;();</div><div class="line"></div><div class="line">        while (true)&#123;</div><div class="line">            list.add(new OOMObject());</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>运行结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">[GC 5963K-&gt;3513K(20480K), 0.0151440 secs]</div><div class="line">[GC 9076K-&gt;8080K(20480K), 0.0149410 secs]</div><div class="line">[Full GC 17389K-&gt;13163K(20480K), 0.2516960 secs]</div><div class="line">[Full GC 16255K-&gt;16164K(20480K), 0.1447540 secs]</div><div class="line">[Full GC 16164K-&gt;16147K(20480K), 0.1832760 secs]</div><div class="line">java.lang.OutOfMemoryError: Java heap space</div><div class="line">Dumping heap to java_pid18191.hprof ...</div><div class="line">Heap dump file created [27741631 bytes in 0.488 secs]</div><div class="line">Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: Java heap space</div><div class="line">    at java.util.Arrays.copyOf(Arrays.java:2245)</div><div class="line">    at java.util.Arrays.copyOf(Arrays.java:2219)</div><div class="line">    at java.util.ArrayList.grow(ArrayList.java:242)</div><div class="line">    at java.util.ArrayList.ensureExplicitCapacity(ArrayList.java:216)</div><div class="line">    at java.util.ArrayList.ensureCapacityInternal(ArrayList.java:208)</div><div class="line">    at java.util.ArrayList.add(ArrayList.java:440)</div><div class="line">    at com.xiyang.study.jvm.HeapOOM.main(HeapOOM.java:20)</div></pre></td></tr></table></figure></p>
+<h3 id="虚拟机栈和本地方法栈溢出"><a href="#虚拟机栈和本地方法栈溢出" class="headerlink" title="虚拟机栈和本地方法栈溢出"></a>虚拟机栈和本地方法栈溢出</h3><p>栈容量有-Xss参数设定。</p>
+<ul>
+<li>如果线程请求的栈深度大于虚拟机所允许的最大深度，将会抛出 StackOverflowError 异常。</li>
+<li>如果虚拟机在扩展栈时无法申请到足够的内存空间，则抛出 OutOfMemoryError 异常。</li>
+</ul>
+<p>单线程情况下，设置相对小的栈空间，比如-Xss128k，然后使用递归，比较容易模拟出StackOverflowError。</p>
+<p>如果是多线程情况下，可以设置较大的栈空间，然后不断的创建线程最后会抛出 OutOfMemoryError，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: unable to create new natice thread</div></pre></td></tr></table></figure></p>
+<p>出现上面的异常很容易理解，总的内存空间是一定的，虚拟机提供参数来控制java 堆和方法区的最大值，用总的内存减去最大堆容量(Xmx)，再减去最大方法区容量（PermSize）,程序计数器消耗内存很小可以忽略，剩下的就是虚拟机栈和本地方法栈的可用空间了。这种情况下可以通过减小栈空间大小来达到增大线程数量的目的。</p>
+<h3 id="方法区和运行时常量池溢出"><a href="#方法区和运行时常量池溢出" class="headerlink" title="方法区和运行时常量池溢出"></a>方法区和运行时常量池溢出</h3><p>在一些大型的web项目启动的时候我们经常会遇到如下的异常：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: PermGen space</div></pre></td></tr></table></figure>
+<p>出现这个异常代表方法区内存溢出了。我们可以通过调整参数的形式来解决这个问题。</p>
 
           
         
@@ -880,7 +805,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/07/06/2013-09-26-python/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/12/11/life-爷爷奶奶/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="XiYang">
@@ -899,7 +824,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="../../2017/07/06/2013-09-26-python/" itemprop="url">python 学习笔记</a></h1>
+                <a class="post-title-link" href="../../2017/12/11/life-爷爷奶奶/" itemprop="url">爷爷奶奶</a></h1>
         
 
         <div class="post-meta">
@@ -911,322 +836,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-06T16:02:32+08:00">
-                2017-07-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="../../categories/python/" itemprop="url" rel="index">
-                    <span itemprop="name">python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="../../2017/07/06/2013-09-26-python/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/07/06/2013-09-26-python/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          字符串、文件、目录、列表和网络的一些笔记
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="../../2017/07/06/2013-09-26-python/">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/07/06/2013-05-11-git/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="XiYang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="../../images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XiYang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="../../2017/07/06/2013-05-11-git/" itemprop="url">git 基础用法和命令</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-06T16:02:32+08:00">
-                2017-07-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="../../categories/工具/" itemprop="url" rel="index">
-                    <span itemprop="name">工具</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="../../2017/07/06/2013-05-11-git/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/07/06/2013-05-11-git/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          git版本控制使用基础用法
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="../../2017/07/06/2013-05-11-git/">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/06/14/论工具的重要性/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="XiYang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="../../images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XiYang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="../../2017/06/14/论工具的重要性/" itemprop="url">论工具的重要性</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-14T09:38:30+08:00">
-                2017-06-14
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-11T00:00:00+08:00">
+                2017-12-11
               </time>
             
 
@@ -1266,9 +877,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="../../2017/06/14/论工具的重要性/#comments" itemprop="discussionUrl">
+                <a href="../../2017/12/11/life-爷爷奶奶/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/06/14/论工具的重要性/" itemprop="commentCount"></span>
+                        data-disqus-identifier="2017/12/11/life-爷爷奶奶/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -1298,37 +909,9 @@
       
         
           
-            <p>最近看了一篇文章:<a href="http://www.techug.com/post/the-effective-engineer.html" target="_blank" rel="external">《顶级程序员和普通程序员在思维模式上的5个区别！》</a></p>
-<p>《The Effective Engineer》的作者在写书的过程中，为了了解那些顶级程序员和普通程序员的区别，采访了很多硅谷顶级科技公司的顶尖软件工程师。他发现这些给世界带来巨大影响的的工程师们至少有以下5个共同的思维模式：</p>
-<ul>
-<li>1.勇于去研究你不懂的代码</li>
-<li>2.精通代码调试(debug)</li>
-<li>3.重视能够节约时间的工具</li>
-<li>4.优化你的迭代速度</li>
-<li>5.系统性的思考方式</li>
-</ul>
-<p>其中第三条 <strong>重视能够节约时间的工具</strong> 带给我很多启发</p>
-<blockquote>
-<p>曾经在Facebook担任技术总监的Bobby Johnson描述过，高效率的程序员都把时间花在制作工具上。<br>很多人也认为工具是很重要的，但是他们并没有花时间去制作、整合自己的工具。但是，Jonson团队最出色的员工耗费了他们1/3的时间在工具制作上，这些工具可以用来发布代码，监控系统，以及能让他们花更少的时间去做更多事情。<br>总之，不要花时间去做机器可以代替你去做的事情。</p>
-</blockquote>
-<p>对于大部分初级工程师来说，大部分的工作内容都是一些重复的业务代码，如果只是被动的编写业务，可能很难有长进，很多人会抱怨整天就是写增删改查的代码，没有技术含量，不能学到新东西，殊不知工作中大部分就是这样的工作。</p>
-<p>infoQ负责出品的王概凯写的&lt;&lt;聊聊架构&gt;&gt;第一篇关于生命周期最后有一段话：</p>
-<blockquote>
-<p>非核心生命周期拆分出来成为服务后，这个服务不再仅仅给一个人使用，而变成了所有人能能够共享。<br>非核心生命周期一旦拆分出来后，往往就变成了一个通用的服务，反而获得了更大的生命力，不再局限于原有的大生命周期。对非核心生命周期的掌握，慢慢也就成为了一个一个的职业。<br>而原有的大生命周期则变的更加精简，可以更加专注于自己的核心生命周期活动，以节省更多的时间。</p>
-</blockquote>
-<p>在日常的后台开发中，会有很多通用的需求，是每次遇到复制拷贝一份代码快速实现功能呢，还是可以抽取出一个公共服务或通用的组件提供给大家使用呢？</p>
-<p>假如仅仅为了实现需求，正好自己以前写过类似或则网上有别人的代码，然后自己复制拷贝一份，长远来看其实是一直在做重复的工作，也很难有成长，假如同样的事情做了5遍，10遍充其量你也只是比别人熟练一下而已。</p>
-<p>那工作中有哪些是通用的并且是可以抽取出来的功能呢？或者说是非核心生命周期。考虑如下的几个场景：</p>
-<h4 id="后台文件导出"><a href="#后台文件导出" class="headerlink" title="后台文件导出"></a>后台文件导出</h4><p>文件导出是一个通用的需求且很常见，在日常的开发中此类的需求和开发会非常频繁，常见的做法是引入POI的包，从数据库中获取到数据，然后调用POI的接口生成excel文件，输出给浏览器。</p>
-<p>需要手工做一次java对象到excel列的映射，如果需求字段有变更，一般情况下需要修改代码上线。</p>
-<p>假如导出的数据量特别大，后台也比较耗时，则同步的方式很容易造成超时，一般会做成异步导出，异步下载，则需要很多额外的开发，假如有多个系统都需要，那就需要在多个系统都实现一遍。</p>
-<p>假如导出的服务在线上的应用中，大量频繁的导出会请求到数据库主库上，会给数据库造成很大的压力，这个时候需要做读写分离。假如需要占用很多内存，有可能影响线上业务，则需要对导出做服务拆分。</p>
-<p>另外还有跨数据库访问的问题。是不是可以在接到这种需求的时候不需要写代码，基于配置式完成功能呢？</p>
-<h4 id="调度系统"><a href="#调度系统" class="headerlink" title="调度系统"></a>调度系统</h4><p>我们知道java中使用quartz可以很方便的配置定时调度，但是很多定时任务都要求在同一时间只能有一个任务执行。如何保证呢？方法有很多。但是是不是可以提供一个调度系统可以让各业务系统不需要都自己实现一套。</p>
-<h4 id="业务监控报警"><a href="#业务监控报警" class="headerlink" title="业务监控报警"></a>业务监控报警</h4><p>分布式系统中分布式事务问题是一个通用的问题，很难去保证在分布式系统下多个系统的一致性问题，一般业界的通用做法是保证数据的最终一致性。</p>
-<p>但是如何发现业务的异常呢？比如订单在支付系统支付成功，但是订单平台支付状态还是未支付。</p>
-<h4 id="代码生成"><a href="#代码生成" class="headerlink" title="代码生成"></a>代码生成</h4><p>在很多的创业公司，或中小型项目开发的公司，会面临大量新系统的开发，每次搭建项目的基础代码都会非常耗费时间，而且里面有大量的配置文件和配置项。<br>如何快速生成项目模板，省去基础的框架配置呢？</p>
-<p>以上的四个场景在我们当前的公司都有独立的系统和工具去支撑对应的需求，每一个系统在不断的迭代过程中都焕发了自己更强大的生命力。</p>
+            <p>三年前大伯父车祸去世，那年我结婚，半年后奶奶也走了，第二年女儿出生，今年清明节爷爷也去世了。<br>今年九月十六是奶奶三周年忌日，从北京匆匆赶回家，又匆匆赶回。<br>前几天去电影院看了迪士尼今年的新片《寻梦环游记》，看到最后留了很多泪，假如真的有灵界，爷爷奶奶和大伯父现在应该在一起了吧。</p>
+<p>爷爷奶奶小的时候家里很穷，奶奶的家在我们那边叫河西，爷爷说奶奶是小时候逃荒的时候要饭要到我们这边的。无法想象他们在那个年代经历过多少的磨难。</p>
+<p>爷爷奶奶有6个孩子，三男三女，最大的是大姑，然后是大伯父、二伯父、二姑、三姑，我爸爸最小。</p>
 
           
         
@@ -1377,7 +960,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/01/12/jsonp解决跨域请求/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/10/25/spring-5-spring-aop的原理解析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="XiYang">
@@ -1396,7 +979,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="../../2017/01/12/jsonp解决跨域请求/" itemprop="url">jsonp 解决跨域请求</a></h1>
+                <a class="post-title-link" href="../../2017/10/25/spring-5-spring-aop的原理解析/" itemprop="url">spring AOP原理解析</a></h1>
         
 
         <div class="post-meta">
@@ -1408,8 +991,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-12T09:08:28+08:00">
-                2017-01-12
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-25T00:00:00+08:00">
+                2017-10-25
               </time>
             
 
@@ -1431,8 +1014,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="../../categories/前端/" itemprop="url" rel="index">
-                    <span itemprop="name">前端</span>
+                  <a href="../../categories/spring/" itemprop="url" rel="index">
+                    <span itemprop="name">spring</span>
                   </a>
                 </span>
 
@@ -1449,9 +1032,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="../../2017/01/12/jsonp解决跨域请求/#comments" itemprop="discussionUrl">
+                <a href="../../2017/10/25/spring-5-spring-aop的原理解析/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/01/12/jsonp解决跨域请求/" itemprop="commentCount"></span>
+                        data-disqus-identifier="2017/10/25/spring-5-spring-aop的原理解析/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -1481,426 +1064,840 @@
       
         
           
-            <h2 id="什么是跨域请求"><a href="#什么是跨域请求" class="headerlink" title="什么是跨域请求"></a>什么是跨域请求</h2><p>浏览器的同源策略限制从一个源加载的文档或脚本与来自另一个源的资源进行交互。<br>如果协议，端口和主机对于两个页面是相同的，则两个页面具有相同的源，否则就是不同源的。<br>如果要在js里发起跨域请求，则要进行一些特殊处理了。</p>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>最简单的有两种解决方式：</p>
-<ol>
-<li>可以把请求发到自己的服务端，再通过后台代码发起请求，再将数据返回前端。</li>
-<li>使用jsonp</li>
+            
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/10/25/spring-6-spring-的事务管理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="../../2017/10/25/spring-6-spring-的事务管理/" itemprop="url">spring 事务管理</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-25T00:00:00+08:00">
+                2017-10-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../categories/spring/" itemprop="url" rel="index">
+                    <span itemprop="name">spring</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="../../2017/10/25/spring-6-spring-的事务管理/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/10/25/spring-6-spring-的事务管理/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/10/15/分布式系统-消息系统总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="../../2017/10/15/分布式系统-消息系统总结/" itemprop="url">消息系统总结</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-15T00:00:00+08:00">
+                2017-10-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../categories/消息系统/" itemprop="url" rel="index">
+                    <span itemprop="name">消息系统</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="../../2017/10/15/分布式系统-消息系统总结/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/10/15/分布式系统-消息系统总结/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="何时需要消息队列"><a href="#何时需要消息队列" class="headerlink" title="何时需要消息队列"></a>何时需要消息队列</h2><p>我们会经常听到消息队列的话题，消息系统可以解决那些问题呢？一个相对完整的消息队列是如何实现的？我们来探讨下这个主题。通常情况，可以使用mq的场景很多，比如如下几种：</p>
+<ul>
+<li>业务系统解耦</li>
+<li>最终一致性</li>
+<li>广播</li>
+<li>异步<ul>
+<li>有些请求并不需要及时处理，只需要最终处理掉就可以了，可以简化核心业务模型的复杂度，比如一个下单或支付的业务流程。</li>
+</ul>
+</li>
+<li>错峰流控<ul>
+<li>削峰填谷，避免瞬时的大流量打垮下游的业务系统</li>
+</ul>
+</li>
+<li>可靠通信<ul>
+<li>如果是用RPC如果失败无法保持状态，以便于补偿发送</li>
+</ul>
+</li>
+</ul>
+<p>一个消息系统最基础的功能是负责接收消息，并转发给目标系统，为了保证可靠消息，需要将消息持久化，并对投递做一些策略。根据消息队列解决的问题，消息队列的本质我们定义为如下几点：</p>
+<ul>
+<li>一次RPC变两次RPC</li>
+<li>内容传输</li>
+<li>选择合适的时机投递</li>
+</ul>
+<h2 id="如何设计一个消息队列"><a href="#如何设计一个消息队列" class="headerlink" title="如何设计一个消息队列"></a>如何设计一个消息队列</h2><p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1514445716436.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h2 id="队列的基本功能"><a href="#队列的基本功能" class="headerlink" title="队列的基本功能"></a>队列的基本功能</h2><h3 id="RPC通信协议"><a href="#RPC通信协议" class="headerlink" title="RPC通信协议"></a>RPC通信协议</h3><p>队列的核心是消息的投递，这就涉及到进程间通讯，刚才也讲到，所谓的消息队列，就是两次RPC加一次转储。所以进程间的通讯选择RPC的实现。一般我们可以利用公司现有的RPC框架，比如hessian、dubbo或thrift。</p>
+<h3 id="数据存储"><a href="#数据存储" class="headerlink" title="数据存储"></a>数据存储</h3><p>broker接收到消息之后一般会选择对消息持久化，理论上，从速度来看，文件系统&gt;分布式KV(持久化)&gt;分布式文件系统&gt;数据库，而可靠性却截然相反。</p>
+<p>如果消息队列是用来支持支付、交易等对可靠性要求非常高，但对性能和量的要求没有那么高，而且没有时间精力专门做文件存储系统的研究，可以选择DB作为存储系统。</p>
+<h3 id="异步-同步"><a href="#异步-同步" class="headerlink" title="异步/同步"></a>异步/同步</h3><ul>
+<li>异步，归根结底你还是需要关心结果的，但可能不是当时的时间点关心，可以用轮询或毁掉方式处理结果。</li>
+<li>同步，是需要当时关心结果的。</li>
+<li>oneway，是发出去就不管死活的方式。</li>
+</ul>
+<h3 id="pull-push"><a href="#pull-push" class="headerlink" title="pull/push"></a>pull/push</h3><h4 id="慢消费"><a href="#慢消费" class="headerlink" title="慢消费"></a>慢消费</h4><p>在push模型中，慢消费会导致消息在broker的堆积，如果消费者的速度比发送者慢很多，则会导致大量的消息无法投递。<br>pull模型中，consumer可以按需消费，不用但系自己处理不了的消息来骚扰自己，而broker堆积消息也相对简单，无需记录每一个要发送消息的状态，只需要维护所有消息的队列和偏移量就可以了。</p>
+<h4 id="消息延迟与忙等"><a href="#消息延迟与忙等" class="headerlink" title="消息延迟与忙等"></a>消息延迟与忙等</h4><p>这是pull模式的最大短板，由于是消费者主动去拉取消息，但是消费者无法准确的决定何时去拉取最新的消息，需要间断的去pull消息，可能会导致消息的延迟。</p>
+<p>业界较成熟的做法是从短时间开始（不会对broker有太大负担），然后指数级增长等待。比如开始等5ms，然后10ms，然后20ms，然后40ms……直到有消息到来，然后再回到5ms。<br>即使这样，依然存在延迟问题：假设40ms到80ms之间的50ms消息到来，消息就延迟了30ms，而且对于半个小时来一次的消息，这些开销就是白白浪费的。<br>在阿里的RocketMq里，有一种优化的做法-长轮询，来平衡推拉模型各自的缺点。基本思路是:消费者如果尝试拉取失败，不是直接return,而是把连接挂在那里wait,服务端如果有新的消息到来，把连接notify起来，这也是不错的思路。但海量的长连接block对系统的开销还是不容小觑的，还是要合理的评估时间间隔，给wait加一个时间上限比较好~</p>
+<h2 id="千丁为何要设计自己的消息系统"><a href="#千丁为何要设计自己的消息系统" class="headerlink" title="千丁为何要设计自己的消息系统"></a>千丁为何要设计自己的消息系统</h2><blockquote>
+<p>背景：<br>千丁在系统创建初期，自己实现了一套内部的消息系统中间件，用于解决系统间可靠通讯的问题，为什么没有采用业内开源产品呢？几乎每一个有好奇心的入职的新人都会问这个问题。</p>
+</blockquote>
+<p>现在来看，市面上可供选择的开源MQ解决方案有很多，比如RocketMQ、RabbitMQ、ZeroMQ、Kafka，为什么我们会选择自研呢？</p>
+<p>首先我们在写imessage的时候是在2015年年初，当时千丁的系统正在进行2.5的开发，核心的几个系统有订单、促销、商品、商城、支付、财务、会员、预存款等。系统间的通信采用RPC（hessian协议），有些业务会涉及多个系统之间的调用和通知，需要保证多个系统都能正常处理，也就是分布式事务和最终一致性的问题。</p>
+<p>我们的需求是可靠性通信，消息要有序。</p>
+<p>快速开发、能够hold住。</p>
+<p>整个imessage开发大约用了一个多星期，由于是自己写的，原理都很清楚，出现问题也可以快速修改。</p>
+<h3 id="imessage的实现原理"><a href="#imessage的实现原理" class="headerlink" title="imessage的实现原理"></a>imessage的实现原理</h3><p>队列使用redis的阻塞队列，持久化存储使用redis+mysql的方式。</p>
+<p>每一个业务系统引入imessage-client并对外暴露message的RPC服务，imessage-server通过RPC协议调用对应的业务系统，业务系统使用SPI的机制找到对应的处理类，实现业务的调用。</p>
+<h4 id="消息保存到哪里？"><a href="#消息保存到哪里？" class="headerlink" title="消息保存到哪里？"></a>消息保存到哪里？</h4><p>imessage接到一个消息后会首先保存到数据库，如果保存成功，则push到block队列。</p>
+<h4 id="如何保证消息的顺序？"><a href="#如何保证消息的顺序？" class="headerlink" title="如何保证消息的顺序？"></a>如何保证消息的顺序？</h4><p>imessage并没有刻意的实现顺序消息，但是由于最初和之后的顺序topic都采用单线程消费，可以一定程度上保证消息消费的顺序性。另外通过状态机的方式保证业务方不会处理异常流程的消息，从另外一方面保证了业务状态的正确性。</p>
+<h4 id="如何保证消息的可靠性投递？"><a href="#如何保证消息的可靠性投递？" class="headerlink" title="如何保证消息的可靠性投递？"></a>如何保证消息的可靠性投递？</h4><p>内部有一个重试队列支持失败消息重试，达到可靠投递的目的（实现最终一致性）。当消息发送失败的时候，就将消息放入到重试队列，重试队列的消息会维护一个变量记录发送次数，和下次发送次数。重试队列的消费线程每隔一分钟获取重试队列的中消息，检测是否可以立即重试，如果可以将会发起一次投递，并记录发送结果，如果成功则写会数据库，如果还是失败，将重试次数加一，并重新计算下次发送时间。</p>
+<h3 id="imessage的进化过程"><a href="#imessage的进化过程" class="headerlink" title="imessage的进化过程"></a>imessage的进化过程</h3><ul>
+<li>第一版的imessage支持p2p的点对点消息。</li>
+<li>第二版支持了广播的特性，广播的实现原理是一次消息投递，分裂成多个消息发送出去。</li>
+<li>而后支持了topic，可以将消息分组，消费线程可以配置，支持无序和有序队列。</li>
+<li>再后来imessage集成了RocketMQ，使用RocketMQ来作为broker，负责消息的存储和转发，转发的协议依然采用hessian。</li>
+</ul>
+<h3 id="遇到的一些坑"><a href="#遇到的一些坑" class="headerlink" title="遇到的一些坑"></a>遇到的一些坑</h3><ol>
+<li>幂等性<br> 由于我们设计的消息系统失败会放入重试队列继续尝试下次通知，所以需要下游消息系统做好幂等性校验，通常需要采取分布式锁的机制，否则很容易造成消息多次投递后被重复消费，造成业务异常。</li>
+<li>消息队列阻塞<br> 最初的所有消息都放到一个队列中，假如有些类型的消息，下游系统处理很慢，会导致队列中的消息，大量堆积，引起后面的消息无法及时送达，对于及时性要求比较高的场景不能容忍，比如支付系统的支付消息通知到订单，如果不能及时送达，会导致订单系统状态长时间无法变为已支付，对用户造成困扰。这和本身imessage使用的push模型也有关系。</li>
 </ol>
-<p>第一种需要在服务器端做额外开发，而且频繁修改也需要频繁的改服务器端，一般不建议使用。下面看一下使用jsonp解决跨域问题的解决方案：</p>
-<h3 id="什么是jsonp"><a href="#什么是jsonp" class="headerlink" title="什么是jsonp"></a>什么是jsonp</h3><p>JSONP 和 JSON 看着很像，他们分别是什么呢？</p>
-<p>JSON(JavaScript Object Notation) 是一种轻量级的数据交换格式。对于JSON大家应该是很了解了吧，不是很清楚的朋友可以去json.org上了解下，简单易懂。</p>
-<p>JSONP是JSON with Padding的略称。它是一个非官方的协议，它允许在服务器端集成Script tags返回至客户端，通过javascript callback的形式实现跨域访问（这仅仅是JSONP简单的实现形式）。</p>
-<h2 id="实现演示"><a href="#实现演示" class="headerlink" title="实现演示"></a>实现演示</h2><h3 id="前端代码"><a href="#前端代码" class="headerlink" title="前端代码"></a>前端代码</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">$.ajax(&#123;</div><div class="line">     type: <span class="string">"get"</span>,</div><div class="line">     <span class="keyword">async</span>: <span class="literal">false</span>,</div><div class="line">     url: <span class="string">"http://wukong.iqdnet.cn/wukongbg/admin/monitorList/test"</span>,</div><div class="line">     dataType: <span class="string">"jsonp"</span>,</div><div class="line">     jsonp: <span class="string">"callbackparam"</span>,<span class="comment">//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)</span></div><div class="line">     success: <span class="function"><span class="keyword">function</span>(<span class="params">json</span>)</span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(json);</div><div class="line">        alert(json);</div><div class="line">     &#125;,</div><div class="line">     error: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">        alert(<span class="string">'fail'</span>);</div><div class="line">     &#125;</div><div class="line"> &#125;);</div></pre></td></tr></table></figure>
-<h3 id="服务器端"><a href="#服务器端" class="headerlink" title="服务器端"></a>服务器端</h3><p>在controller中定义一个方法 <code>test</code> 返回JSON的数据</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * test</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"test"</span>,method= RequestMethod.GET)</div><div class="line"><span class="meta">@ResponseBody</span></div><div class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">test</span><span class="params">(String callbackparam,HttpServletRequest request,MonitorListParams monitorListParams)</span> </span>&#123;</div><div class="line">    logger.info(<span class="string">"find monitorList list."</span>);</div><div class="line"></div><div class="line">    System.out.println(System.getProperty(<span class="string">"env"</span>));</div><div class="line"></div><div class="line">    ModelResult modelResult = <span class="keyword">new</span> ModelResult(ModelResult.CODE_200);</div><div class="line">    ResultPage&lt;MonitorList&gt; resultPage = <span class="keyword">null</span>;</div><div class="line">    resultPage = monitorListService.getResultPage(monitorListParams);</div><div class="line">    modelResult.setMessage(<span class="string">"查询成功"</span>);</div><div class="line">    modelResult.setResultPage(resultPage);</div><div class="line"></div><div class="line">    String content = JSON.toJSONString(modelResult);</div><div class="line"></div><div class="line">    content = callbackparam +<span class="string">"("</span>+content+<span class="string">")"</span>;</div><div class="line">    <span class="keyword">return</span> content;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1484107901127.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1484107880451.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="http://api.jquery.com/jQuery.ajax/" target="_blank" rel="external">Jquery 文档</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2016/10/21/06-深入研究java基础-HashMap/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="XiYang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="../../images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XiYang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="../../2016/10/21/06-深入研究java基础-HashMap/" itemprop="url">HashMap 详解和源码解析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-10-21T18:12:53+08:00">
-                2016-10-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="../../categories/java-集合/" itemprop="url" rel="index">
-                    <span itemprop="name">java 集合</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="../../2016/10/21/06-深入研究java基础-HashMap/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2016/10/21/06-深入研究java基础-HashMap/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public class HashMap&lt;K,V&gt;</div><div class="line">    extends AbstractMap&lt;K,V&gt;</div><div class="line">    implements Map&lt;K,V&gt;, Cloneable, Serializable</div></pre></td></tr></table></figure>
-<p>类图结构<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505200086056.png?imageMogr2/thumbnail/!60p/quality/100!" alt=""></p>
-<p><a href="http://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/" target="_blank" rel="external">http://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/</a></p>
-<p><a href="http://www.cnblogs.com/skywang12345/p/3323085.html" target="_blank" rel="external">http://www.cnblogs.com/skywang12345/p/3323085.html</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2016/10/21/2016-10-21-java基础-深入研究java-lang-Object类/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="XiYang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="../../images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XiYang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="../../2016/10/21/2016-10-21-java基础-深入研究java-lang-Object类/" itemprop="url">深入研究java.lang.Object类</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-10-21T14:52:09+08:00">
-                2016-10-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="../../categories/java-基础/" itemprop="url" rel="index">
-                    <span itemprop="name">java 基础</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="../../2016/10/21/2016-10-21-java基础-深入研究java-lang-Object类/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2016/10/21/2016-10-21-java基础-深入研究java-lang-Object类/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="Object类是所有类的基类"><a href="#Object类是所有类的基类" class="headerlink" title="Object类是所有类的基类"></a>Object类是所有类的基类</h2><p>尽管Object 类是一个具体类，但是设计他主要是为了扩展。他所有的非final方法（equals、hashcode、tostring、clone和finalize）都有明确的通用约定，因为他们被设计成是要被覆盖的。任何一个类，在覆盖这些方法的时候，都有责任遵守这些通用约定，如果不能做到这一点，其它依赖月这些约定的类（例如HashMap和HashSet）就无法结合该类一起正常工作。</p>
-<h2 id="Object包含如下API"><a href="#Object包含如下API" class="headerlink" title="Object包含如下API"></a>Object包含如下API</h2><ul>
-<li>Object()<ul>
-<li>默认构造方法</li>
-</ul>
-</li>
-<li>clone() <ul>
-<li>创建并返回此对象的一个副本。 </li>
-</ul>
-</li>
-<li>equals(Object obj) <ul>
-<li>指示某个其他对象是否与此对象“相等”。 </li>
-</ul>
-</li>
-<li>finalize() <ul>
-<li>当垃圾回收器确定不存在对该对象的更多引用时，由对象的垃圾回收器调用此方法。 </li>
-</ul>
-</li>
-<li>getClass() <ul>
-<li>返回一个对象的运行时类。 </li>
-</ul>
-</li>
-<li>hashCode() <ul>
-<li>返回该对象的哈希码值。 </li>
-</ul>
-</li>
-<li>notify() <ul>
-<li>唤醒在此对象监视器上等待的单个线程。 </li>
-</ul>
-</li>
-<li>notifyAll() <ul>
-<li>唤醒在此对象监视器上等待的所有线程。 </li>
-</ul>
-</li>
-<li>toString() <ul>
-<li>返回该对象的字符串表示。 </li>
-</ul>
-</li>
-<li>wait() <ul>
-<li>导致当前的线程等待，直到其他线程调用此对象的 notify() 方法或 notifyAll() 方法。 </li>
-</ul>
-</li>
-<li>wait(long timeout) <ul>
-<li>导致当前的线程等待，直到其他线程调用此对象的 notify() 方法或 notifyAll() 方法，或者超过指定的时间量。 </li>
-</ul>
-</li>
-<li>wait(long timeout, int nanos) <ul>
-<li>导致当前的线程等待，直到其他线程调用此对象的 notify() 方法或 notifyAll() 方法，或者其他某个线程中断当前线程，或者已超过某个实际时间量。</li>
-</ul>
-</li>
-</ul>
-<h2 id="方法详解"><a href="#方法详解" class="headerlink" title="方法详解"></a>方法详解</h2><h3 id="equals-用来判断两个对象是否相等"><a href="#equals-用来判断两个对象是否相等" class="headerlink" title="equals 用来判断两个对象是否相等"></a>equals 用来判断两个对象是否相等</h3><p>==与equals在Java中经常被使用，大家也都知道==与equals的区别：<br>==表示的是变量值完成相同（对于基础类型，地址中存储的是值，引用类型则存储指向实际对象的地址）；<br>equals表示的是对象的内容完全相同，此处的内容多指对象的特征/属性。</p>
-<p>实际上，上面说法是不严谨的，更多的只是常见于String类中。首先看一下Object类中关于equals()方法的定义：<br>jdk的默认实现是用 == 来实现的,直接比较的内存地址。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> (<span class="keyword">this</span> == obj);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>由此可见，Object原生的equals()方法内部调用的正是==，与==具有相同的含义。既然如此，为什么还要定义此equals()方法？</p>
-<p>equlas()方法的正确理解应该是：判断两个对象是否相等。那么判断对象相等的标尺又是什么？</p>
-<p>如上，在object类中，此标尺即为==。当然，这个标尺不是固定的，其他类中可以按照实际的需要对此标尺含义进行重定义。如String类中则是依据字符串内容是否相等来重定义了此标尺含义。如此可以增加类的功能型和实际编码的灵活性。当然了，如果自定义的类没有重写equals()方法来重新定义此标尺，那么默认的将是其父类的equals()，直到object基类。</p>
-<p>Java语言规范要求equals方法具有下面的特点：</p>
-<p>jdk 中的注释如下：</p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1504769026265.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<p>翻译过来有下面的几个规则：</p>
+<h2 id="kafka-实现解析"><a href="#kafka-实现解析" class="headerlink" title="kafka 实现解析"></a>kafka 实现解析</h2><p><a href="http://www.jasongj.com/2015/01/02/Kafka%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90/" target="_blank" rel="external">Kafka深度解析</a><br>本文转发自技术世界，原文链接　<a href="http://www.jasongj.com/2015/01/02/Kafka深度解析" target="_blank" rel="external">http://www.jasongj.com/2015/01/02/Kafka深度解析</a></p>
+<h3 id="kafka-简介"><a href="#kafka-简介" class="headerlink" title="kafka 简介"></a>kafka 简介</h3><p>Kafka是一种分布式的，基于发布/订阅的消息系统。主要设计目标如下：</p>
 <ul>
-<li>自反性：对于任何非空引用值 x，x.equals(x) 都应返回 true。 </li>
-<li>对称性：对于任何非空引用值 x 和 y，当且仅当 y.equals(x) 返回 true 时，x.equals(y) 才应返回 true。 </li>
-<li>传递性：对于任何非空引用值 x、y 和 z，如果 x.equals(y) 返回 true，并且 y.equals(z) 返回 true，那么 x.equals(z) 应返回 true。 </li>
-<li>一致性：对于任何非空引用值 x 和 y，多次调用 x.equals(y) 始终返回 true 或始终返回 false，前提是对象上 equals 比较中所用的信息没有被修改。 </li>
-<li>对于任何非空引用值 x，x.equals(null) 都应返回 false</li>
+<li>以时间复杂度为O(1)的方式提供消息持久化能力，即使对TB级以上数据也能保证常数时间的访问性能</li>
+<li>高吞吐率。即使在非常廉价的商用机器上也能做到单机支持每秒100K条消息的传输</li>
+<li>支持Kafka Server间的消息分区，及分布式消费，同时保证每个partition内的消息顺序传输</li>
+<li>同时支持离线数据处理和实时数据处理</li>
 </ul>
-<p>String 类重写了equals方法，如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * Compares this string to the specified object.  The result is &#123;<span class="doctag">@code</span></span></div><div class="line"><span class="comment"> * true&#125; if and only if the argument is not &#123;<span class="doctag">@code</span> null&#125; and is a &#123;<span class="doctag">@code</span></span></div><div class="line"><span class="comment"> * String&#125; object that represents the same sequence of characters as this</span></div><div class="line"><span class="comment"> * object.</span></div><div class="line"><span class="comment"> *</span></div><div class="line"><span class="comment"> * <span class="doctag">@param</span>  anObject</span></div><div class="line"><span class="comment"> *         The object to compare this &#123;<span class="doctag">@code</span> String&#125; against</span></div><div class="line"><span class="comment"> *</span></div><div class="line"><span class="comment"> * <span class="doctag">@return</span>  &#123;<span class="doctag">@code</span> true&#125; if the given object represents a &#123;<span class="doctag">@code</span> String&#125;</span></div><div class="line"><span class="comment"> *          equivalent to this string, &#123;<span class="doctag">@code</span> false&#125; otherwise</span></div><div class="line"><span class="comment"> *</span></div><div class="line"><span class="comment"> * <span class="doctag">@see</span>  #compareTo(String)</span></div><div class="line"><span class="comment"> * <span class="doctag">@see</span>  #equalsIgnoreCase(String)</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object anObject)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">this</span> == anObject) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (anObject <span class="keyword">instanceof</span> String) &#123;</div><div class="line">        String anotherString = (String)anObject;</div><div class="line">        <span class="keyword">int</span> n = value.length;</div><div class="line">        <span class="keyword">if</span> (n == anotherString.value.length) &#123;</div><div class="line">            <span class="keyword">char</span> v1[] = value;</div><div class="line">            <span class="keyword">char</span> v2[] = anotherString.value;</div><div class="line">            <span class="keyword">int</span> i = <span class="number">0</span>;</div><div class="line">            <span class="keyword">while</span> (n-- != <span class="number">0</span>) &#123;</div><div class="line">                <span class="keyword">if</span> (v1[i] != v2[i])</div><div class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                i++;</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h3 id="toString-方法"><a href="#toString-方法" class="headerlink" title="toString 方法"></a>toString 方法</h3><p>toString()方法返回该对象的字符串表示。先看一下Object中的具体方法体：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> getClass().getName() + <span class="string">"@"</span> + Integer.toHexString(hashCode());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>toString()方法相信大家都经常用到，即使没有显式调用，但当我们使用System.out.println(obj)时，其内部也是通过toString()来实现的。</p>
-<p>getClass()返回对象的类对象，getClassName()以String形式返回类对象的名称（含包名）。Integer.toHexString(hashCode())则是以对象的哈希码为实参，以16进制无符号整数形式返回此哈希码的字符串表示形式。</p>
-<p>如上例中的u1的哈希码是638，则对应的16进制为27e，调用toString()方法返回的结果为：com.corn.objectsummary.User@27e。</p>
-<p>因此：toString()是由对象的类型和其哈希码唯一确定，同一类型但不相等的两个对象分别调用toString()方法返回的结果可能相同。</p>
-<p>我们做实验打印某个类如下所示<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">User u1 = <span class="keyword">new</span> User();</div><div class="line">u1.setName(<span class="string">"u1"</span>);</div><div class="line"></div><div class="line">User u2 = <span class="keyword">new</span> User();</div><div class="line">u2.setName(<span class="string">"u2"</span>);</div><div class="line"></div><div class="line">System.out.println(<span class="string">"u1--&gt; "</span> + u1);</div><div class="line">System.out.println(<span class="string">"u2--&gt; "</span> + u2);</div><div class="line"></div><div class="line">输出</div><div class="line">u1--&gt; com.xiyang.study.reflect.User@<span class="number">99f</span>ad95c</div><div class="line">u2--&gt; com.xiyang.study.reflect.User<span class="meta">@cee</span>1149d</div><div class="line">u1--&gt; com.xiyang.study.reflect.User@<span class="number">99f</span>ad95c</div><div class="line">u2--&gt; com.xiyang.study.reflect.User<span class="meta">@cee</span>1149d</div></pre></td></tr></table></figure></p>
-<h3 id="hashcode"><a href="#hashcode" class="headerlink" title="hashcode"></a>hashcode</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span></span>;</div></pre></td></tr></table></figure>
-<p>以下是关于HashCode的官方文档定义：</p>
-<p>hashcode方法返回该对象的哈希码值。支持该方法是为哈希表提供一些优点，例如，java.util.Hashtable 提供的哈希表。 </p>
-<p>hashCode 的常规协定是： </p>
+<h2 id="RocketMQ-实现解析"><a href="#RocketMQ-实现解析" class="headerlink" title="RocketMQ 实现解析"></a>RocketMQ 实现解析</h2><p><a href="https://rocketmq.apache.org/docs/motivation/" target="_blank" rel="external">https://rocketmq.apache.org/docs/motivation/</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/10/15/分布式系统-调度系统总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="../../2017/10/15/分布式系统-调度系统总结/" itemprop="url">调度系统总结</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-15T00:00:00+08:00">
+                2017-10-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../categories/调度系统/" itemprop="url" rel="index">
+                    <span itemprop="name">调度系统</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="../../2017/10/15/分布式系统-调度系统总结/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/10/15/分布式系统-调度系统总结/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>千丁在2.5平台系统中实现了一个集中式调度系统用来管理后台系统中的定时任务。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/09/30/spring-4-spring-bean的加载详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="../../2017/09/30/spring-4-spring-bean的加载详解/" itemprop="url">spring Bean加载详解</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-30T00:00:00+08:00">
+                2017-09-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../categories/spring/" itemprop="url" rel="index">
+                    <span itemprop="name">spring</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="../../2017/09/30/spring-4-spring-bean的加载详解/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/09/30/spring-4-spring-bean的加载详解/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/09/29/spring-spring-properties文件配置PropertyPlaceholderConfigurer解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XiYang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="../../images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiYang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="../../2017/09/29/spring-spring-properties文件配置PropertyPlaceholderConfigurer解析/" itemprop="url">spring PropertyPlaceholderConfigurer 详解</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-29T00:00:00+08:00">
+                2017-09-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../categories/spring/" itemprop="url" rel="index">
+                    <span itemprop="name">spring</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="../../2017/09/29/spring-spring-properties文件配置PropertyPlaceholderConfigurer解析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/09/29/spring-spring-properties文件配置PropertyPlaceholderConfigurer解析/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506656331747.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
 <blockquote>
-<p>在 Java 应用程序执行期间，在同一对象上多次调用 hashCode 方法时，必须一致地返回相同的整数，前提是对象上 equals 比较中所用的信息没有被修改。从某一应用程序的一次执行到同一应用程序的另一次执行，该整数无需保持一致。<br>如果根据 equals(Object) 方法，两个对象是相等的，那么在两个对象中的每个对象上调用 hashCode 方法都必须生成相同的整数结果。<br>以下情况不是必需的：如果根据 equals(java.lang.Object) 方法，两个对象不相等，那么在两个对象中的任一对象上调用 hashCode 方法必定会生成不同的整数结果。但是，程序员应该知道，为不相等的对象生成不同整数结果可以提高哈希表的性能。<br>实际上，由 Object 类定义的 hashCode 方法确实会针对不同的对象返回不同的整数。（这一般是通过将该对象的内部地址转换成一个整数来实现的，但是 JavaTM 编程语言不需要这种实现技巧。） </p>
+<p>A BeanFactoryPostProcessor may interact with and modify bean definitions, but never bean instances. Doing so may cause premature bean instantiation, violating the container and causing unintended side-effects. If bean instance interaction is required, consider implementing BeanPostProcessor instead.</p>
 </blockquote>
-<p>以上这段官方文档的定义，我们可以抽取出以下几个关键点：<br>1、hashCode的存在主要是用于查找的快捷性，如Hashtable，HashMap等，hashCode是用来在散列存储结构中确定对象的存储地址的；<br>2、如果两个对象相同（x.equals(y)），那么这两个对象的hashCode一定要相同；<br>3、如果对象的equals方法被重写，那么对象的hashCode也尽量重写，并且产生hashCode使用的对象，一定要和equals方法中使用的一致，否则就会违反上面提到的第2点；<br>4、两个对象的hashCode相同，并不一定表示两个对象就相同，只能够说明这两个对象在散列存储结构中，他们“存放在同一个篮子里”。</p>
-<p>再归纳一下就是hashCode是用于查找使用的，而equals是用于比较两个对象的是否相等的。</p>
-<p>结合HashMap的实现可以很好的理解这个概念。如下是HashMap的数据结构:</p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505973792303.png?imageMogr2/thumbnail/!50p/quality/100!" alt=""></p>
-<p>table 数组代表了桶，每一个桶里可能会存放不止一个元素，如果两个对象的hash值相等，就会放到一个桶里，用链表存放。但是这两个对象并不一定相当，所以这也解释了为什么hashcode相等的两个对象并不一定相等。</p>
-<h4 id="既然比较两个对象是否相等的唯一条件（也是冲要条件）是equals，那么为什么还要弄出一个hashCode-，并且进行如此约定，弄得这么麻烦？"><a href="#既然比较两个对象是否相等的唯一条件（也是冲要条件）是equals，那么为什么还要弄出一个hashCode-，并且进行如此约定，弄得这么麻烦？" class="headerlink" title="既然比较两个对象是否相等的唯一条件（也是冲要条件）是equals，那么为什么还要弄出一个hashCode()，并且进行如此约定，弄得这么麻烦？"></a>既然比较两个对象是否相等的唯一条件（也是冲要条件）是equals，那么为什么还要弄出一个hashCode()，并且进行如此约定，弄得这么麻烦？</h4><p>其实，这主要体现在hashCode()方法的作用上，其主要用于增强哈希表的性能。</p>
-<p>以集合类中，以Set为例，当新加一个对象时，需要判断现有集合中是否已经存在与此对象相等的对象，如果没有hashCode()方法，需要将Set进行一次遍历，并逐一用equals()方法判断两个对象是否相等，此种算法时间复杂度为o(n)。通过借助于hasCode方法，先计算出即将新加入对象的哈希码，然后根据哈希算法计算出此对象的位置，直接判断此位置上是否已有对象即可。（注：Set的底层用的是Map的原理实现）</p>
-<p>在此需要纠正一个理解上的误区：对象的hashCode()返回的不是对象所在的物理内存地址。甚至也不一定是对象的逻辑地址，hashCode()相同的两个对象，不一定相等，换言之，不相等的两个对象，hashCode()返回的哈希码可能相同。</p>
-<h4 id="为什么重写了equals-还要重写-hashCode方法？"><a href="#为什么重写了equals-还要重写-hashCode方法？" class="headerlink" title="为什么重写了equals 还要重写 hashCode方法？"></a>为什么重写了equals 还要重写 hashCode方法？</h4><p>在 hashcode 方法中有一个原则：如果两个对象相同，即x.equals(y)为true, 那么这两个对象的hashCode一定要相同。</p>
-<p>假如你自己的类不重写hashCode，那就会使用 Object 类的 hashCode 返回这个类的hashcode值，Object默认返回这个对象存储的内存地址的编号，那么有可能会导致两个对象equals返回为true，但是却有不同的hashcode码。</p>
-<h4 id="如何重写equals-和-hashCode-方法"><a href="#如何重写equals-和-hashCode-方法" class="headerlink" title="如何重写equals 和 hashCode 方法"></a>如何重写equals 和 hashCode 方法</h4><p>不建议自己实现，借助IDE可以很容易的实现一个类的equals 和 hashCode方法，比如我们定义一个类如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * Created by xiexiyang on 16/5/3.</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Member</span></span>&#123;</div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> Integer age;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> status;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>IDE 辅助生成的 equals 和 hashCode 如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object o)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">this</span> == o) <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    <span class="keyword">if</span> (o == <span class="keyword">null</span> || getClass() != o.getClass()) <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line"></div><div class="line">    Member member = (Member) o;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (status != member.status) <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    <span class="keyword">if</span> (name != <span class="keyword">null</span> ? !name.equals(member.name) : member.name != <span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    <span class="keyword">if</span> (age != <span class="keyword">null</span> ? !age.equals(member.age) : member.age != <span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> result = name != <span class="keyword">null</span> ? name.hashCode() : <span class="number">0</span>;</div><div class="line">    result = <span class="number">31</span> * result + (age != <span class="keyword">null</span> ? age.hashCode() : <span class="number">0</span>);</div><div class="line">    result = <span class="number">31</span> * result + status;</div><div class="line">    <span class="keyword">return</span> result;</div><div class="line">&#125;</div><div class="line"></div><div class="line">注：上述hashCode()的重写中出现了result*<span class="number">31</span>，是因为result*<span class="number">31</span> = (result&lt;&lt;<span class="number">5</span>) - result。之所以选择<span class="number">31</span>，是因为左移运算和减运算计算效率远大于乘法运算。当然，也可以选择其他数字。</div></pre></td></tr></table></figure></p>
-<h3 id="notify-notifyAll-wait-clone-都是native的方法，依赖于底层的实现"><a href="#notify-notifyAll-wait-clone-都是native的方法，依赖于底层的实现" class="headerlink" title="notify notifyAll  wait clone 都是native的方法，依赖于底层的实现"></a>notify notifyAll  wait clone 都是native的方法，依赖于底层的实现</h3>
+
           
         
       
@@ -1948,7 +1945,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2016/08/05/01-java集合类概述/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com../../2017/09/28/spring-3-spring-IOC容器详解/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="XiYang">
@@ -1967,7 +1964,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="../../2016/08/05/01-java集合类概述/" itemprop="url">java 集合类概述</a></h1>
+                <a class="post-title-link" href="../../2017/09/28/spring-3-spring-IOC容器详解/" itemprop="url">Spring的IoC 容器</a></h1>
         
 
         <div class="post-meta">
@@ -1979,8 +1976,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-08-05T11:58:13+08:00">
-                2016-08-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-28T00:00:00+08:00">
+                2017-09-28
               </time>
             
 
@@ -2002,8 +1999,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="../../categories/java-集合/" itemprop="url" rel="index">
-                    <span itemprop="name">java 集合</span>
+                  <a href="../../categories/spring/" itemprop="url" rel="index">
+                    <span itemprop="name">spring</span>
                   </a>
                 </span>
 
@@ -2020,9 +2017,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="../../2016/08/05/01-java集合类概述/#comments" itemprop="discussionUrl">
+                <a href="../../2017/09/28/spring-3-spring-IOC容器详解/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2016/08/05/01-java集合类概述/" itemprop="commentCount"></span>
+                        data-disqus-identifier="2017/09/28/spring-3-spring-IOC容器详解/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -2052,22 +2049,69 @@
       
         
           
-            <p>在java中一切皆是对象，集合就是盛放对象的容器，根据不同的数据结构（集合、链表、队列、栈、数组、映射等）对应不同的集合类。java的集合类都在java.util包下。为了处理多线程环境下的并发安全问题，java5还在java.util.concurrent包下提供了一些多线程支持的集合类。本文暂不包含并发集合包。</p>
-<p>java 集合主要可以分为如下4个部分：List列表、Set集合、Map映射和工具类（Iterator迭代器、Enumeration枚举类、Arrays和Collections）。如下图所示：</p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505102536216.png?imageMogr2/thumbnail/!50p/quality/100!" alt=""></p>
-<p>整体的框架图如下：</p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1470370421012.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<p>梳理出主干我们常用的集合类如下：</p>
-<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1505102962855.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
-<p>最主要的两个接口 Collection 和 Map</p>
-<p>1 、 Collections 包含了 List 和 Set 两种不同的数据集合。</p>
+            <h1 id="什么是IoC"><a href="#什么是IoC" class="headerlink" title="什么是IoC"></a>什么是IoC</h1><p>IoC 的全称为：Inversion of Control，中文通常翻译为 ”控制反转“，还有一个别名叫做依赖注入（Dependency Injection）。</p>
+<p>我们考虑一个电商流程下单的过程，对于创建订单的服务来讲，下单的过程描述的是这么一件事情：</p>
+<blockquote>
+<p>记录谁在什么时候购买了哪些商品，使用了什么优惠，配送到何处。</p>
+</blockquote>
+<p>前端传递给后台的参数通常只有：</p>
 <ul>
-<li>List 是一个有序的队列，包含了常用的 ArrayList，LinkedList、Vector和Stack 类。</li>
-<li>Set 是一个不允许重复元素的集合，包含有 HashSet、TreeSet。HashSet依赖于HashMap，TreeSet依赖于TreeMap</li>
+<li>会员ID</li>
+<li>商品ID和数量</li>
+<li>优惠券</li>
+<li>配送地址ID</li>
 </ul>
-<p>2、 Map 是表示键值对映射的结构。</p>
-<p>AbstractMap 是一个抽象类，它实现了Map接口中的大部分API，而HashMap、TreeMap、WeakHashMap都是继承于AbstractMap。<br>HashTable继承于Dictionary，但它实现了Map接口。</p>
-<p>Arrays 和 Collections 是两个常用的工具类。</p>
+<p>后端的服务接到请求后需要做如下的几件事情：</p>
+<ol>
+<li>根据会员ID获取到会员详细的信息，比如会员姓名，会员手机号等</li>
+<li>根据商品ID获取到商品的具体信息，价格、合同、供方</li>
+<li>调用计价服务计算价格</li>
+<li>记录用户的配送信息</li>
+<li>将订单对象保存到数据库</li>
+</ol>
+<p>我们可以看到一个下单服务依赖很多相关的服务，假如订单服务我们创建一个类叫 OrderService ，定义一个方法叫 makeOrder()。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderServiceImpl</span> <span class="keyword">implements</span> <span class="title">IOrderService</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> PassportService passportService;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> ProductService productService;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">makeOrder</span><span class="params">()</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="comment">//1. 获取会员信息</span></div><div class="line">        Member member = passportService.getMember();</div><div class="line"></div><div class="line">        <span class="comment">//2. 获取商品信息</span></div><div class="line">        Product product = productService.getProduct();</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上述的代码中 <code>OrderService</code> 依赖 <code>passportService</code> 和 <code>productService</code>，如何完成这两个服务的初始化呢？ 假如不使用spring，可能我们需要写类似下面的代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">OrderServiceImpl</span><span class="params">(PassportService passportService, ProductService productService)</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.passportService = passportService;</div><div class="line">    <span class="keyword">this</span>.productService = productService;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">    <span class="comment">// 创建 PassportService 和 ProductService，并设置到orderService对象</span></div><div class="line">    PassportService passportService = <span class="keyword">new</span> PassportService();</div><div class="line">    ProductService productService = <span class="keyword">new</span> ProductService();</div><div class="line"></div><div class="line">    OrderServiceImpl orderService = <span class="keyword">new</span> OrderServiceImpl(passportService,productService);</div><div class="line"></div><div class="line">    orderService.makeOrder();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>或使用 setter 的方法构建：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPassportService</span><span class="params">(PassportService passportService)</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.passportService = passportService;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setProductService</span><span class="params">(ProductService productService)</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.productService = productService;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">    OrderServiceImpl orderService = <span class="keyword">new</span> OrderServiceImpl();</div><div class="line">    </div><div class="line">    <span class="comment">// 创建 PassportService 和 ProductService，并设置到orderService对象</span></div><div class="line">    PassportService passportService = <span class="keyword">new</span> PassportService();</div><div class="line">    ProductService productService = <span class="keyword">new</span> ProductService();</div><div class="line">    </div><div class="line">    orderService.setPassportService(passportService);</div><div class="line">    orderService.setProductService(productService);</div><div class="line"></div><div class="line">    orderService.makeOrder();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>无论使用哪种方式，在实际的编码中都会非常的麻烦，一个类有的时候会依赖可能很多个其它类，如果全部是由程序员去控制类的初始化和依赖关系，将会是一件异常痛苦的事情。spring 通过IOC和DI，通过java本身的一些特性，很好的解决了这个问题。程序员无需再关心类的依赖，只需要在用到某个服务的时候声明一下即可，spring框架会帮助你注入所需的依赖。</p>
+<p>spring 是如何知道依赖并完成依赖的注入呢，我们结合源码一点一点的看。</p>
+<h1 id="IoC-容器之-BeanFactory"><a href="#IoC-容器之-BeanFactory" class="headerlink" title="IoC 容器之 BeanFactory"></a>IoC 容器之 BeanFactory</h1><p>首先我们要来探究容器的概念，所谓的容器是可以盛放东西的一类事物，在程序的世界中，我们可以看到很多关于容器的存在，比如java容器类，通常也称为集合类。spring 中的容器和其它的容器类有什么不同呢？</p>
+<p>spring 提供了一个IoC容器，针对于其存储的对象可以管理其依赖关系，负责其所管理的bean的生命周期，从对象的创建到销毁。Spring 容器使用依赖注入（DI）来管理组成一个应用程序的组件，这些对象被称为 Spring Beans。</p>
+<p>bean 是Spring中最核心的东西，因为Spring就像一个大水桶，而bean就像是容器里面的水，水桶脱离了水便也没有什么用处了。</p>
+<p>在spring中，BeanFactory便是一个容器，里面的Bean便是其管理的对象。我们通过一个例子看看 spring BeanFactory 容器的用法。</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506493983558.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h2 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h2><p>首先定义一个bean如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.xiyang.study.spring4.bean;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBeanTest</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">(String name)</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="string">"hello "</span>+name+<span class="string">"!"</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>然后在配置文件中配置这个bean：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></div><div class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></div><div class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"</span></span></div><div class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans </span></span></div><div class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd</span></span></div><div class="line"><span class="tag"><span class="string">    "</span> &gt;</span></div><div class="line">    </div><div class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"myBeanTest"</span> <span class="attr">class</span>=<span class="string">"com.xiyang.study.spring4.bean.MyBeanTest"</span>&gt;</span><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>使用如下的测试代码测试它：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.xiyang.study.spring4;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.xiyang.study.spring4.bean.MyBeanTest;</div><div class="line"><span class="keyword">import</span> org.junit.Test;</div><div class="line"><span class="keyword">import</span> org.springframework.beans.factory.BeanFactory;</div><div class="line"><span class="keyword">import</span> org.springframework.beans.factory.xml.XmlBeanFactory;</div><div class="line"><span class="keyword">import</span> org.springframework.core.io.ClassPathResource;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * Created by xiexiyang on 2017/9/25.</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanFactoryTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>&#123;</div><div class="line">        BeanFactory beanFactory = <span class="keyword">new</span> XmlBeanFactory(<span class="keyword">new</span> ClassPathResource(<span class="string">"beanTest.xml"</span>));</div><div class="line">        MyBeanTest myBeanTest = (MyBeanTest) beanFactory.getBean(<span class="string">"myBeanTest"</span>);</div><div class="line">        String retVal  = myBeanTest.sayHello(<span class="string">"xiyang"</span>);</div><div class="line">        System.out.println(retVal);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>运行结果如下：<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506325137786.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""><br>可以看到，我们在测试用例中正确的拿到了 <code>MyBeanTest</code> 的实例，并执行了其中的 sayHello 方法。</p>
+<blockquote>
+<p>说明：直接使用 BeanFactory 作为容器在日常的开发中并不多见，这里只是为了演示spring容器的用法，通常我们使用的是 <code>ApplicationContext</code> ，我们之后对他再做更详细的介绍。</p>
+</blockquote>
+<h2 id="XmlBeanFactory"><a href="#XmlBeanFactory" class="headerlink" title="XmlBeanFactory"></a>XmlBeanFactory</h2><p>首先我们初始化了一个 <code>XmlBeanFactory</code> ，这个对象是什么，能做什么呢？如下是 <code>XmlBeanFactory</code> 的类图：<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506325639900.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>XmlBeanFactory 源码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">XmlBeanFactory</span> <span class="keyword">extends</span> <span class="title">DefaultListableBeanFactory</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> XmlBeanDefinitionReader reader = <span class="keyword">new</span> XmlBeanDefinitionReader(<span class="keyword">this</span>);</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * Create a new XmlBeanFactory with the given resource,</span></div><div class="line"><span class="comment">     * which must be parsable using DOM.</span></div><div class="line"><span class="comment">     * <span class="doctag">@param</span> resource XML resource to load bean definitions from</span></div><div class="line"><span class="comment">     * <span class="doctag">@throws</span> BeansException in case of loading or parsing errors</span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">XmlBeanFactory</span><span class="params">(Resource resource)</span> <span class="keyword">throws</span> BeansException </span>&#123;</div><div class="line">        <span class="keyword">this</span>(resource, <span class="keyword">null</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * Create a new XmlBeanFactory with the given input stream,</span></div><div class="line"><span class="comment">     * which must be parsable using DOM.</span></div><div class="line"><span class="comment">     * <span class="doctag">@param</span> resource XML resource to load bean definitions from</span></div><div class="line"><span class="comment">     * <span class="doctag">@param</span> parentBeanFactory parent bean factory</span></div><div class="line"><span class="comment">     * <span class="doctag">@throws</span> BeansException in case of loading or parsing errors</span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">XmlBeanFactory</span><span class="params">(Resource resource, BeanFactory parentBeanFactory)</span> <span class="keyword">throws</span> BeansException </span>&#123;</div><div class="line">        <span class="keyword">super</span>(parentBeanFactory);</div><div class="line">        <span class="keyword">this</span>.reader.loadBeanDefinitions(resource);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>XmlBeanFactory</code> 自身的源码非常简单，只有两个构造函数和一个 <code>XmlBeanDefinitionReader</code> 的变量，由于<code>XmlBeanFactory</code> 继承自 <code>DefaultListableBeanFactory</code>。所以欲探究其本质，首先需要搞明白 <code>DefaultListableBeanFactory</code> 和 <code>XmlBeanDefinitionReader</code>这两个类。</p>
+<h2 id="DefaultListableBeanFactory"><a href="#DefaultListableBeanFactory" class="headerlink" title="DefaultListableBeanFactory"></a>DefaultListableBeanFactory</h2><p>DefaultListableBeanFactory 是 <code>BeanFactory</code>的一个具体实现，所以我们先来看 <code>BeanFactory</code> 接口定义的方法有哪些：<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506327604852.png?imageMogr2/thumbnail/!50p/quality/100!" alt=""></p>
+<h1 id="IoC-容器之ApplicationContext"><a href="#IoC-容器之ApplicationContext" class="headerlink" title="IoC 容器之ApplicationContext"></a>IoC 容器之ApplicationContext</h1><p>ApplicationContext 是 spring提供的较之 BeanFactory更为先进的IOC容器实现。ApplicationContext 除了拥有BeanFactory支持的所有功能之外，还进一步扩展了基本容器的其它功能和特性比如：</p>
+<ul>
+<li>统一资源加载策略</li>
+<li>国际化信息支持</li>
+<li>容器内部事件发布</li>
+<li>多配置模块加载的简化</li>
+</ul>
+<p>Spring提供了ApplicationContext几个常用的实现：</p>
+<ul>
+<li>org.springframework.context.support.ClassPathXmlApplicationContext。默认情况下，从classpath加载bean定义及相关资源。</li>
+<li>org.springframework.context.support.FileSystemXmlApplicationContext。默认情况下，从文件系统加载bean定义及相关资源。</li>
+</ul>
+<p>我们先从类图上对ApplicationContext 和 ClassPathXmlApplicationContext 有一个基础的认识：</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506493479089.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506494389644.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<h2 id="统一资源加载策略"><a href="#统一资源加载策略" class="headerlink" title="统一资源加载策略"></a>统一资源加载策略</h2><p>之前说到 ApplicationContext 相比于 BeanFactory 的不同是 ApplicationContext 实现很多 BeanFactory 没有的特性，其中统一资源加载策略便是其一，这个是什么意思呢？</p>
+<p>要搞清楚Spring为什么提供这么一个功能，还是从 Java SE提供的标准类 java.net.URL说起比较好。URL全名是Uniform Resource Locator（统一资源定位器），但多少有点名不副实。</p>
+<p>首先，说是统一资源定位，但基本实现却只限于网络形式发布的资源的查找和定位工作，基本上只提供了基于HTTP、FTP、File等协议（sun.net.www.protocal包下所支持的协议）的资源定位功能。虽然也提供了扩展的接口，但从一开始，其自身的“定位”就已经趋于狭隘了。实际上，资源这个词的范围比较广义，资源可以以任何形式存在，比如以二进制对象形式存在、以字节流形式存在、以文件形式存在等。而且，资源也可以存在于任何场所，如存在于文件系统、存在于java应用的Classpath中，甚至存在于URL可以定位的地方。</p>
+<p>其次，从某些程度上来说，该类的功能职责划分不清，资源的查找和资源的表示没有一个清晰的界限。当前情况是，资源查找后返回的形式多种多样，没有一个统一的抽象。理想情况下，资源查找完成后，返回给客户端的应该是一个统一的资源抽象接口，客户端要对资源进行什么样的处理，应该有资源抽象接口来界定，而不应该成为资源的定位者和查找者同时要关心的事情。</p>
+<p>所以，在这个前提下，Spring提出了一套基于 org.springframework.core.io.Resource 和 org.springframework.core.io.ResourceLoader 接口的资源抽象和加载策略。</p>
+<p><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506499655320.png?imageMogr2/thumbnail/!100p/quality/100!" alt=""></p>
+<p>和 Resource 相关的类和组件位于 org.springframework.core.io 包下，如下所示：<br><img src="http://7xo9p3.com1.z0.glb.clouddn.com/markdown/1506498754763.png?imageMogr2/thumbnail/!50p/quality/100!" alt=""></p>
 
           
         
@@ -2107,7 +2151,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="../../index.html"><i class="fa fa-angle-left"></i></a><a class="page-number" href="../../index.html">1</a><span class="page-number current">2</span><a class="page-number" href="../3/">3</a><a class="extend next" rel="next" href="../3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="../../index.html"><i class="fa fa-angle-left"></i></a><a class="page-number" href="../../index.html">1</a><span class="page-number current">2</span><a class="page-number" href="../3/">3</a><span class="space">&hellip;</span><a class="page-number" href="../5/">5</a><a class="extend next" rel="next" href="../3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2152,7 +2196,7 @@
             
               <a href="../../archives/">
             
-                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-count">46</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2163,7 +2207,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="../../categories/index.html">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">14</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2174,7 +2218,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="../../tags/index.html">
-                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -2216,7 +2260,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
